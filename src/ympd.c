@@ -27,6 +27,7 @@
 #include "mongoose.h"
 #include "http_server.h"
 #include "mpd_client.h"
+#include "net.h"
 #include "config.h"
 
 extern char *optarg;
@@ -47,7 +48,7 @@ static int server_callback(struct mg_connection *c, enum mg_event ev) {
             if (c->is_websocket) {
                 c->content[c->content_len] = '\0';
                 if(c->content_len)
-                    return callback_mpd(c);
+                    return callback_net(c);
                 else
                     return MG_TRUE;
             } else
