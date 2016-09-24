@@ -47,6 +47,7 @@ file(GLOB RESOURCES
 
 set(SOURCES
     src/ympd.c
+    src/net.c
     src/mpd_client.c
     src/mongoose.c
     src/json_encode.c

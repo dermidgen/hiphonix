@@ -46,10 +46,12 @@ static int server_callback(struct mg_connection *c, enum mg_event ev) {
             return MG_TRUE;
         case MG_REQUEST:
             if (c->is_websocket) {
+                fprintf(stdout, "websocket request\n");
                 c->content[c->content_len] = '\0';
-                if(c->content_len)
+                if(c->content_len) {
+                    fprintf(stdout, "pre callback_net\n");
                     return callback_net(c);
-                else
+                } else
                     return MG_TRUE;
             } else
 #ifdef WITH_DYNAMIC_ASSETS
