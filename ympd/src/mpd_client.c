@@ -149,9 +149,6 @@ int callback_mpd(struct mg_connection *c)
                 mpd_run_seek_id(mpd.conn, uint_buf, uint_buf_2);
             break;
         case MPD_API_GET_QUEUE:
-            fprintf(stdout, "MPD_API_GET_QUEUE\n");
-            printf("MPD_API_GET_QUEUE\n");
-            printf("MPD_API_GET_%s\n", "QUEUE");
             if(sscanf(c->content, "MPD_API_GET_QUEUE,%u", &uint_buf))
                 n = mpd_put_queue(mpd.buf, uint_buf);
             break;
