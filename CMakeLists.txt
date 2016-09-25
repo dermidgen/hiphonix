@@ -6,9 +6,9 @@ set(CPACK_PACKAGE_VERSION_MAJOR "1")
 set(CPACK_PACKAGE_VERSION_MINOR "2")
 set(CPACK_PACKAGE_VERSION_PATCH "3")
 if(CMAKE_BUILD_TYPE MATCHES RELEASE)
-    set(ASSETS_PATH "${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/hiphonix-player")
+    set(ASSETS_PATH "${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/htdocs")
 else()
-    set(ASSETS_PATH "${PROJECT_SOURCE_DIR}/hiphonix-player")
+    set(ASSETS_PATH "${PROJECT_SOURCE_DIR}/htdocs")
 endif()
 
 option(WITH_MPD_HOST_CHANGE "Let users of the web frontend change the MPD Host" ON)
@@ -38,7 +38,7 @@ endif()
 
 file(GLOB RESOURCES 
     RELATIVE ${PROJECT_SOURCE_DIR}
-    hiphonix-player/index.html
+    htdocs/index.html
 )
 
 set(SOURCES
@@ -72,5 +72,5 @@ target_link_libraries(hiphonix ${LIBMPDCLIENT_LIBRARY} ${CMAKE_THREAD_LIBS_INIT}
 install(TARGETS hiphonix DESTINATION bin)
 install(FILES ympd/ympd.1 DESTINATION ${CMAKE_INSTALL_PREFIX}/share/man/man1)
 if(WITH_DYNAMIC_ASSETS)
-    install(DIRECTORY hiphonix-player DESTINATION share/${PROJECT_NAME})
+    install(DIRECTORY htdocs DESTINATION share/${PROJECT_NAME})
 endif()
