@@ -51,11 +51,11 @@ set(SOURCES
 
 if(NOT WITH_DYNAMIC_ASSETS)
     if(CMAKE_CROSSCOMPILING)
-        set(MKDATA_EXE ${PROJECT_SOURCE_DIR}/ympd/tools/mkdata.pl)
+        set(MKDATA_EXE ${PROJECT_SOURCE_DIR}/tools/mkdata.pl)
     else()
         set(MKDATA_EXE $<TARGET_FILE:mkdata>)
         set(MKDATA_TARGET mkdata)
-        add_executable(mkdata ympd/tools/mkdata.c)
+        add_executable(mkdata tools/mkdata.c)
     endif()
 
     add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/assets.c
