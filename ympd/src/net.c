@@ -24,9 +24,18 @@ static inline enum net_cmd_ids get_cmd_id(char *cmd)
     return -1;
 }
 
+int is_net_request(struct mg_connection *c)
+{
+    enum net_cmd_ids cmd_id = get_cmd_id(c->content);
+    
+    if (cmd_id == -1)
+        return MG_FALSE;
+    else
+        return MG_TRUE;
+}
+
 int callback_net(struct mg_connection *c)
 {
-    printf("Entering callback_net\n");
     enum net_cmd_ids cmd_id = get_cmd_id(c->content);
     size_t n = 0;
 
@@ -38,11 +47,10 @@ int callback_net(struct mg_connection *c)
     if(cmd_id == -1)
         return MG_TRUE;
 
-    printf("Entering callback_net:cmd_switch %i\n", cmd_id);
+    // printf("Entering callback_net:cmd_switch %i\n", cmd_id);
     switch(cmd_id)
     {
         case NET_EHLO:
-            printf("Calling hello world\n");
             fp = popen("echo \"Hello World\"", "r");
             break;
         case NET_SCAN:
@@ -74,13 +82,12 @@ int callback_net(struct mg_connection *c)
         strcat(resbuf,resbuf_cat);
     }
 
-    printf("Response %s\n", resbuf);
+    // /* close */
+    pclose(fp);
+
+    // printf("Response %s\n", resbuf);
     n = snprintf(wsres, MAX_SIZE, "{\"type\":\"net\", \"data\": \"%s\"}", resbuf);
     mg_websocket_write(c, 1, wsres, n);
 
-    
-
-    // /* close */
-    pclose(fp);
     return MG_TRUE;
 }

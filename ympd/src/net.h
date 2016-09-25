@@ -26,5 +26,6 @@ enum net_conn_states {
     NET_RECONNECT
 };
 
+int is_net_request(struct mg_connection *c);
 int callback_net(struct mg_connection *c);
 #endif
