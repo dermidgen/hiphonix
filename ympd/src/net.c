@@ -50,16 +50,16 @@ int callback_net(struct mg_connection *c)
     switch(cmd_id)
     {
         case NET_EHLO:
-            fp = popen("echo \"Hello World\"", "r");
+            fp = popen("connmanctl scan wifi && connmanctl services", "r");
             break;
         case NET_SCAN:
-            fp = popen("iw list", "r");
+            fp = popen("rfkill unblock 0 && ip link set wlan0 up && iw wlan0 scan ap-force", "r");
             break;
         case NET_LIST:
             fp = popen("iw list", "r");
             break;
         case NET_CONNECT:
-            fp = popen("connman []", "r");
+            fp = popen("connmanctl ", "r");
             break;
         case NET_DISCONNECT:
             fp = popen("connman []", "r");
