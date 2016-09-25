@@ -54,9 +54,6 @@ int callback_net(struct mg_connection *c)
             break;
         case NET_SCAN:
             fp = popen("iw list", "r");
-            // while() {
-            //     fgets(resbuf, 1024, fp);
-            // }
             break;
         case NET_LIST:
             fp = popen("iw list", "r");
