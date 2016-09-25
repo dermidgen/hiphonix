@@ -16,7 +16,6 @@ const char * net_cmd_strs[] = {
 
 static inline enum net_cmd_ids get_cmd_id(char *cmd)
 {
-    printf("Entering net_cmd_ids\n");
     for(int i = 0; i < sizeof(net_cmd_strs)/sizeof(net_cmd_strs[0]); i++)
         if(!strncmp(cmd, net_cmd_strs[i], strlen(net_cmd_strs[i])))
             return i;
