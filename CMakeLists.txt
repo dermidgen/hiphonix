@@ -38,7 +38,7 @@ endif()
 
 file(GLOB RESOURCES 
     RELATIVE ${PROJECT_SOURCE_DIR}
-    hiphonix-player/capture.html
+    hiphonix-player/index.html
 )
 
 set(SOURCES

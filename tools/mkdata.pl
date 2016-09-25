@@ -46,7 +46,7 @@ EOS
 foreach my $i (0 .. $#ARGV) {
   my ($ext) = $ARGV[$i] =~ /([^.]+)$/;
   my $mime = $mimetypes{$ext};
-  $ARGV[$i] =~ s/hiphonix-player//;
+  $ARGV[$i] =~ s/hiphonix\-player//;
   print "  {\"$ARGV[$i]\", v$i, \"$mime\", sizeof(v$i) - 1},\n";
 }
 
