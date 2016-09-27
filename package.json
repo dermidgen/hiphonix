@@ -13,7 +13,7 @@
   "scripts": {
     "start": "REACT_APP_VERSION=$npm_package_version react-scripts start",
     "build": "REACT_APP_VERSION=$npm_package_version react-scripts build",
-    "preversion": "npm run build && git add --force build/*",
+    "preversion": "npm run build && git add --force build/* && git commit -m 'Adding build'",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   }

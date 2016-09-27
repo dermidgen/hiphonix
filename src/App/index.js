@@ -15,7 +15,7 @@ class App extends Component {
         <main>
           {this.props.children}
         </main>
-        <footer>Version: {process.env.REACT_APP_VERSION}</footer>
+        <footer>Version: v{process.env.REACT_APP_VERSION}</footer>
       </div>
     );
   }
