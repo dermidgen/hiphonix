@@ -12,8 +12,8 @@ import Settings from './Settings';
 
 ReactDOM.render(
   <Router history={browserHistory}>
-    <Route path="/" component={Splash}>
-      <IndexRoute component={App} />
+    <Route path="/" component={App}>
+      <IndexRoute  component={Splash}/>
       <Route path="/playback" component={Playback}/>
       <Route path="/library" component={Library}>
         <Route path="/library/:id" component={Library}/>
