@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
     for(i = 1; i < argc; i++)
     {
         printf("  {\"%s\", v%d, \"%s\", sizeof(v%d) - 1}, \n", 
-            argv[i]+6, i, get_mime(argv[i]), i);
+            argv[i]+12, i, get_mime(argv[i]), i);
     }
 
     fputs(footer, stdout);

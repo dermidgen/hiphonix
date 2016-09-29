@@ -38,7 +38,23 @@ endif()
 
 file(GLOB RESOURCES 
     RELATIVE ${PROJECT_SOURCE_DIR}
-    htdocs/index.html
+    htdocs/build/fonts/Roboto/Roboto-Black.ttf
+    htdocs/build/fonts/Roboto/Roboto-BlackItalic.ttf
+    htdocs/build/fonts/Roboto/Roboto-Bold.ttf
+    htdocs/build/fonts/Roboto/Roboto-BoldItalic.ttf
+    htdocs/build/fonts/Roboto/Roboto-Italic.ttf
+    htdocs/build/fonts/Roboto/Roboto-Light.ttf
+    htdocs/build/fonts/Roboto/Roboto-LightItalic.ttf
+    htdocs/build/fonts/Roboto/Roboto-Medium.ttf
+    htdocs/build/fonts/Roboto/Roboto-MediumItalic.ttf
+    htdocs/build/fonts/Roboto/Roboto-Regular.ttf
+    htdocs/build/fonts/Roboto/Roboto-Thin.ttf
+    htdocs/build/fonts/Roboto/Roboto-ThinItalic.ttf
+    htdocs/build/static/css/main.e76baed9.css
+    htdocs/build/static/css/main.e76baed9.css.map
+    htdocs/build/static/js/main.ec3a52bd.js
+    htdocs/build/static/js/main.ec3a52bd.js.map
+    htdocs/build/index.html
 )
 
 set(SOURCES
