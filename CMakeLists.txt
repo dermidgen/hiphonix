@@ -52,8 +52,8 @@ file(GLOB RESOURCES
     htdocs/build/fonts/Roboto/Roboto-ThinItalic.ttf
     htdocs/build/static/css/main.e76baed9.css
     htdocs/build/static/css/main.e76baed9.css.map
-    htdocs/build/static/js/main.ec3a52bd.js
-    htdocs/build/static/js/main.ec3a52bd.js.map
+    htdocs/build/static/js/main.90d96e2e.js
+    htdocs/build/static/js/main.90d96e2e.js.map
     htdocs/build/index.html
 )
 
