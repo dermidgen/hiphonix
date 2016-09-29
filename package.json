@@ -1,0 +1,21 @@
+{
+  "name": "player",
+  "version": "0.1.6",
+  "private": true,
+  "devDependencies": {
+    "react-scripts": "0.6.1"
+  },
+  "dependencies": {
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "react-router": "^2.8.1"
+  },
+  "scripts": {
+    "start": "REACT_APP_VERSION=$npm_package_version react-scripts start",
+    "build": "REACT_APP_VERSION=$npm_package_version react-scripts build",
+    "preversion": "npm run build && git add --force build/* && git commit -m 'Adding build'",
+    "postversion": "git push --follow-tags",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
