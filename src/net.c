@@ -33,57 +33,72 @@ int is_net_request(struct mg_connection *c)
         return MG_TRUE;
 }
 
+char* cmd_exec(char *cmd)
+{
+    int MAX_LINE = 1024;
+    char resbuf_cat[MAX_LINE];
+    char response_charbuf[MAX_SIZE];
+    FILE *fp;
+   
+    fp = popen(cmd, "r");
+
+    if (fp == NULL) {
+        strcat(response_charbuf, "Command Failed");
+        return (char *)strdup(response_charbuf);
+    }
+
+    response_charbuf[0] = 0;
+    while(fgets(resbuf_cat, MAX_LINE, fp) != NULL) {
+        strcat(response_charbuf, resbuf_cat);
+    }
+
+    pclose(fp);
+
+    response_charbuf[strlen(response_charbuf) - 1] = '\0';
+    return (char *)strdup(response_charbuf);
+}
+
 int callback_net(struct mg_connection *c)
 {
     enum net_cmd_ids cmd_id = get_cmd_id(c->content);
     size_t n = 0;
 
-    FILE *fp;
-    char wsres[10000];
-    char resbuf[10000];
-    char resbuf_cat[10000];
+    char wsres[MAX_SIZE];
+    char *resbuf;
 
     if(cmd_id == -1)
         return MG_TRUE;
 
-    // printf("Entering callback_net:cmd_switch %i\n", cmd_id);
     switch(cmd_id)
     {
         case NET_EHLO:
-            fp = popen("HELO", "r");
+            resbuf = (char *)cmd_exec("echo \\\"HelloWorld\\\"");
             break;
         case NET_SCAN:
-            fp = popen("iw dev wlan0 scan ap-force", "r");
+            resbuf = (char *)cmd_exec("iw dev wlan0 scan ap-force > /dev/null && echo \\\"Scanned\\\"");
             break;
         case NET_LIST:
-            fp = popen("echo \"[`iw dev wlan0 scan ap-force | grep SSID | cut -d ' ' -f 2 | sed -e 's/\\(.*\\)/\"\\1\"/' | tr \"\n\" \",\" | sed 's/,$//'`]\"", "r");
+            resbuf = (char *)cmd_exec("echo \"[`iw dev wlan0 scan ap-force | grep SSID | cut -d ' ' -f 2 | sed -e 's/\\(.*\\)/\"\\1\"/' | tr \"\n\" \",\" | sed 's/,$//'`]\"");
             break;
         case NET_CONNECT:
-            fp = popen("connmanctl", "r");
+            resbuf = (char *)cmd_exec("connmanctl");
             break;
         case NET_DISCONNECT:
-            fp = popen("connmanctl", "r");
+            resbuf = (char *)cmd_exec("connmanctl");
             break;
         case NET_RESET:
-            fp = popen("connmanctl", "r");
+            resbuf = (char *)cmd_exec("connmanctl");
             break;
     }
 
-    // if(fp == NULL) {
-    //     resbuf = "Command Failed";
-    // }
+    // printf("resbuf %s\n", resbuf);
+    n = snprintf(wsres, MAX_SIZE, "{\"type\":\"net\", \"data\": %s}", resbuf);
 
-    resbuf[0] = 0;
-    while(fgets(resbuf_cat, 1024, fp) != NULL) {
-        strcat(resbuf,resbuf_cat);
-    }
-
-    // /* close */
-    pclose(fp);
-
-    // printf("Response %s\n", resbuf);
-    n = snprintf(wsres, MAX_SIZE, "{\"type\":\"net\", \"data\": \"%s\"}", resbuf);
+    // printf("wres %s\n", wsres);
+    // printf("n %i\n", (int)n);
     mg_websocket_write(c, 1, wsres, n);
+
+    free(resbuf);
 
     return MG_TRUE;
 }
