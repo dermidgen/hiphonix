@@ -58,8 +58,8 @@ file(GLOB RESOURCES
 )
 
 set(SOURCES
-    ympd/src/ympd.c
-    ympd/src/net.c
+    src/hiphonix.c
+    src/net.c
     ympd/src/mpd_client.c
     ympd/src/mongoose.c
     ympd/src/json_encode.c
