@@ -53,10 +53,10 @@ int callback_net(struct mg_connection *c)
             fp = popen("HELO", "r");
             break;
         case NET_SCAN:
-            fp = popen("connmanctl scan wifi", "r");
+            fp = popen("iw dev wlan0 scan ap-force", "r");
             break;
         case NET_LIST:
-            fp = popen("connmanctl services", "r");
+            fp = popen("echo \"[`iw dev wlan0 scan ap-force | grep SSID | cut -d ' ' -f 2 | sed -e 's/\\(.*\\)/\"\\1\"/' | tr \"\n\" \",\" | sed 's/,$//'`]\"", "r");
             break;
         case NET_CONNECT:
             fp = popen("connmanctl", "r");
