@@ -13,6 +13,10 @@ if(GLib_LIBRARY AND NOT GLib_FOUND)
     HINTS ${GLib_PKG_INCLUDE_DIRS}
     PATH_SUFFIXES "glib-2.0")
 
+  find_path(GLib_INCLUDE_DIRS "glib-object.h"
+    HINTS ${GLib_PKG_INCLUDE_DIRS}
+    PATH_SUFFIXES "glib-2.0")
+
   get_filename_component(GLib_LIBDIR "${GLib}" DIRECTORY)
   find_path(GLib_CONFIG_INCLUDE_DIR "glibconfig.h"
     HINTS

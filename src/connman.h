@@ -2,7 +2,6 @@
 #define __NET_CONNMAN_H__
 
 #include <dbus/dbus-glib.h>
-#include <glib-object.h>
 
 void print_properties(GHashTable *hash);
 void properties_callback(DBusGProxy *proxy,

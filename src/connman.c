@@ -1,5 +1,4 @@
 #include <dbus/dbus-glib.h>
-#include <glib-object.h>
 #include "connman.h"
 
 GMainLoop *mainloop;
