@@ -10,6 +10,7 @@
 #include "ympd/src/mongoose.h"
 #include "ympd/src/http_server.h"
 #include "ympd/src/mpd_client.h"
+#include "connman.h"
 #include "net.h"
 
 extern char *optarg;

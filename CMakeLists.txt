@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 
 project (hiphonix)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/ympd/cmake/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/")
 set(CPACK_PACKAGE_VERSION_MAJOR "1")
 set(CPACK_PACKAGE_VERSION_MINOR "2")
 set(CPACK_PACKAGE_VERSION_PATCH "3")
@@ -18,9 +18,12 @@ option(WITH_SSL "enable SSL support" ON)
 
 find_package(LibMPDClient REQUIRED)
 find_package(Threads REQUIRED)
+find_package(DBus REQUIRED)
+find_package(Glib REQUIRED)
 
+# Configure Build
 configure_file(ympd/src/config.h.in ${PROJECT_BINARY_DIR}/config.h)
-include_directories(${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR} ${LIBMPDCLIENT_INCLUDE_DIR})
+include_directories(${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR} ${LIBMPDCLIENT_INCLUDE_DIR} ${DBUS_INCLUDE_DIR} ${DBUS_INCLUDE_LIB_DIR} ${GLib_INCLUDE_DIRS})
 
 include(CheckCSourceCompiles)
 
@@ -60,6 +63,7 @@ file(GLOB RESOURCES
 set(SOURCES
     src/hiphonix.c
     src/net.c
+    src/connman.c
     ympd/src/mpd_client.c
     ympd/src/mongoose.c
     ympd/src/json_encode.c
@@ -83,7 +87,7 @@ if(NOT WITH_DYNAMIC_ASSETS)
 endif()
 
 add_executable(hiphonix ${SOURCES})
-target_link_libraries(hiphonix ${LIBMPDCLIENT_LIBRARY} ${CMAKE_THREAD_LIBS_INIT} ${OPENSSL_LIBRARIES})
+target_link_libraries(hiphonix ${LIBMPDCLIENT_LIBRARY} ${DBUS_LIBRARIES} ${GLib_LIBRARY} ${CMAKE_THREAD_LIBS_INIT} ${OPENSSL_LIBRARIES})
 
 install(TARGETS hiphonix DESTINATION bin)
 install(FILES ympd/ympd.1 DESTINATION ${CMAKE_INSTALL_PREFIX}/share/man/man1)
