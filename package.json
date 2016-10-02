@@ -3,7 +3,9 @@
   "version": "0.1.7",
   "private": true,
   "devDependencies": {
-    "react-scripts": "latest"
+    "react-scripts": "latest",
+    "renamer": "^0.5.7",
+    "replace": "^0.3.0"
   },
   "dependencies": {
     "react": "^15.3.2",
@@ -13,6 +15,12 @@
   "scripts": {
     "start": "REACT_APP_VERSION=$npm_package_version react-scripts start",
     "build": "REACT_APP_VERSION=$npm_package_version react-scripts build",
+    "remover": "rm -rf build/static/**/*.map",
+    "renamer": "renamer --regex --find '(main).[a-z0-9]+' --replace '$1' 'build/static/**/*'",
+    "replacer": "replace -r '^(.*)sourceMappingURL(.*)$' '' build/static",
+    "overrides": "npm run remover && npm run renamer && npm run replacer",
+    "release": "git add --force build/* && git commit -m 'Adding build' && git push --follow-tags",
+    "postversion": "npm run build && npm run overrides && npm run release",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   }
