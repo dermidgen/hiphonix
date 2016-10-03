@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha test"
+    "test": "mocha --compilers js:babel-core/register test/index.js"
   },
   "repository": {
     "type": "git",
@@ -18,5 +18,10 @@
   "bugs": {
     "url": "https://github.com/dermidgen/hiphonix/issues"
   },
-  "homepage": "https://github.com/dermidgen/hiphonix#readme"
+  "homepage": "https://github.com/dermidgen/hiphonix#readme",
+  "devDependencies": {
+    "babel-core": "^6.17.0",
+    "babel-preset-es2015": "^6.16.0",
+    "mock-socket": "^5.0.1"
+  }
 }
