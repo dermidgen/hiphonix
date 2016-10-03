@@ -55,10 +55,8 @@ file(GLOB RESOURCES
     htdocs/build/fonts/Roboto/Roboto-Regular.ttf
     htdocs/build/fonts/Roboto/Roboto-Thin.ttf
     htdocs/build/fonts/Roboto/Roboto-ThinItalic.ttf
-    htdocs/build/static/css/main.e76baed9.css
-    htdocs/build/static/css/main.e76baed9.css.map
-    htdocs/build/static/js/main.90d96e2e.js
-    htdocs/build/static/js/main.90d96e2e.js.map
+    htdocs/build/static/css/main.css
+    htdocs/build/static/js/main.js
     htdocs/build/index.html
 )
 
