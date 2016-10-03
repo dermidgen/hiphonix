@@ -1,0 +1,22 @@
+{
+  "name": "hiphonix",
+  "version": "1.0.0",
+  "description": "The hi-fi hub for the audiophile http://www.hiphonix.com",
+  "main": "hiphonix",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dermidgen/hiphonix.git"
+  },
+  "author": "good.midget@gmail.com",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/dermidgen/hiphonix/issues"
+  },
+  "homepage": "https://github.com/dermidgen/hiphonix#readme"
+}
