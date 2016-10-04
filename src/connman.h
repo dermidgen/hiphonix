@@ -3,9 +3,12 @@
 
 #include <dbus/dbus-glib.h>
 
-void print_properties(GHashTable *hash);
-void properties_callback(DBusGProxy *proxy,
+void connman_print_properties(GHashTable *hash);
+void connman_properties_callback(DBusGProxy *proxy,
                 DBusGProxyCall *call, void *user_data);
-void get_properties(const char *path, const char *interface);
+void connman_get_properties(const char *path, const char *interface);
+void connman_wifi_join();
+void connman_connect();
+void connman_disconnect();
 
 #endif

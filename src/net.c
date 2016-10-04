@@ -6,13 +6,13 @@
 #include <libgen.h>
 
 #include "net.h"
+#include "connman.h"
 #include "config.h"
 #include "ympd/src/json_encode.h"
 
 const char * net_cmd_strs[] = {
     NET_CMDS(GEN_STR)
 };
-
 
 static inline enum net_cmd_ids get_cmd_id(char *cmd)
 {
@@ -81,7 +81,10 @@ int callback_net(struct mg_connection *c)
             resbuf = (char *)cmd_exec("echo \"[`iw dev wlan0 scan ap-force | grep SSID | cut -d ' ' -f 2 | sed -e 's/\\(.*\\)/\"\\1\"/' | tr \"\n\" \",\" | sed 's/,$//'`]\"");
             break;
         case NET_CONNECT:
-            resbuf = (char *)cmd_exec("connmanctl");
+            resbuf = (char *)cmd_exec("echo \\\"Joining\\\"");
+            // connman_connect();
+            connman_wifi_join();
+            // connman_disconnect();
             break;
         case NET_DISCONNECT:
             resbuf = (char *)cmd_exec("connmanctl");

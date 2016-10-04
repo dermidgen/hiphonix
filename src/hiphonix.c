@@ -135,6 +135,8 @@ int main(int argc, char **argv)
         }
     }
 
+    // connman_connect();
+
     while (!force_exit) {
         mg_poll_server(server, 200);
         current_timer = time(NULL);
@@ -145,6 +147,7 @@ int main(int argc, char **argv)
         }
     }
 
+    // connman_disconnect();
     mpd_disconnect();
     mg_destroy_server(&server);
 
