@@ -15,14 +15,14 @@ This project is inspired by the very cool [ympd](http://github.com/notandy/ympd)
 ## Commands
 
 ### MPD (ympd compat)
- * MPD_API_GET_BROWSE,[(int) page],[(string) path]
-    Usage: MPD_API_GET_BROWSE,0,"/"
+ * MPD_API_GET_BROWSE,(int) page,(string) path
+    Usage: MPD_API_GET_BROWSE,0,/
  * MPD_API_SEARCH,(string) search
     Usage: MPD_API_SEARCH,radiohead
  * MPD_API_GET_QUEUE
  * MPD_API_SAVE_QUEUE
  * MPD_API_ADD_TRACK,(string) path
-    Usage: MPD_API_ADD_TRACK,"/"
+    Usage: MPD_API_ADD_TRACK,/
  * MPD_API_ADD_PLAY_TRACK
  * MPD_API_ADD_PLAYLIST
  * MPD_API_RM_TRACK
