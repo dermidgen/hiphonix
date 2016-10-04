@@ -1,1 +1,6 @@
-{"type":"outputnames", "data":{ "0":"My ALSA Device" }}
+{
+  "type": "outputnames",
+  "data": {
+    "0": "My ALSA Device"
+  }
+}

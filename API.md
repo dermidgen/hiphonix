@@ -15,6 +15,7 @@ This project is inspired by the very cool [ympd](http://github.com/notandy/ympd)
 ## Commands
 
 ### MPD (ympd compat)
+ * MPD_API_GET_OUTPUTS
  * MPD_API_GET_BROWSE,(int) page,(string) path
     Usage: MPD_API_GET_BROWSE,0,/
  * MPD_API_SEARCH,(string) search
@@ -41,7 +42,6 @@ This project is inspired by the very cool [ympd](http://github.com/notandy/ympd)
  * MPD_API_TOGGLE_CROSSFADE
  * MPD_API_TOGGLE_REPEAT
  * MPD_API_TOGGLE_OUTPUT
- * MPD_API_GET_OUTPUTS
  * MPD_API_SET_MPDHOST
  * MPD_API_SET_MPDPASS
  * MPD_API_UPDATE_DB
