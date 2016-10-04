@@ -12,6 +12,9 @@ The Hiphonix service is a lightweight embedded server for the Hiphonix Player De
 
 This project is inspired by the very cool [ympd](http://github.com/notandy/ympd) project.
 
+## Connecting
+The WebSocket API endpoint is available at http://hiphonix/ws
+
 ## Commands
 
 ### MPD (ympd compat)
