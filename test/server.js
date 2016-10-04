@@ -12,7 +12,7 @@ function MockServer() {
   mockServer.on('connection', server => {
     setInterval(() => {
       mockServer.send(JSON.stringify(fixtures.STATE));
-    }, 2000);
+    }, 200);
   });
 
   var parseCommand = (message) => {

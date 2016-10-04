@@ -4,11 +4,9 @@ import util from 'util';
 // If we're in --live we want to hit a running
 // instance of hiphonix server.
 if (process.argv.pop() === '--live') {
-  console.log('running live');
   var WebSocket = require('ws');
   var url = 'ws://localhost:8080/ws';
 } else {
-  console.log('running mocks');
   var Server = require('./server.js');
   var WebSocket = require('mock-socket').WebSocket;
   var url = 'ws://localhost:8080';
@@ -21,13 +19,17 @@ function Client() {
   const $this = this;
 
   socket.onmessage = (event) => {
-    console.log(event.data);
-    var message = JSON.parse(event.data);
-    this.emit(message.type, message);
+    if (!event.data) return;
+    try {
+      var message = JSON.parse(event.data);
+      this.emit(message.type, message);
+    } catch(err) {
+      console.log(event);
+      console.trace(err);
+    }
   };
 
   this.send = (message) => {
-    console.log('Sending %s', message);
     try {
       socket.send(message);
     } catch(e) {

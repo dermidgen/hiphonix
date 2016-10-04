@@ -1,6 +1,5 @@
 import assert from 'assert';
 import Client from './client.js';
-// import Server from './server.js';
 
 const client = new Client();
 
@@ -26,7 +25,4 @@ describe('WebSocket Service Tests', function() {
     client.once('state', () => { done(); });
   });
 
-  after(() => {
-    // Server.stop();
-  })
 });
