@@ -19,16 +19,24 @@ class App extends Component {
 
   componentDidMount() {
     ws.onmessage = m => {
+      // Apparently the server sends empty frames
+      if (!m.data) return;
+
       // console.log('[client::onmessage]: %o', m);
-      var message = JSON.parse(m.data);
-      console.log('[client::onmessage]: %o', message.payload);
-      this.setState(message.payload)
+      try {
+        var message = JSON.parse(m.data);
+        console.log('[client::onmessage]: %o', message.data);
+        // this.setState(message.data);
+      } catch(e) {
+        console.log('[client::onmessage]: %o', m);
+        console.error('[client::onmessageerror] %o', e);        
+      }
     };
     ws.onopen = () => {
       console.info('[client::onopen]:');
       this.setState({
-        connection: 'true'
-      })
+        connection: 'true',
+      });
     };
     ws.onerror = e => {
       console.error('[client::onerror]: %o', e);

@@ -40,7 +40,13 @@ const api = {
     'SYS_RESTART',
     'SYS_RESET',
     'SYS_UPGRADE',
-  ]
-}
+  ],
+  events: [
+    'state',
+    'browse',
+    'outputnames',
+    'outputs',
+  ],
+};
 
 module.exports = api;
