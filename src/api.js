@@ -1,5 +1,3 @@
-
-
 const api = {
   VERSION: '0',
   actions: [

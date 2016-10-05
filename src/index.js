@@ -6,31 +6,73 @@ import API from './api';
 
 import './index.css';
 
+const ws = new WebSocket('ws://localhost:8080', 'echo-protocol');
+
 class App extends Component {
+
+  constructor() {
+    super()
+    this.state = {
+      connection: 'false'
+    }
+  }
+
+  componentDidMount() {
+    ws.onmessage = m => {
+      // console.log('[client::onmessage]: %o', m);
+      var message = JSON.parse(m.data);
+      console.log('[client::onmessage]: %o', message.payload);
+      this.setState(message.payload)
+    };
+    ws.onopen = () => {
+      console.info('[client::onopen]:');
+      this.setState({
+        connection: 'true'
+      })
+    };
+    ws.onerror = e => {
+      console.error('[client::onerror]: %o', e);
+    };
+  }
+
   render() {
     return (
       <div className="App">
         <header>
-          <Link to="/">Playback</Link>
+          <Link to="/playback">Playback</Link>
           <Link to="/library">Library</Link>
           <Link to="/settings">Settings</Link>
         </header>
         <main>
           {this.props.children}
         </main>
-        <footer>Version: {process.env.REACT_APP_VERSION}, API: {API.VERSION}</footer>
+        <footer>
+          Version: {process.env.REACT_APP_VERSION},
+          API: {API.VERSION},
+          Connection: {this.state.connection},
+          State: {this.state.state}
+        </footer>
       </div>
     );
   }
 }
 
 class Playback extends Component {
+
+  play() {
+    ws.send(JSON.stringify({ state: 'playing' }));
+  }
+
+  pause() {
+    ws.send(JSON.stringify({ state: 'paused' }));
+  }
+
   render() {
     return (
       <div>
         <h2>Playback</h2>
-        <button>play</button>
-        <button>pause</button>
+        <button onClick={this.play.bind(this)}>Play</button>
+        <button onClick={this.pause.bind(this)}>Pause</button>
       </div>
     );
   }
@@ -63,9 +105,8 @@ class Settings extends Component {
 
 ReactDOM.render(
   <Router history={browserHistory}>
-    <Route path="/">
-      <IndexRoute component={App} />
-      <Route path="/playback" component={Playback}/>
+    <Route path="/" component={App}>
+      <IndexRoute component={Playback} />
       <Route path="/library" component={Library}>
         <Route path="/library/:id" component={Library}/>
       </Route>
