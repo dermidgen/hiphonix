@@ -1,0 +1,17 @@
+[
+  {
+    "Title": "Title 1",
+    "Sub Title": "Sub Title 1",
+    "Cover": "./images/covers/Janis Joplin.png",
+  },
+  {
+    "Title": "Title 2",
+    "Sub Title": "Sub Title 2",
+    "Cover": "",
+  },
+  {
+    "Title": "Title 3",
+    "Sub Title": "Sub Title 3",
+    "Cover": "",
+  }
+]
