@@ -1,5 +1,3 @@
-
-
 const api = {
   VERSION: '0',
   actions: [
@@ -37,7 +35,13 @@ const api = {
     'SYS_RESET',
     'SYS_RESTART',
     'SYS_UPGRADE',
-  ]
-}
+  ],
+  events: [
+    'state',
+    'browse',
+    'outputnames',
+    'outputs',
+  ],
+};
 
 module.exports = api;
