@@ -1,4 +1,4 @@
-var WebSocket = require('websocket').server;
+var wss = require('websocket').server;
 var http = require('http');
 
 var fixtures = {
@@ -17,7 +17,7 @@ server.listen(8080, function() {
   console.log((new Date()) + ' Server is listening on http://localhost:8080');
 });
 
-wsServer = new WebSocket({
+var wsServer = new wss({
   httpServer: server,
   autoAcceptConnections: false
 });
@@ -61,3 +61,5 @@ wsServer.on('request', function(request) {
   });
 
 });
+
+module.exports = wsServer;
