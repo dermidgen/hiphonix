@@ -7,6 +7,40 @@ import API from './api';
 import './index.css';
 
 class App extends Component {
+
+  constructor() {
+    super()
+    this.state = {
+      connection: 'false'
+    }
+  }
+
+  componentDidMount() {
+    ws.onmessage = m => {
+      // Apparently the server sends empty frames
+      if (!m.data) return;
+
+      // console.log('[client::onmessage]: %o', m);
+      try {
+        var message = JSON.parse(m.data);
+        console.log('[client::onmessage]: %o', message.data);
+        // this.setState(message.data);
+      } catch(e) {
+        console.log('[client::onmessage]: %o', m);
+        console.error('[client::onmessageerror] %o', e);
+      }
+    };
+    ws.onopen = () => {
+      console.info('[client::onopen]:');
+      this.setState({
+        connection: 'true',
+      });
+    };
+    ws.onerror = e => {
+      console.error('[client::onerror]: %o', e);
+    };
+  }
+
   render() {
     return (
       <div className="App">
@@ -14,12 +48,27 @@ class App extends Component {
           <Link to="/">Playback</Link>
           <Link to="/library">Library</Link>
           <Link to="/settings">Settings</Link>
+          <Icon name="people"/>
+          <div>
+          Version: {process.env.REACT_APP_VERSION},
+          API: {API.VERSION},
+          Connection: {this.state.connection},
+          State: {this.state.state}
+          </div>
         </header>
         <main>
           {this.props.children}
         </main>
-        <footer>Version: {process.env.REACT_APP_VERSION}, API: {API.VERSION}</footer>
+        <Controls />
       </div>
+    );
+  }
+}
+
+class Controls extends Component {
+  render() {
+    return (
+      <footer></footer>
     );
   }
 }
@@ -51,6 +100,14 @@ class Library extends Component {
   }
 }
 
+class Icon extends Component {
+  render() {
+    return (
+      <i className="material-icons">{this.props.name}</i>
+    );
+  }
+}
+
 class Settings extends Component {
   render() {
     return (
@@ -70,6 +127,8 @@ ReactDOM.render(
         <Route path="/library/:id" component={Library}/>
       </Route>
       <Route path="/settings" component={Settings}/>
+      <Route path="/queue" component={Settings}/>
+      <Route path="/queue" component={Settings}/>
     </Route>
   </Router>,
   document.getElementById('root')
