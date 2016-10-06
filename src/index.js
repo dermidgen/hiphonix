@@ -6,6 +6,8 @@ import API from './api';
 
 import './index.css';
 
+const ws = new WebSocket('ws://localhost:8080', 'echo-protocol');
+
 class App extends Component {
 
   constructor() {
@@ -45,7 +47,7 @@ class App extends Component {
     return (
       <div className="App">
         <header>
-          <Link to="/">Playback</Link>
+          <Link to="/playback">Playback</Link>
           <Link to="/library">Library</Link>
           <Link to="/settings">Settings</Link>
           <Icon name="people"/>
@@ -60,6 +62,7 @@ class App extends Component {
           {this.props.children}
         </main>
         <Controls />
+
       </div>
     );
   }
@@ -74,12 +77,21 @@ class Controls extends Component {
 }
 
 class Playback extends Component {
+
+  play() {
+    ws.send(JSON.stringify({ state: 'playing' }));
+  }
+
+  pause() {
+    ws.send(JSON.stringify({ state: 'paused' }));
+  }
+
   render() {
     return (
       <div>
         <h2>Playback</h2>
-        <button>play</button>
-        <button>pause</button>
+        <button onClick={this.play.bind(this)}>Play</button>
+        <button onClick={this.pause.bind(this)}>Pause</button>
       </div>
     );
   }
@@ -120,9 +132,8 @@ class Settings extends Component {
 
 ReactDOM.render(
   <Router history={browserHistory}>
-    <Route path="/">
-      <IndexRoute component={App} />
-      <Route path="/playback" component={Playback}/>
+    <Route path="/" component={App}>
+      <IndexRoute component={Playback} />
       <Route path="/library" component={Library}>
         <Route path="/library/:id" component={Library}/>
       </Route>
