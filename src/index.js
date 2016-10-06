@@ -26,7 +26,7 @@ class App extends Component {
       try {
         var message = JSON.parse(m.data);
         console.log('[client::onmessage]: %o', message.data);
-        // this.setState(message.data);
+        this.setState(message.data);
       } catch(e) {
         console.log('[client::onmessage]: %o', m);
         console.error('[client::onmessageerror] %o', e);

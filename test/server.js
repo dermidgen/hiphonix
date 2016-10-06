@@ -32,12 +32,27 @@ wsServer.on('request', function(request) {
   var pinger = setInterval(function () {
     console.log('[server::state]: %o', fixtures.STATE);
     connection.send(JSON.stringify(fixtures.STATE));
-  }, 5000)
+  }, 2000)
+
+  var parseCommand = function(message) {
+    let parts =  message.split(',');
+    return {
+      cmd: parts.shift(),
+      args: parts,
+    };
+  };
+
+  var runCommand = function(cmd) {
+    try {
+      connection.send(JSON.stringify(fixtures[cmd.cmd]));
+    } catch(err) {
+      console.trace(err);
+    }
+  };
 
   connection.on('message', function(m) {
     console.log('[server::onmessage]: %o', m);
-    var message = JSON.parse(m.utf8Data)
-    state = message.state || state;
+    runCommand(parseCommand(m));
   });
 
   connection.on('close', function(code, description) {
