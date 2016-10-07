@@ -1,6 +1,8 @@
 import { EventEmitter } from 'events';
 
-const host = 'ws://localhost:8080/ws';
+const hostname = (typeof document !== 'undefined' && document.location) ? document.location.hostname : 'localhost';
+const port = (hostname !== 'hiphonix') ? '8080' : document.location.port;
+const host = 'ws://' + hostname + ':' + port + '/ws';
 const protocol = 'echo-protocol';
 
 class Socket extends EventEmitter {
@@ -22,27 +24,25 @@ class Socket extends EventEmitter {
 
       try {
         var message = JSON.parse(m.data);
-        // console.log('[client::onmessage]:', message);
         this.emit('message', message);
       } catch(e) {
-        console.log('[client::onmessage]:', m);
-        console.error('[client::onmessageerror]', e);
+        console.error('[Socket::onmessage] Error: %o, Message: %o', e, m);
       }
     };
     ws.onopen = () => {
-      // console.info('[client::onopen]:');
+      console.info('[Socket::onopen]');
       this.emit('open', {
         connection: 'true',
       });
     };
     ws.onclose = () => {
-      // console.info('[client::onclose]:');
+      console.info('[Socket::onclose]');
       this.emit('close', {
         connection: 'false',
       });
     };
     ws.onerror = e => {
-      // console.error('[client::onerror]: %o', e);
+      console.error('[Socket::onerror]: %o', e);
       this.emit('error', e);
     };
   }

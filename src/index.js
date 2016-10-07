@@ -1,109 +1,100 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Router, Route, browserHistory, IndexRoute, Link } from 'react-router'
+import { Router, Route, browserHistory } from 'react-router'
 
 import API from './api';
-
 import './index.css';
 
-let api;
+const api = new API();
 
 class App extends Component {
-
-  constructor() {
-    super()
-    api = new API();
-    api.on('connected', () => {
-      console.info('[client::onopen]:');
-      this.setState({
-        connection: 'true',
-      });
-    });
-    api.on('disconnected', () => {
-      console.info('[client::onclose]:');
-      this.setState({
-        connection: 'false',
-      });
-    });
-    api.on('error', e => {
-      console.error('[client::onerror]: %o', e);
-    });
-    this.state = {
-      connection: 'false',
-    };
-  }
-
-  componentDidMount() {
-    api.on('state', m => {
-      this.setState(m.data);
-    });
-  }
-
   render() {
     return (
       <div className="App">
         <header>
-          <Link to="/playback">Playback</Link>
-          <Link to="/library">Library</Link>
-          <Link to="/settings">Settings</Link>
-          <Icon name="people"/>
-          <div>
-          Version: {process.env.REACT_APP_VERSION},
-          API: {API.VERSION},
-          Connection: {this.state.connection},
-          State: {this.state.state}
-          </div>
+          <Icon name="settings" />
         </header>
         <main>
           {this.props.children}
+          <Debugger/>
         </main>
         <Controls />
+      </div>
+    );
+  }
+}
 
+class Debugger extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      player: {
+        version: process.env.REACT_APP_VERSION
+      },
+      socket: null,
+      ping: null
+    }
+  }
+  componentDidMount() {
+    api.on('state', payload => {
+      this.setState({
+        ping: {
+          timestamp: new Date(),
+          payload
+        }
+      });
+    });
+    api.on('connected', () => {
+      this.setState({
+        socket: 'open'
+      });
+    });
+    api.on('disconnected', () => {
+      this.setState({
+        socket: 'closed'
+      });
+    });
+  }
+  render() {
+    return (
+      <div className="debugger">
+        <div><strong>Version:</strong> {}</div>
+        <pre>
+          {JSON.stringify(this.state, null, 2)}
+        </pre>
       </div>
     );
   }
 }
 
 class Controls extends Component {
-  render() {
-    return (
-      <footer></footer>
-    );
+  constructor(props) {
+    super(props)
+    this.browse.bind(this);
+    this.play.bind(this);
+    this.pause.bind(this);
+    this.volume.bind(this);
   }
-}
-
-class Playback extends Component {
-
+  browse() {
+    // ws.send('setState,browse');
+  }
   play() {
-    api.send(JSON.stringify({ state: 'playing' }));
+    // ws.send('setState,playing');
   }
-
   pause() {
-    api.send(JSON.stringify({ state: 'paused' }));
+    // ws.send('setState,paused');
   }
-
+  volume() {
+    // ws.send('setState,volume');
+  }
   render() {
     return (
-      <div>
-        <h2>Playback</h2>
-        <button onClick={this.play.bind(this)}>Play</button>
-        <button onClick={this.pause.bind(this)}>Pause</button>
-      </div>
-    );
-  }
-}
-
-class Library extends Component {
-  render() {
-    return (
-      <div>
-        <h2>Library {this.props.params.id}</h2>
-        <ul>
-          <li><Link to="/library/001">001</Link></li>
-          <li><Link to="/library/002">002</Link></li>
-          <li><Link to="/library/003">003</Link></li>
-        </ul>
-      </div>
+      <footer>
+        <Icon name="list" onClick={this.browse} />
+        <Icon name="play_arrow" onClick={this.play} />
+        <Icon name="pause" onClick={this.pause} />
+        <Icon name="volume_up" onClick={this.volume} />
+      </footer>
     );
   }
 }
@@ -111,17 +102,7 @@ class Library extends Component {
 class Icon extends Component {
   render() {
     return (
-      <i className="material-icons">{this.props.name}</i>
-    );
-  }
-}
-
-class Settings extends Component {
-  render() {
-    return (
-      <div>
-        <h2>Settings</h2>
-      </div>
+      <i {...this.props} className="material-icons">{this.props.name}</i>
     );
   }
 }
@@ -129,13 +110,6 @@ class Settings extends Component {
 ReactDOM.render(
   <Router history={browserHistory}>
     <Route path="/" component={App}>
-      <IndexRoute component={Playback} />
-      <Route path="/library" component={Library}>
-        <Route path="/library/:id" component={Library}/>
-      </Route>
-      <Route path="/settings" component={Settings}/>
-      <Route path="/queue" component={Settings}/>
-      <Route path="/queue" component={Settings}/>
     </Route>
   </Router>,
   document.getElementById('root')
