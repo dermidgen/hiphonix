@@ -20,7 +20,7 @@ PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 LOG_OUT=/var/log/$NAME.out
 LOG_ERR=/var/log/$NAME.err
-HIPHONIX_USER=nobody
+HIPHONIX_USER=root
 MPD_HOST=localhost
 MPD_PORT=6600
 WEB_PORT=8080
@@ -35,7 +35,7 @@ WEB_PORT=8080
 # Load the VERBOSE setting and other rcS variables
 [ -f /etc/default/rcS ] && . /etc/default/rcS
 
-DAEMON_OPT="--user root --webport $WEB_PORT --host $MPD_HOST --port $MPD_PORT"
+DAEMON_OPT="--user $HIPHONIX_USER --webport $WEB_PORT --host $MPD_HOST --port $MPD_PORT"
 
 do_start()
 {
