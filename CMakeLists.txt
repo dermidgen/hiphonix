@@ -55,6 +55,12 @@ file(GLOB RESOURCES
     htdocs/build/fonts/Roboto/Roboto-Regular.ttf
     htdocs/build/fonts/Roboto/Roboto-Thin.ttf
     htdocs/build/fonts/Roboto/Roboto-ThinItalic.ttf
+    htdocs/build/fonts/MaterialIcons/MaterialIcons-Regular.eot
+    htdocs/build/fonts/MaterialIcons/MaterialIcons-Regular.svg
+    htdocs/build/fonts/MaterialIcons/MaterialIcons-Regular.ttf
+    htdocs/build/fonts/MaterialIcons/MaterialIcons-Regular.woff
+    htdocs/build/fonts/MaterialIcons/material-icons.css
+    htdocs/build/fonts/styles.css
     htdocs/build/static/css/main.css
     htdocs/build/static/js/main.js
     htdocs/build/index.html
