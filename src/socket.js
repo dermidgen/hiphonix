@@ -3,7 +3,6 @@ import { EventEmitter } from 'events';
 const hostname = (typeof document !== 'undefined' && document.location) ? document.location.hostname : 'localhost';
 const port = (hostname !== 'hiphonix') ? '8080' : document.location.port;
 const host = 'ws://' + hostname + ':' + port + '/ws';
-const protocol = '';
 
 class Socket extends EventEmitter {
   constructor() {
@@ -17,7 +16,7 @@ class Socket extends EventEmitter {
   }
 
   open() {
-    const ws = this.ws = new WebSocket(host, protocol);
+    const ws = this.ws = new WebSocket(host);
     ws.onmessage = m => {
       // Apparently the server sends empty frames
       if (!m.data) return;
