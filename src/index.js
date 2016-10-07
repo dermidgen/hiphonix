@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Router, Route, browserHistory } from 'react-router'
+import { Router, Route, browserHistory, Link } from 'react-router'
 
 import API from './api';
 import './index.css';
@@ -12,7 +12,7 @@ class App extends Component {
     return (
       <div className="App">
         <header>
-          <Icon name="settings" />
+          <Link to="/settings"><Icon name="settings" /></Link>
         </header>
         <main>
           {this.props.children}
@@ -58,7 +58,7 @@ class Debugger extends Component {
   render() {
     return (
       <div className="debugger">
-        <div><strong>Version:</strong> {}</div>
+        <div><strong>Debug:</strong> {}</div>
         <pre>
           {JSON.stringify(this.state, null, 2)}
         </pre>
@@ -107,9 +107,44 @@ class Icon extends Component {
   }
 }
 
+class Settings extends Component {
+  constructor() {
+    super();
+    this.scan.bind(this);    
+    api.on('networks', (message) => {
+      console.log('NETWORKS', message.data);
+      this.setState({
+        networks: message.data,
+      });
+    });
+  }
+  scan() {
+    api.command('NL_LIST',[]);
+  }
+  componentDidMount() {
+    this.setState({
+      networks: [],
+    });
+  }
+  render() {
+    var networks = (this.state && typeof this.state.networks !== undefined) ? this.state.networks : [];
+    return (
+      <div className="settings">
+        <h2>Settings</h2>
+        <h3>Wifi Connection</h3>
+        <select>
+          {networks.map((name,index) => { return <option key={index}>{name}</option>; })}
+        </select>
+        <button onClick={this.scan}>Scan</button>
+      </div>
+    );
+  }
+}
+
 ReactDOM.render(
   <Router history={browserHistory}>
     <Route path="/" component={App}>
+      <Route path="/settings" component={Settings}/>
     </Route>
   </Router>,
   document.getElementById('root')

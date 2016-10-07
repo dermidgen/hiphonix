@@ -31,7 +31,7 @@ const features = {
     { command: 'MPD_API_SET_MPDPASS',      event: '', },
     { command: 'MPD_API_UPDATE_DB',        event: '', },
     { command: 'NL_SCAN',                  event: '', },
-    { command: 'NL_LIST',                  event: '', },
+    { command: 'NL_LIST',                  event: 'networks', },
     { command: 'NL_DISCONNECT',            event: '', },
     { command: 'NL_JOIN',                  event: '', },
     { command: 'NL_RESET',                 event: '', },
@@ -44,6 +44,7 @@ const features = {
     'browse',
     'outputnames',
     'outputs',
+    'networks',
   ],
 };
 

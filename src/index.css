@@ -33,6 +33,6 @@ footer {
   text-align: center;
   background-color: rgba(0, 0, 0, 0.1);
 }
-.debugger {
+.debugger, .settings {
   padding:20px;
 }

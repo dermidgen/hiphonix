@@ -26,4 +26,14 @@ describe('API Library', function() {
     });
   });
 
+  it('Can get a list of wireless networks', function(done) {
+    let api = new API();
+    api.on('networks', function(result) {
+      assert.equal(result.data.length > 0, true);
+      done();
+    });
+    api.on('connected', function() {
+      api.command('NL_LIST', []);
+    })
+  })
 });
