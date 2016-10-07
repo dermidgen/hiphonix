@@ -6,7 +6,7 @@ var fixtures = {
   MPD_API_GET_OUTPUTS: require('./fixtures/MPD_API_GET_OUTPUTS.json'),
   MPD_API_GET_BROWSE: require('./fixtures/MPD_API_GET_BROWSE.json'),
   MPD_API_SEARCH: require('./fixtures/MPD_API_SEARCH.json'),
-  NL_LIST: require('./fixtures/NL_LIST.json'),
+  NET_LIST: require('./fixtures/NET_LIST.json'),
 };
 
 wss.on('connection', function(connection) {

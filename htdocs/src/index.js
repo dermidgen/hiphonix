@@ -119,7 +119,7 @@ class Settings extends Component {
     });
   }
   scan() {
-    api.command('NL_LIST',[]);
+    api.command('NET_LIST',[]);
   }
   componentDidMount() {
     this.setState({
