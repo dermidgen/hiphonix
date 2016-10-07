@@ -1,4 +1,4 @@
-import EventListener from 'events';
+import { EventEmitter } from 'events';
 import Socket from './socket';
 
 let ws;
@@ -48,7 +48,7 @@ const features = {
   ],
 };
 
-class API extends EventListener {
+class API extends EventEmitter {
   constructor() {
     super();
 
