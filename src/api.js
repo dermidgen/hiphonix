@@ -73,7 +73,8 @@ class API extends EventEmitter {
   command(cmd, params) {
     let feature = features.actions.find((item) => { return item.command === cmd; });
     if (!feature) throw new Error('Not implemented');
-    ws.send(cmd + ',' + params.join(','));
+    if (params.length > 0) ws.send(cmd + ',' + params.join(','));
+    else ws.send(cmd);
   }
 
   static get VERSION() {
