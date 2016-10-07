@@ -1,6 +1,6 @@
 {
   "name": "player",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "private": true,
   "devDependencies": {
     "babel-core": "^6.17.0",
