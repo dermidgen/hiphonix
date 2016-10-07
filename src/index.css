@@ -2,11 +2,9 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  background-color: #1E272F;
-  color: white;
+  /*background-color: #1E272F;*/
+  /*color: white;*/
   font-family: "Roboto", Helvetica, Arial, sans-serif;
-}
-body {
 }
 #root {
   display: flex;
@@ -14,25 +12,34 @@ body {
   min-height: 100%;
 }
 .App {
-  flex: 1 1 100%;
   display: flex;
   flex-direction: column;
+  flex: 1 1 100%;
 }
 header {
   height:50px;
-  background-color: black;
+  /*display: flex;*/
+  /*align-items: center;*/
+  /*justify-content: center;*/
+  text-align: right;
 }
 main {
   flex: 3 1 100%;
-  background-color: grey;
+  /*padding: 20px;*/
 }
 footer {
+  position:absolute;
+  bottom: 0;
+  width: 100%;
   height:50px;
-  background-color: black;
-}
-#splash {
+  /*padding: 10px;*/
+
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
+  background-color: rgba(0, 0, 0, 0.5);;
+}
+.debugger {
+  padding:20px;
 }

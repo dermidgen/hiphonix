@@ -14,6 +14,11 @@ class Socket extends EventEmitter {
     if (this.ws) this.ws.close();
   }
 
+  send(...args) {
+    console.log(args);
+    // if (this.ws) this.ws.send('nothing');
+  }
+
   open() {
     const ws = this.ws = new WebSocket(host, protocol);
     ws.onmessage = m => {
@@ -22,27 +27,25 @@ class Socket extends EventEmitter {
 
       try {
         var message = JSON.parse(m.data);
-        console.log('[client::onmessage]: %o', message);
         this.emit('message', message);
       } catch(e) {
-        console.log('[client::onmessage]: %o', m);
-        console.error('[client::onmessageerror] %o', e);
+        console.error('[Socket::onmessage] Error: %o, Message: %o', e, m);
       }
     };
     ws.onopen = () => {
-      console.info('[client::onopen]:');
+      console.info('[Socket::onopen]');
       this.emit('open', {
         connection: 'true',
       });
     };
     ws.onclose = () => {
-      console.info('[client::onclose]:');
+      console.info('[Socket::onclose]');
       this.emit('close', {
         connection: 'false',
       });
     };
     ws.onerror = e => {
-      console.error('[client::onerror]: %o', e);
+      console.error('[Socket::onerror]: %o', e);
       this.emit('error', e);
     };
   }
