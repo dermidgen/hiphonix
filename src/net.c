@@ -73,29 +73,34 @@ int callback_net(struct mg_connection *c)
     {
         case NET_EHLO:
             resbuf = (char *)cmd_exec("echo \\\"HelloWorld\\\"");
+            n = snprintf(wsres, MAX_SIZE, "{\"type\":\"ehlo\", \"data\": %s}", resbuf);
             break;
         case NET_SCAN:
             resbuf = (char *)cmd_exec("iw dev wlan0 scan ap-force > /dev/null && echo \\\"Scanned\\\"");
+            n = snprintf(wsres, MAX_SIZE, "{\"type\":\"scanned\", \"data\": %s}", resbuf);
             break;
         case NET_LIST:
             resbuf = (char *)cmd_exec("echo \"[`iw dev wlan0 scan ap-force | grep SSID | cut -d ' ' -f 2 | sed -e 's/\\(.*\\)/\"\\1\"/' | tr \"\n\" \",\" | sed 's/,$//'`]\"");
+            n = snprintf(wsres, MAX_SIZE, "{\"type\":\"networks\", \"data\": %s}", resbuf);
             break;
         case NET_CONNECT:
             resbuf = (char *)cmd_exec("echo \\\"Joining\\\"");
+            n = snprintf(wsres, MAX_SIZE, "{\"type\":\"connect\", \"data\": %s}", resbuf);
             // connman_connect();
             connman_wifi_join();
             // connman_disconnect();
             break;
         case NET_DISCONNECT:
             resbuf = (char *)cmd_exec("connmanctl");
+            n = snprintf(wsres, MAX_SIZE, "{\"type\":\"disconnect\", \"data\": %s}", resbuf);
             break;
         case NET_RESET:
             resbuf = (char *)cmd_exec("connmanctl");
+            n = snprintf(wsres, MAX_SIZE, "{\"type\":\"reset\", \"data\": %s}", resbuf);
             break;
     }
 
     // printf("resbuf %s\n", resbuf);
-    n = snprintf(wsres, MAX_SIZE, "{\"type\":\"net\", \"data\": %s}", resbuf);
 
     // printf("wres %s\n", wsres);
     // printf("n %i\n", (int)n);
