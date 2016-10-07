@@ -6,41 +6,37 @@ import API from './api';
 
 import './index.css';
 
-const ws = new WebSocket('ws://localhost:8080', 'echo-protocol');
+let api;
 
 class App extends Component {
 
   constructor() {
     super()
-    this.state = {
-      connection: 'false'
-    }
-  }
-
-  componentDidMount() {
-    ws.onmessage = m => {
-      // Apparently the server sends empty frames
-      if (!m.data) return;
-
-      // console.log('[client::onmessage]: %o', m);
-      try {
-        var message = JSON.parse(m.data);
-        console.log('[client::onmessage]: %o', message.data);
-        this.setState(message.data);
-      } catch(e) {
-        console.log('[client::onmessage]: %o', m);
-        console.error('[client::onmessageerror] %o', e);
-      }
-    };
-    ws.onopen = () => {
+    api = new API();
+    api.on('connected', () => {
       console.info('[client::onopen]:');
       this.setState({
         connection: 'true',
       });
-    };
-    ws.onerror = e => {
+    });
+    api.on('disconnected', () => {
+      console.info('[client::onclose]:');
+      this.setState({
+        connection: 'false',
+      });
+    });
+    api.on('error', e => {
       console.error('[client::onerror]: %o', e);
+    });
+    this.state = {
+      connection: 'false',
     };
+  }
+
+  componentDidMount() {
+    api.on('state', m => {
+      this.setState(m.data);
+    });
   }
 
   render() {
@@ -79,11 +75,11 @@ class Controls extends Component {
 class Playback extends Component {
 
   play() {
-    ws.send(JSON.stringify({ state: 'playing' }));
+    api.send(JSON.stringify({ state: 'playing' }));
   }
 
   pause() {
-    ws.send(JSON.stringify({ state: 'paused' }));
+    api.send(JSON.stringify({ state: 'paused' }));
   }
 
   render() {

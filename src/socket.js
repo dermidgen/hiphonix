@@ -22,29 +22,33 @@ class Socket extends EventEmitter {
 
       try {
         var message = JSON.parse(m.data);
-        console.log('[client::onmessage]: %o', message);
+        // console.log('[client::onmessage]:', message);
         this.emit('message', message);
       } catch(e) {
-        console.log('[client::onmessage]: %o', m);
-        console.error('[client::onmessageerror] %o', e);
+        console.log('[client::onmessage]:', m);
+        console.error('[client::onmessageerror]', e);
       }
     };
     ws.onopen = () => {
-      console.info('[client::onopen]:');
+      // console.info('[client::onopen]:');
       this.emit('open', {
         connection: 'true',
       });
     };
     ws.onclose = () => {
-      console.info('[client::onclose]:');
+      // console.info('[client::onclose]:');
       this.emit('close', {
         connection: 'false',
       });
     };
     ws.onerror = e => {
-      console.error('[client::onerror]: %o', e);
+      // console.error('[client::onerror]: %o', e);
       this.emit('error', e);
     };
+  }
+
+  send(m) {
+    this.ws.send(m);
   }
 }
 

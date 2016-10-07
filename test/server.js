@@ -1,5 +1,5 @@
-var wss = require('websocket').server;
-var http = require('http');
+var WebSocketServer = require('ws').Server
+  , wss = new WebSocketServer({ port: 8080 });
 
 var fixtures = {
   STATE: require('./fixtures/STATE.json'),
@@ -8,23 +8,7 @@ var fixtures = {
   MPD_API_SEARCH: require('./fixtures/MPD_API_SEARCH.json'),
 };
 
-var server = http.createServer(function(request, response) {
-  console.log((new Date()) + ' Received request for ' + request.url);
-  response.writeHead(404);
-  response.end();
-});
-server.listen(8080, function() {
-  console.log((new Date()) + ' Server is listening on http://localhost:8080');
-});
-
-var wsServer = new wss({
-  httpServer: server,
-  autoAcceptConnections: false
-});
-
-wsServer.on('request', function(request) {
-  var connection = request.accept('echo-protocol', request.origin);
-
+wss.on('connection', function(connection) {
   console.log((new Date()) + ' Connection accepted.');
 
   var state = 'idle';
@@ -35,7 +19,7 @@ wsServer.on('request', function(request) {
   }, 2000)
 
   var parseCommand = function(message) {
-    let parts =  message.split(',');
+    var parts =  message.split(',');
     return {
       cmd: parts.shift(),
       args: parts,
@@ -44,6 +28,7 @@ wsServer.on('request', function(request) {
 
   var runCommand = function(cmd) {
     try {
+      console.log('[server::command]:', cmd);
       connection.send(JSON.stringify(fixtures[cmd.cmd]));
     } catch(err) {
       console.trace(err);
@@ -51,15 +36,15 @@ wsServer.on('request', function(request) {
   };
 
   connection.on('message', function(m) {
-    console.log('[server::onmessage]: %o', m);
+    console.log('[server::onmessage]: %s', m);
     runCommand(parseCommand(m));
   });
 
   connection.on('close', function(code, description) {
-    console.log('[server::onclose]: %o', code, description);
+    console.log('[server::onclose]: %s', code, description);
     clearInterval(pinger);
   });
 
 });
 
-module.exports = wsServer;
+module.exports = wss;
