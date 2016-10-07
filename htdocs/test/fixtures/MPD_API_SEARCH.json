@@ -1,0 +1,11 @@
+{
+  "type": "search",
+  "data": [
+    {
+      "type": "song",
+      "uri": "Pink Floyd - The Thin Ice.mp3",
+      "duration": 146,
+      "title": "The Thin Ice"
+    }
+  ]
+}

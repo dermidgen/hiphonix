@@ -1,11 +1,16 @@
 {
   "name": "player",
-  "version": "0.1.11",
+  "version": "0.1.14",
   "private": true,
   "devDependencies": {
+    "babel-core": "^6.17.0",
+    "babel-preset-es2015": "^6.16.0",
+    "mocha": "^3.1.0",
     "react-scripts": "latest",
     "renamer": "^0.5.7",
-    "replace": "^0.3.0"
+    "replace": "^0.3.0",
+    "websocket": "^1.0.23",
+    "ws": "^1.1.1"
   },
   "dependencies": {
     "react": "^15.3.2",
@@ -14,6 +19,7 @@
   },
   "scripts": {
     "start": "REACT_APP_VERSION=$npm_package_version react-scripts start",
+    "server": "node test/server",
     "build": "REACT_APP_VERSION=$npm_package_version react-scripts build",
     "remover": "rm -rf build/static/**/*.map",
     "renamer": "renamer --regex --find '(main).[a-z0-9]+' --replace '$1' 'build/static/**/*'",
@@ -24,6 +30,7 @@
     "release": "git add --force build/* && git commit -m 'Adding build' && git push --follow-tags",
     "postversion": "npm run build && npm run overrides && npm run release",
     "test": "react-scripts test --env=jsdom",
+    "test:units": "mocha --compilers js:babel-core/register test/spec/",
     "eject": "react-scripts eject"
   }
 }
