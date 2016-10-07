@@ -33,7 +33,7 @@ describe('API Library', function() {
       done();
     });
     api.on('connected', function() {
-      api.command('NL_LIST', []);
+      api.command('NET_LIST', []);
     })
   })
 });
