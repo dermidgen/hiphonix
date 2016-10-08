@@ -76,16 +76,16 @@ class Controls extends Component {
     this.volume.bind(this);
   }
   browse() {
-    // ws.send('setState,browse');
+    api.command('MPD_API_GET_BROWSE',[]);
   }
   play() {
-    // ws.send('setState,playing');
+    api.command('MPD_API_SET_PLAY',[]);
   }
   pause() {
-    // ws.send('setState,paused');
+    api.command('MPD_API_SET_PAUSE',[]);
   }
   volume() {
-    // ws.send('setState,volume');
+    api.command('MPD_API_SET_VOLUME',[]);
   }
   render() {
     return (
@@ -110,7 +110,7 @@ class Icon extends Component {
 class Settings extends Component {
   constructor() {
     super();
-    this.scan.bind(this);    
+    this.scan.bind(this);
     api.on('networks', (message) => {
       console.log('NETWORKS', message.data);
       this.setState({
