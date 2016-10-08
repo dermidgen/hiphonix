@@ -38,8 +38,14 @@ class Controls extends Component {
   browse() {
     socket.command('MPD_API_GET_BROWSE',[]);
   }
+  prev() {
+    socket.command('MPD_API_SET_PREV',[]);
+  }
   play() {
     socket.command('MPD_API_SET_PLAY',[]);
+  }
+  next() {
+    socket.command('MPD_API_SET_NEXT',[]);
   }
   pause() {
     socket.command('MPD_API_SET_PAUSE',[]);
