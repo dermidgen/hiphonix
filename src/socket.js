@@ -53,9 +53,11 @@ class Socket extends EventEmitter {
     };
   }
 
-  send(m) {
-    this.ws.send(m);
+  command(cmd, params) {
+    const message = ([cmd].concat(params)).join(',');
+    this.ws.send(message);
   }
+
 }
 
 module.exports = Socket;
