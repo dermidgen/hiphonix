@@ -88,11 +88,21 @@ class Settings extends Component {
       <div className="settings">
         <div>
           <strong>Wifi Connection</strong>
+class Library extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+  render() {
+    return (
+      <div className="library">
+        <div>
+          <strong>Library</strong>
+          <div><Link to="/">Close</Link></div>
+          <div><Link to="/library">/library</Link></div>
+          <div><Link to="/library/path/to/somewhere">/library/path/to/somewhere</Link></div>
+          {this.props.params.splat}
         </div>
-        <select>
-          {networks.map((name,index) => { return <option key={index}>{name}</option>; })}
-        </select>
-        <button onClick={this.scan}>Scan</button>
       </div>
     );
   }
@@ -102,6 +112,7 @@ ReactDOM.render(
   <Router history={browserHistory}>
     <Route path="/" component={App}>
       <Route path="/settings" component={Settings}/>
+      <Route path="/library*" component={Library}/>
     </Route>
   </Router>,
   document.getElementById('root')
