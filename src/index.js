@@ -13,7 +13,9 @@ class App extends Component {
     return (
       <div className="App">
         <header>
-          <Link to="/settings"><Icon name="settings" /></Link>
+          <Link to="/settings">
+            <i className="material-icons">settings</i>
+          </Link>
         </header>
         <main>
           {this.props.children}
@@ -91,19 +93,15 @@ class Controls extends Component {
   render() {
     return (
       <footer>
-        <Icon name="list" onClick={this.browse} />
-        <Icon name="play_arrow" onClick={this.play} />
-        <Icon name="pause" onClick={this.pause} />
-        <Icon name="volume_up" onClick={this.volume} />
+        <Link to="/library">
+          <i className="material-icons">list</i>
+        </Link>
+        <i onClick={this.pause} className="material-icons">pause</i>
+        <i onClick={this.prev} className="material-icons">skip_previous</i>
+        <i onClick={this.play} className="material-icons">play_arrow</i>
+        <i onClick={this.next} className="material-icons">skip_next</i>
+        <i onClick={this.volume} className="material-icons">volume_up</i>
       </footer>
-    );
-  }
-}
-
-class Icon extends Component {
-  render() {
-    return (
-      <i {...this.props} className="material-icons">{this.props.name}</i>
     );
   }
 }
