@@ -16,33 +16,40 @@ class Socket extends EventEmitter {
   }
 
   open() {
-    const ws = this.ws = new WebSocket(host);
-    ws.onmessage = m => {
+    this.ws = new WebSocket(host);
+    this.ws.onmessage = message => {
       // Apparently the server sends empty frames
-      if (!m.data) return;
+      if (!message.data) return;
 
       try {
-        var message = JSON.parse(m.data);
-        this.emit('message', message);
-      } catch(e) {
-        console.error('[Socket::onmessage] Error: %o, Message: %o', e, m);
+        var data = JSON.parse(message.data);
+        if (data.type !== 'state') {
+          console.groupCollapsed('[Socket::message]: %o', data.type, data.data);
+          console.log(message);
+          console.groupEnd();
+        }
+        this.emit('message', data);
+      } catch(error) {
+        console.error('[Socket::message]: %o, %o', error, message);
       }
     };
-    ws.onopen = () => {
-      console.info('[Socket::onopen]');
-      this.emit('open', {
-        connection: 'true',
-      });
+
+    this.ws.onopen = () => {
+      console.info('[Socket::open]');
+      this.emit('open');
     };
-    ws.onclose = () => {
-      console.info('[Socket::onclose]');
-      this.emit('close', {
-        connection: 'false',
-      });
+
+    this.ws.onclose = () => {
+      console.info('[Socket::close]');
+      this.emit('close');
+      setTimeout(() => {
+        this.open();
+      }, 3000);
     };
-    ws.onerror = e => {
-      console.error('[Socket::onerror]: %o', e);
-      this.emit('error', e);
+
+    this.ws.onerror = error => {
+      console.error('[Socket::error]: %o', error);
+      this.emit('error', error);
     };
   }
 
