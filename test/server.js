@@ -15,7 +15,8 @@ wss.on('connection', connection => {
   debug('Client connection established.');
 
   const pinger = setInterval(() => {
-    connection.send(JSON.stringify(fixtures('STATE')));
+    const data = fixtures('STATE');
+    connection.send(JSON.stringify(data));
   }, 2000)
 
   connection.on('message', message => {
