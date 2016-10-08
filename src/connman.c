@@ -114,9 +114,9 @@ void connman_wifi_join()
     printf("DBUS Connected.\n");
 
     proxy = dbus_g_proxy_new_for_name(connection, "net.connman",
-                            "/", "net.connman.Device");
+                            "/net/connman/service/wifi_74da385a43f2_6e617574696c7573_managed_psk", "net.connman.Service");
 
-    if (dbus_g_proxy_begin_call_with_timeout(proxy, "JoinNetwork",
+    if (dbus_g_proxy_begin_call_with_timeout(proxy, "Connect",
                     connman_wifi_join_callback, NULL, NULL,
                     120 * 1000, G_TYPE_INVALID) == FALSE) {
         g_printerr("Method call for retrieving properties failed\n");
