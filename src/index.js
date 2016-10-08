@@ -36,7 +36,7 @@ class Debugger extends Component {
     }
   }
   componentDidMount() {
-    api.on('state', payload => {
+    socket.on('STATE', payload => {
       this.setState({
         ping: {
           timestamp: new Date(),
@@ -111,7 +111,7 @@ class Settings extends Component {
   constructor() {
     super();
     this.scan.bind(this);
-    api.on('networks', (message) => {
+    socket.on('NET_LIST', (message) => {
       console.log('NETWORKS', message.data);
       this.setState({
         networks: message.data,

@@ -23,7 +23,7 @@ class Socket extends EventEmitter {
 
       try {
         var data = JSON.parse(message.data);
-        if (data.type !== 'state') {
+        // if (data.type !== 'STATE') {
           console.groupCollapsed('[Socket::message]: %o', data.type, data.data);
           console.log(message);
           console.groupEnd();
