@@ -87,7 +87,18 @@ class Settings extends Component {
     return (
       <div className="settings">
         <div>
-          <strong>Wifi Connection</strong>
+          <strong>Settings</strong>
+          <div><strong>Wifi Connection</strong></div>
+          <div>
+            {networks.map((name,index) => { return <option key={index}>{name}</option>; })}
+          </div>
+          <button onClick={this.scan}>Scan</button>
+        </div>
+      </div>
+    );
+  }
+}
+
 class Library extends Component {
   constructor(props) {
     super(props);
