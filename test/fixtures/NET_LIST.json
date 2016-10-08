@@ -1,5 +1,5 @@
 {
-  "type": "networks",
+  "type": "NET_LIST",
   "data": [
     "nautilus",
     "cuttlefish",

@@ -1,5 +1,5 @@
 {
-  "type": "outputnames",
+  "type": "MPD_API_GET_OUTPUTS",
   "data": {
     "0": "My ALSA Device"
   }

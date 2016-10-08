@@ -1,5 +1,5 @@
 {
-  "type": "browse",
+  "type": "MPD_API_GET_BROWSE",
   "data": [
     {
       "type": "song",
