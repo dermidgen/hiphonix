@@ -12,6 +12,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <div className="player-background"></div>
         <header>
           <Link to="/settings">
             <i className="material-icons">settings</i>
