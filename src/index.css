@@ -3,6 +3,7 @@ html, body {
   padding: 0;
   height: 100%;
   font-family: "Roboto", Helvetica, Arial, sans-serif;
+  overflow: auto;
 }
 #root {
   display: flex;
@@ -34,5 +35,5 @@ footer {
   background-color: rgba(0, 0, 0, 0.1);
 }
 .debugger, .settings {
-  padding:20px;
+  padding: 0 20px;
 }

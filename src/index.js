@@ -130,8 +130,9 @@ class Settings extends Component {
     var networks = (this.state && typeof this.state.networks !== undefined) ? this.state.networks : [];
     return (
       <div className="settings">
-        <h2>Settings</h2>
-        <h3>Wifi Connection</h3>
+        <div>
+          <strong>Wifi Connection</strong>
+        </div>
         <select>
           {networks.map((name,index) => { return <option key={index}>{name}</option>; })}
         </select>
