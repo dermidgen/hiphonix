@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, browserHistory, Link } from 'react-router'
 
-import API from './api';
+// import API from './api';
+import Socket from './socket';
 import './index.css';
 
-const api = new API();
+const socket = new Socket();
 
 class App extends Component {
   render() {
@@ -44,12 +45,12 @@ class Debugger extends Component {
         }
       });
     });
-    api.on('connected', () => {
+    socket.on('connected', () => {
       this.setState({
         socket: 'open'
       });
     });
-    api.on('disconnected', () => {
+    socket.on('disconnected', () => {
       this.setState({
         socket: 'closed'
       });
@@ -76,16 +77,16 @@ class Controls extends Component {
     this.volume.bind(this);
   }
   browse() {
-    api.command('MPD_API_GET_BROWSE',[]);
+    socket.command('MPD_API_GET_BROWSE',[]);
   }
   play() {
-    api.command('MPD_API_SET_PLAY',[]);
+    socket.command('MPD_API_SET_PLAY',[]);
   }
   pause() {
-    api.command('MPD_API_SET_PAUSE',[]);
+    socket.command('MPD_API_SET_PAUSE',[]);
   }
   volume() {
-    api.command('MPD_API_SET_VOLUME',[]);
+    socket.command('MPD_API_SET_VOLUME',[]);
   }
   render() {
     return (
@@ -119,7 +120,7 @@ class Settings extends Component {
     });
   }
   scan() {
-    api.command('NET_LIST',[]);
+    socket.command('NET_LIST',[]);
   }
   componentDidMount() {
     this.setState({

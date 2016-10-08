@@ -27,8 +27,8 @@ class Socket extends EventEmitter {
           console.groupCollapsed('[Socket::message]: %o', data.type, data.data);
           console.log(message);
           console.groupEnd();
-        }
-        this.emit('message', data);
+        // }
+        this.emit(data.type, data);
       } catch(error) {
         console.error('[Socket::message]: %o, %o', error, message);
       }
@@ -36,12 +36,13 @@ class Socket extends EventEmitter {
 
     this.ws.onopen = () => {
       console.info('[Socket::open]');
-      this.emit('open');
+      this.emit('connected');
+      this.command('TEST_COMMAND',['foo', 'bar']);
     };
 
-    this.ws.onclose = () => {
+    this.ws.onclose = state => {
       console.info('[Socket::close]');
-      this.emit('close');
+      this.emit('disconnected', state);
       setTimeout(() => {
         this.open();
       }, 3000);
@@ -51,6 +52,7 @@ class Socket extends EventEmitter {
       console.error('[Socket::error]: %o', error);
       this.emit('error', error);
     };
+
   }
 
   command(cmd, params) {
