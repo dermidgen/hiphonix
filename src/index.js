@@ -19,52 +19,8 @@ class App extends Component {
         </header>
         <main>
           {this.props.children}
-          <Debugger/>
         </main>
         <Controls />
-      </div>
-    );
-  }
-}
-
-class Debugger extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      player: {
-        version: process.env.REACT_APP_VERSION
-      },
-      socket: null,
-      ping: null
-    }
-  }
-  componentDidMount() {
-    socket.on('STATE', payload => {
-      this.setState({
-        ping: {
-          timestamp: new Date(),
-          payload
-        }
-      });
-    });
-    socket.on('connected', () => {
-      this.setState({
-        socket: 'open'
-      });
-    });
-    socket.on('disconnected', () => {
-      this.setState({
-        socket: 'closed'
-      });
-    });
-  }
-  render() {
-    return (
-      <div className="debugger">
-        <div><strong>Debug:</strong> {}</div>
-        <pre>
-          {JSON.stringify(this.state, null, 2)}
-        </pre>
       </div>
     );
   }
