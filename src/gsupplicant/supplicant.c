@@ -32,7 +32,7 @@
 #include <ctype.h>
 
 #include <glib.h>
-#include "gdbus.h"
+#include "../gdbus/gdbus.h"
 
 #include "dbus.h"
 #include "gsupplicant.h"

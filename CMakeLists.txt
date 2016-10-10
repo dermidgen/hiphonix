@@ -25,7 +25,7 @@ find_package(GObject)
 
 # Configure Build
 configure_file(ympd/src/config.h.in ${PROJECT_BINARY_DIR}/config.h)
-include_directories(${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR} ${DBUS_INCLUDE_DIR} ${DBUS_INCLUDE_LIB_DIR} ${LIBMPDCLIENT_INCLUDE_DIR} ${GLib_INCLUDE_DIRS} ${DBUS_GLIB_INCLUDE_DIR} ${GOBJECT_INCLUDE_DIR})
+include_directories(${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/gdbus ${PROJECT_SOURCE_DIR}/gsupplicant ${DBUS_INCLUDE_DIR} ${DBUS_INCLUDE_LIB_DIR} ${LIBMPDCLIENT_INCLUDE_DIR} ${GLib_INCLUDE_DIRS} ${DBUS_GLIB_INCLUDE_DIR} ${GOBJECT_INCLUDE_DIR})
 
 include(CheckCSourceCompiles)
 
@@ -71,8 +71,13 @@ set(SOURCES
     src/hiphonix.c
     src/net.c
     src/connman.c
+    src/gdbus/client.c
+    src/gdbus/gdbus.h
+    src/gdbus/mainloop.c
+    src/gdbus/object.c
+    src/gdbus/polkit.c
+    src/gdbus/watch.c
     src/gsupplicant/dbus.c
-    src/gsupplicant/gdbus.h
     src/gsupplicant/dbus.h
     src/gsupplicant/gsupplicant.h
     src/gsupplicant/supplicant.c
