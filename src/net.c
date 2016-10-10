@@ -87,7 +87,7 @@ int callback_net(struct mg_connection *c)
             resbuf = (char *)cmd_exec("echo \\\"Joining\\\"");
             n = snprintf(wsres, MAX_SIZE, "{\"type\":\"connect\", \"data\": %s}", resbuf);
             // connman_connect();
-            connman_wifi_join();
+            // connman_wifi_join();
             // connman_disconnect();
             break;
         case NET_DISCONNECT:
