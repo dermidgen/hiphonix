@@ -1,5 +1,5 @@
 {
-  "type": "state",
+  "type": "STATE",
   "data": {
     "state": 1,
     "volume": -1,

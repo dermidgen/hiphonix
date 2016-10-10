@@ -2,66 +2,26 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, browserHistory, Link } from 'react-router'
 
-import API from './api';
+// import API from './api';
+import Socket from './socket';
 import './index.css';
 
-const api = new API();
+const socket = new Socket();
 
 class App extends Component {
   render() {
     return (
       <div className="App">
+        <div className="player-background"></div>
         <header>
-          <Link to="/settings"><Icon name="settings" /></Link>
+          <Link to="/settings">
+            <i className="material-icons">settings</i>
+          </Link>
         </header>
         <main>
           {this.props.children}
-          <Debugger/>
         </main>
         <Controls />
-      </div>
-    );
-  }
-}
-
-class Debugger extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      player: {
-        version: process.env.REACT_APP_VERSION
-      },
-      socket: null,
-      ping: null
-    }
-  }
-  componentDidMount() {
-    api.on('state', payload => {
-      this.setState({
-        ping: {
-          timestamp: new Date(),
-          payload
-        }
-      });
-    });
-    api.on('connected', () => {
-      this.setState({
-        socket: 'open'
-      });
-    });
-    api.on('disconnected', () => {
-      this.setState({
-        socket: 'closed'
-      });
-    });
-  }
-  render() {
-    return (
-      <div className="debugger">
-        <div><strong>Debug:</strong> {}</div>
-        <pre>
-          {JSON.stringify(this.state, null, 2)}
-        </pre>
       </div>
     );
   }
@@ -76,33 +36,35 @@ class Controls extends Component {
     this.volume.bind(this);
   }
   browse() {
-    // ws.send('setState,browse');
+    socket.command('MPD_API_GET_BROWSE',[]);
+  }
+  prev() {
+    socket.command('MPD_API_SET_PREV',[]);
   }
   play() {
-    // ws.send('setState,playing');
+    socket.command('MPD_API_SET_PLAY',[]);
+  }
+  next() {
+    socket.command('MPD_API_SET_NEXT',[]);
   }
   pause() {
-    // ws.send('setState,paused');
+    socket.command('MPD_API_SET_PAUSE',[]);
   }
   volume() {
-    // ws.send('setState,volume');
+    socket.command('MPD_API_SET_VOLUME',[]);
   }
   render() {
     return (
       <footer>
-        <Icon name="list" onClick={this.browse} />
-        <Icon name="play_arrow" onClick={this.play} />
-        <Icon name="pause" onClick={this.pause} />
-        <Icon name="volume_up" onClick={this.volume} />
+        <Link to="/library">
+          <i className="material-icons">list</i>
+        </Link>
+        <i onClick={this.pause} className="material-icons">pause</i>
+        <i onClick={this.prev} className="material-icons">skip_previous</i>
+        <i onClick={this.play} className="material-icons">play_arrow</i>
+        <i onClick={this.next} className="material-icons">skip_next</i>
+        <i onClick={this.volume} className="material-icons">volume_up</i>
       </footer>
-    );
-  }
-}
-
-class Icon extends Component {
-  render() {
-    return (
-      <i {...this.props} className="material-icons">{this.props.name}</i>
     );
   }
 }
@@ -110,8 +72,8 @@ class Icon extends Component {
 class Settings extends Component {
   constructor() {
     super();
-    this.scan.bind(this);    
-    api.on('networks', (message) => {
+    this.scan.bind(this);
+    socket.on('NET_LIST', (message) => {
       console.log('NETWORKS', message.data);
       this.setState({
         networks: message.data,
@@ -119,7 +81,7 @@ class Settings extends Component {
     });
   }
   scan() {
-    api.command('NET_LIST',[]);
+    socket.command('NET_LIST',[]);
   }
   componentDidMount() {
     this.setState({
@@ -130,12 +92,34 @@ class Settings extends Component {
     var networks = (this.state && typeof this.state.networks !== undefined) ? this.state.networks : [];
     return (
       <div className="settings">
-        <h2>Settings</h2>
-        <h3>Wifi Connection</h3>
-        <select>
-          {networks.map((name,index) => { return <option key={index}>{name}</option>; })}
-        </select>
-        <button onClick={this.scan}>Scan</button>
+        <div>
+          <strong>Settings</strong>
+          <div><strong>Wifi Connection</strong></div>
+          <div>
+            {networks.map((name,index) => { return <option key={index}>{name}</option>; })}
+          </div>
+          <button onClick={this.scan}>Scan</button>
+        </div>
+      </div>
+    );
+  }
+}
+
+class Library extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+  render() {
+    return (
+      <div className="library">
+        <div>
+          <strong>Library</strong>
+          <div><Link to="/">Close</Link></div>
+          <div><Link to="/library">/library</Link></div>
+          <div><Link to="/library/path/to/somewhere">/library/path/to/somewhere</Link></div>
+          {this.props.params.splat}
+        </div>
       </div>
     );
   }
@@ -145,6 +129,7 @@ ReactDOM.render(
   <Router history={browserHistory}>
     <Route path="/" component={App}>
       <Route path="/settings" component={Settings}/>
+      <Route path="/library*" component={Library}/>
     </Route>
   </Router>,
   document.getElementById('root')
