@@ -22,6 +22,16 @@ void bye()
     force_exit = 1;
 }
 
+int is_mpd_request(struct mg_connection *c)
+{
+    enum mpd_cmd_ids cmd_id = get_cmd_id(c->content);
+    
+    if (cmd_id == -1)
+        return MG_FALSE;
+    else
+        return MG_TRUE;
+}
+
 static int server_callback(struct mg_connection *c, enum mg_event ev) {
     switch(ev) {
         case MG_CLOSE:
