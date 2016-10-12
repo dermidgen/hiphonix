@@ -35,6 +35,9 @@ The WebSocket API endpoint is available at http://hiphonix/ws
  * MPD_API_ADD_TRACK,(string) path
    - *Usage*: ```MPD_API_ADD_TRACK,Pink Floyd - The Thin Ice.mp3```
    - *Event*: ```{ type: "update_queue" }```
+ * MPD_API_MOVE_TRACK,(int) pos,(int) pos
+   - *Usage*: ```MPD_API_MOVE_TRACK,1,2```
+   - *Event*: ```{ type: "update_queue" }```
  * MPD_API_ADD_PLAY_TRACK
  * MPD_API_ADD_PLAYLIST
  * MPD_API_RM_TRACK
