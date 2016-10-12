@@ -1,0 +1,29 @@
+{
+  "type": "queue",
+  "data": [
+    {
+      "id": 1,
+      "pos": 0,
+      "duration": 146,
+      "title": "The Thin Ice"
+    },
+    {
+      "id": 2,
+      "pos": 1,
+      "duration": 111,
+      "title": "Happiest Days of Our Lives"
+    },
+    {
+      "id": 3,
+      "pos": 2,
+      "duration": 239,
+      "title": "Another Brick In The Wall, II"
+    },
+    {
+      "id": 4,
+      "pos": 3,
+      "duration": 335,
+      "title": "Mother"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "type": "state",
+  "data": {
+    "state": 3,
+    "volume": -1,
+    "repeat": 0,
+    "single": 0,
+    "crossfade": 0,
+    "consume": 0,
+    "random": 0,
+    "songpos": 2,
+    "elapsedTime": 84,
+    "totalTime": 239,
+    "currentsongid": 3
+  }
+}

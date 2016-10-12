@@ -21,16 +21,17 @@ The WebSocket API endpoint is available at http://hiphonix/ws
  * MPD_API_GET_OUTPUTS
    - *Event*: ```{ type: "outputnames" }```
  * MPD_API_GET_BROWSE,(int) page,(string) path
-   - *Event*: ```{ type: "browse" }```
    - *Usage*: ```MPD_API_GET_BROWSE,0,/```
+   - *Event*: ```{ type: "browse" }```
  * MPD_API_SEARCH,(string) search
-   - *Event*: ```{ type: "search" }```
    - *Usage*: ```MPD_API_SEARCH,radiohead```
- * MPD_API_GET_QUEUE
+   - *Event*: ```{ type: "search" }```
+ * MPD_API_GET_QUEUE,(int) songid
    - *Event*: ```{ type: "queue" }```
  * MPD_API_SAVE_QUEUE
  * MPD_API_ADD_TRACK,(string) path
-   - *Usage*: ```MPD_API_ADD_TRACK,/```
+   - *Usage*: ```MPD_API_ADD_TRACK,Pink Floyd - The Thin Ice.mp3```
+   - *Event*: ```{ type: "update_queue" }```
  * MPD_API_ADD_PLAY_TRACK
  * MPD_API_ADD_PLAYLIST
  * MPD_API_RM_TRACK
@@ -38,7 +39,9 @@ The WebSocket API endpoint is available at http://hiphonix/ws
  * MPD_API_SET_PLAY
  * MPD_API_SET_PAUSE
  * MPD_API_SET_NEXT
+   - *Event*: ```{ type: "song_change" }```
  * MPD_API_SET_PREV
+   - *Event*: ```{ type: "song_change" }```
  * MPD_API_SET_SEEK,(int) trackId,(int) seekTime
    - *Usage*: ```MPD_API_SET_SEEK,1,1```
  * MPD_API_SET_VOLUME,(int) level
@@ -73,3 +76,5 @@ The WebSocket API endpoint is available at http://hiphonix/ws
 ### MPD (ympd compat)
  * `status`: ```{ type: "status", data: "..." }```
  * `outputs`: ```{ type: "outputs", data: "..." }```
+ * `update_queue`: ```{ type: "update_queue" }```
+ * `song_change`: ```{ type: "song_change" }```
