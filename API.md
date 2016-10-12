@@ -23,6 +23,9 @@ The WebSocket API endpoint is available at http://hiphonix/ws
  * MPD_API_GET_BROWSE,(int) page,(string) path
    - *Usage*: ```MPD_API_GET_BROWSE,0,/```
    - *Event*: ```{ type: "browse" }```
+ * MPD_API_GET_PLAYLIST,(string) path
+   - *Usage*: ```MPD_API_GET_PLAYLIST,PinkFloyd```
+   - *Event*: ```{ type: "playlist" }```
  * MPD_API_SEARCH,(string) search
    - *Usage*: ```MPD_API_SEARCH,radiohead```
    - *Event*: ```{ type: "search" }```
