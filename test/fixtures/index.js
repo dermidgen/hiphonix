@@ -42,7 +42,7 @@ function fixtures(cmd) {
   let data = {};
 
   try {
-    data = (!fixture) ? '' : JSON.parse(fs.readFileSync(fixture, 'utf8'));
+    data = (!fixture) ? null : JSON.parse(fs.readFileSync(fixture, 'utf8'));
   } catch (e) {
     data = {
       type: "error",
