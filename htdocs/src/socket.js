@@ -23,7 +23,7 @@ class Socket extends EventEmitter {
 
       try {
         var data = JSON.parse(message.data);
-        if (data.type !== 'STATE') {
+        if (data.type !== 'state') {
           console.groupCollapsed('[Socket::message]: %o', data.type, data.data);
           console.log(message);
           console.groupEnd();
@@ -37,7 +37,6 @@ class Socket extends EventEmitter {
     this.ws.onopen = () => {
       console.info('[Socket::open]');
       this.emit('connected');
-      this.command('TEST_COMMAND',['foo', 'bar']);
     };
 
     this.ws.onclose = state => {

@@ -1,17 +1,12 @@
 import { Server } from 'mock-socket';
-
-const fixtures = {
-  STATE: require('./fixtures/STATE.json'),
-  MPD_API_GET_OUTPUTS: require('./fixtures/MPD_API_GET_OUTPUTS.json'),
-  MPD_API_GET_BROWSE: require('./fixtures/MPD_API_GET_BROWSE.json'),
-  MPD_API_SEARCH: require('./fixtures/MPD_API_SEARCH.json'),
-};
+import util from 'util';
+import fixtures from '../htdocs/test/fixtures';
 
 function MockServer() {
   const mockServer = new Server('ws://localhost:8080');
   mockServer.on('connection', server => {
     setInterval(() => {
-      mockServer.send(JSON.stringify(fixtures.STATE));
+      mockServer.send(JSON.stringify(fixtures('STATE')));
     }, 200);
   });
 
@@ -25,7 +20,7 @@ function MockServer() {
 
   var runCommand = (cmd) => {
     try {
-      mockServer.send(JSON.stringify(fixtures[cmd.cmd]));
+      mockServer.send(JSON.stringify(fixtures(cmd.cmd)));
     } catch(err) {
       console.trace(err);
     }
