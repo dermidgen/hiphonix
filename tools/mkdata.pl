@@ -12,6 +12,7 @@ use File::Basename;
   css => 'text/css',
   ico => 'image/vnd.microsoft.icon',
   woff => 'application/font-woff',
+  woff2 => 'application/font-woff',
   ttf => 'application/x-font-ttf',
   eot => 'application/octet-stream',
   svg => 'image/svg+xml',

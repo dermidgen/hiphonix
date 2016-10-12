@@ -59,6 +59,7 @@ file(GLOB RESOURCES
     htdocs/build/fonts/MaterialIcons/MaterialIcons-Regular.svg
     htdocs/build/fonts/MaterialIcons/MaterialIcons-Regular.ttf
     htdocs/build/fonts/MaterialIcons/MaterialIcons-Regular.woff
+    htdocs/build/fonts/MaterialIcons/MaterialIcons-Regular.woff2
     htdocs/build/fonts/MaterialIcons/material-icons.css
     htdocs/build/fonts/styles.css
     htdocs/build/images/cover.png

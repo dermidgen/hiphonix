@@ -42,6 +42,8 @@ static const char* get_mime(char* filename)
         return "image/vnd.microsoft.icon";
     if(!strcmp(extension, ".woff"))
         return "application/font-woff";
+    if(!strcmp(extension, ".woff2"))
+        return "application/font-woff";
     if(!strcmp(extension, ".ttf"))
         return "application/x-font-ttf";
     if(!strcmp(extension, ".eot"))
