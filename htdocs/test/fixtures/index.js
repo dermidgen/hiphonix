@@ -8,7 +8,7 @@ function fixtures(cmd) {
     data = JSON.parse(fs.readFileSync(file, 'utf8'));
   } catch (e) {
     data = {
-      type: cmd,
+      type: "error",
       data: {
         unimplemented: true
       }

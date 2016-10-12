@@ -73,7 +73,7 @@ class Settings extends Component {
   constructor() {
     super();
     this.scan.bind(this);
-    socket.on('NET_LIST', (message) => {
+    socket.on('networks', (message) => {
       console.log('NETWORKS', message.data);
       this.setState({
         networks: message.data,
