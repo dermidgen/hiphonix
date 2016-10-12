@@ -10,6 +10,7 @@
 #include "ympd/src/mongoose.h"
 #include "ympd/src/http_server.h"
 #include "ympd/src/mpd_client.h"
+#include "ympd.h"
 #include "connman.h"
 #include "net.h"
 
@@ -22,16 +23,6 @@ void bye()
     force_exit = 1;
 }
 
-int is_mpd_request(struct mg_connection *c)
-{
-    enum mpd_cmd_ids cmd_id = get_cmd_id(c->content);
-    
-    if (cmd_id == -1)
-        return MG_FALSE;
-    else
-        return MG_TRUE;
-}
-
 static int server_callback(struct mg_connection *c, enum mg_event ev) {
     switch(ev) {
         case MG_CLOSE:
@@ -40,7 +31,7 @@ static int server_callback(struct mg_connection *c, enum mg_event ev) {
         case MG_REQUEST:
             if (c->is_websocket) {
                 c->content[c->content_len] = '\0';
-                if(c->content_len && is_mpd_request(c)) {
+                if(c->content_len && is_ympd_request(c)) {
                     return callback_mpd(c);
                 } else if(c->content_len && is_net_request(c)) {
                     return callback_net(c);
