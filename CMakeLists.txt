@@ -70,6 +70,7 @@ set(SOURCES
     src/hiphonix.c
     src/net.c
     src/connman.c
+    src/ympd.c
     ympd/src/mpd_client.c
     ympd/src/mongoose.c
     ympd/src/json_encode.c
