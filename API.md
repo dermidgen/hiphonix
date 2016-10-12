@@ -39,10 +39,14 @@ The WebSocket API endpoint is available at http://hiphonix/ws
    - *Usage*: ```MPD_API_MOVE_TRACK,1,2```
    - *Event*: ```{ type: "update_queue" }```
  * MPD_API_ADD_PLAY_TRACK
- * MPD_API_ADD_PLAYLIST
+ * MPD_API_ADD_PLAYLIST,(string) playlist
+   - *Usage*: ```MPD_API_ADD_PLAYLIST,PinkFloyd```
+   - *Event*: ```{ type: "update_queue" }```
  * MPD_API_RM_TRACK
  * MPD_API_PLAY_TRACK
+   - *Event*: ```{ type: "song_change" }```
  * MPD_API_SET_PLAY
+   - *Event*: ```{ type: "song_change" }```
  * MPD_API_SET_PAUSE
  * MPD_API_SET_NEXT
    - *Event*: ```{ type: "song_change" }```
@@ -52,12 +56,12 @@ The WebSocket API endpoint is available at http://hiphonix/ws
    - *Usage*: ```MPD_API_SET_SEEK,1,1```
  * MPD_API_SET_VOLUME,(int) level
    - *Usage*: ```MPD_API_SET_VOLUME,100```
- * MPD_API_TOGGLE_RANDOM
- * MPD_API_TOGGLE_CONSUME
- * MPD_API_TOGGLE_SINGLE
- * MPD_API_TOGGLE_CROSSFADE
- * MPD_API_TOGGLE_REPEAT
- * MPD_API_TOGGLE_OUTPUT
+ * MPD_API_TOGGLE_RANDOM,(intbool) 0|1
+ * MPD_API_TOGGLE_CONSUME,(intbool) 0|1
+ * MPD_API_TOGGLE_SINGLE,(intbool) 0|1
+ * MPD_API_TOGGLE_CROSSFADE,(intbool) 0|1
+ * MPD_API_TOGGLE_REPEAT,(intbool) 0|1
+ * MPD_API_TOGGLE_OUTPUT,(intbool) 0|1
  * MPD_API_SET_MPDHOST
  * MPD_API_SET_MPDPASS
  * MPD_API_UPDATE_DB
