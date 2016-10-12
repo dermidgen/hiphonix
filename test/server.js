@@ -8,6 +8,53 @@ const i = (obj, depth = 1) => {
   return '\n' + util.inspect(obj, { depth, colors: true })
 }
 
+const MPD_STATE = {
+  STOPPED: 1,
+  PLAYING: 2,
+  PAUSED: 3,
+};
+
+let MPD_STATUS = {
+  "type": "state",
+  "data": {
+    "state": MPD_STATE.STOPPED,
+    "volume": -1,
+    "repeat": 0,
+    "single": 0,
+    "crossfade": 0,
+    "consume": 0,
+    "random": 0,
+    "songpos": -1,
+    "elapsedTime": 0,
+    "totalTime": 0,
+    "currentsongid": -1
+  }
+};
+
+function setState(cmd, args) {
+  switch(cmd) {
+    case 'MPD_API_SET_PLAY':
+      MPD_STATUS.data.state = MPD_STATE.PLAYING;
+    break;
+    case 'MPD_API_SET_PAUSE':
+      MPD_STATUS.data.state = MPD_STATE.PAUSED;
+    break;
+    case 'MPD_API_SET_STOP':
+      MPD_STATUS.data.state = MPD_STATE.STOPPED;
+    break;
+    case 'MPD_API_TOGGLE_RANDOM':
+      MPD_STATUS.data.random = parseInt(args[0]);
+    break;
+    case 'MPD_API_TOGGLE_SINGLE':
+      MPD_STATUS.data.single = parseInt(args[0]);
+    break;
+    case 'MPD_API_TOGGLE_REPEAT':
+      MPD_STATUS.data.repeat = parseInt(args[0]);
+    break;
+  }
+  return MPD_STATUS;
+}
+
 debug('Initializing test server...');
 
 wss.on('connection', connection => {
@@ -15,14 +62,14 @@ wss.on('connection', connection => {
   debug('Client connection established.');
 
   const pinger = setInterval(() => {
-    const data = fixtures('STATE');
-    connection.send(JSON.stringify(data));
+    connection.send(JSON.stringify(MPD_STATUS));
   }, 2000)
 
   connection.on('message', message => {
     const parts = message.split(',');
     const cmd = parts.shift();
     const args = parts;
+    const state = setState(cmd, args);
     const data = fixtures(cmd);
     const response = JSON.stringify(data)
 
@@ -31,13 +78,16 @@ wss.on('connection', connection => {
       parts,
       cmd,
       args,
-      data
+      data,
+      state,
     }, 3));
 
-    try {
-      connection.send(response);
-    } catch(err) {
-      console.trace(err);
+    if (data) {
+      try {
+        connection.send(response);
+      } catch(err) {
+        console.trace(err);
+      }
     }
 
   });
