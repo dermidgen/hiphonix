@@ -1,0 +1,71 @@
+{
+  "type": "playlist",
+  "data": [
+    {
+      "type": "song",
+      "uri": "/home/dgraham/Music/Pink Floyd - Another Brick in the Wall, III.mp3",
+      "duration": 0,
+      "title": "Pink Floyd - Another Brick in the Wall, III.mp3"
+    },
+    {
+      "type": "song",
+      "uri": "/home/dgraham/Music/Pink Floyd - Another Brick In The Wall, II.mp3",
+      "duration": 0,
+      "title": "Pink Floyd - Another Brick In The Wall, II.mp3"
+    },
+    {
+      "type": "song",
+      "uri": "/home/dgraham/Music/Pink Floyd - Don't Leave Me Now.mp3",
+      "duration": 0,
+      "title": "Pink Floyd - Don't Leave Me Now.mp3"
+    },
+    {
+      "type": "song",
+      "uri": "/home/dgraham/Music/Pink Floyd - Empty Spaces.mp3",
+      "duration": 0,
+      "title": "Pink Floyd - Empty Spaces.mp3"
+    },
+    {
+      "type": "song",
+      "uri": "/home/dgraham/Music/Pink Floyd - Goobye Blue Sky.mp3",
+      "duration": 0,
+      "title": "Pink Floyd - Goobye Blue Sky.mp3"
+    },
+    {
+      "type": "song",
+      "uri": "/home/dgraham/Music/Pink Floyd - Goodbye Cruel World.mp3",
+      "duration": 0,
+      "title": "Pink Floyd - Goodbye Cruel World.mp3"
+    },
+    {
+      "type": "song",
+      "uri": "/home/dgraham/Music/Pink Floyd - Happiest Days of Our Lives.mp3",
+      "duration": 0,
+      "title": "Pink Floyd - Happiest Days of Our Lives.mp3"
+    },
+    {
+      "type": "song",
+      "uri": "/home/dgraham/Music/Pink Floyd - Mother.mp3",
+      "duration": 0,
+      "title": "Pink Floyd - Mother.mp3"
+    },
+    {
+      "type": "song",
+      "uri": "/home/dgraham/Music/Pink Floyd - One Of My Turns.mp3",
+      "duration": 0,
+      "title": "Pink Floyd - One Of My Turns.mp3"
+    },
+    {
+      "type": "song",
+      "uri": "/home/dgraham/Music/Pink Floyd - The Thin Ice.mp3",
+      "duration": 0,
+      "title": "Pink Floyd - The Thin Ice.mp3"
+    },
+    {
+      "type": "song",
+      "uri": "/home/dgraham/Music/Pink Floyd - Young Lust.mp3",
+      "duration": 0,
+      "title": "Pink Floyd - Young Lust.mp3"
+    }
+  ]
+}
