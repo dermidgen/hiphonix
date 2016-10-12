@@ -19,14 +19,18 @@ The WebSocket API endpoint is available at http://hiphonix/ws
 
 ### MPD (ympd compat)
  * MPD_API_GET_OUTPUTS
+   - *Event*: ```{ type: "outputnames" }```
  * MPD_API_GET_BROWSE,(int) page,(string) path
-    Usage: MPD_API_GET_BROWSE,0,/
+   - *Event*: ```{ type: "browse" }```
+   - *Usage*: ```MPD_API_GET_BROWSE,0,/```
  * MPD_API_SEARCH,(string) search
-    Usage: MPD_API_SEARCH,radiohead
+   - *Event*: ```{ type: "search" }```
+   - *Usage*: ```MPD_API_SEARCH,radiohead```
  * MPD_API_GET_QUEUE
+   - *Event*: ```{ type: "queue" }```
  * MPD_API_SAVE_QUEUE
  * MPD_API_ADD_TRACK,(string) path
-    Usage: MPD_API_ADD_TRACK,/
+   - *Usage*: ```MPD_API_ADD_TRACK,/```
  * MPD_API_ADD_PLAY_TRACK
  * MPD_API_ADD_PLAYLIST
  * MPD_API_RM_TRACK
@@ -36,9 +40,9 @@ The WebSocket API endpoint is available at http://hiphonix/ws
  * MPD_API_SET_NEXT
  * MPD_API_SET_PREV
  * MPD_API_SET_SEEK,(int) trackId,(int) seekTime
-    Usage: MPD_API_SET_SEEK,1,1
+   - *Usage*: ```MPD_API_SET_SEEK,1,1```
  * MPD_API_SET_VOLUME,(int) level
-    Usage: MPD_API_SET_VOLUME,100
+   - *Usage*: ```MPD_API_SET_VOLUME,100```
  * MPD_API_TOGGLE_RANDOM
  * MPD_API_TOGGLE_CONSUME
  * MPD_API_TOGGLE_SINGLE
@@ -48,21 +52,24 @@ The WebSocket API endpoint is available at http://hiphonix/ws
  * MPD_API_SET_MPDHOST
  * MPD_API_SET_MPDPASS
  * MPD_API_UPDATE_DB
+   - *Event*: ```{ type: "update" }```
 
 ### Networking
- * NL_SCAN
- * NL_LIST
- * NL_JOIN
- * NL_DISCONNECT
- * NL_RESET
+ * NET_SCAN
+ * NET_LIST
+   - *Usage*: ```NET_LIST```
+   - *Event*: ```{ type: "networks" }```
+ * NET_JOIN
+ * NET_DISCONNECT
+ * NET_RESET
 
 ### System
  * SYS_RESTART
  * SYS_RESET
  * SYS_UPGRADE
 
-## Events
+## Service Events
 
 ### MPD (ympd compat)
- * status
-   - { type: "status", data: "..." }
+ * `status`: ```{ type: "status", data: "..." }```
+ * `outputs`: ```{ type: "outputs", data: "..." }```
