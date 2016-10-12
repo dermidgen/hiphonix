@@ -21,16 +21,16 @@ function selectFixture(cmd) {
       } 
     break;
     case 'MPD_API_SET_PLAY':
-      state: MPD_STATE.PLAYING;
+      state = MPD_STATE.PLAYING;
       return path.join(__dirname, `${cmd}.json`);
     break;
     case 'MPD_API_SET_PAUSE':
-      state: MPD_STATE.PAUSED;
-      return path.join(__dirname, `${cmd}.json`);
+      state = MPD_STATE.PAUSED;
+      return path.join(__dirname, `STATE_PAUSED.json`);
     break;
     case 'MPD_API_SET_STOP':
-      state: MPD_STATE.STOPPED;
-      return path.join(__dirname, `${cmd}.json`);
+      state = MPD_STATE.STOPPED;
+      return path.join(__dirname, `STATE.json`);
     break;
     default:
       return path.join(__dirname, `${cmd}.json`);
