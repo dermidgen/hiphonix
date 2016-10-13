@@ -94,7 +94,7 @@ gpointer thread(gpointer data)
 
 int main(int argc, char **argv)
 {
-    int n, option_index = 0;
+    int n, option_index, ret = 0;
     char *run_as_user = NULL;
     char const *error_msg = NULL;
     char *webport = "8080";
@@ -196,7 +196,15 @@ int main(int argc, char **argv)
             fprintf(stderr, "Can't connect to system bus.\n");
         exit(1);
     }
+
+    // dbus disconnect handling
     g_dbus_set_disconnect_function(conn, disconnect_callback, NULL, NULL);
+
+    ret = dbus_bus_request_name(conn, "fi.epitest.hostap.WPASupplicant", 0, &err);
+    if (dbus_error_is_set(&err)) {
+        fprintf(stderr, "Name Error (%s)\n", err.message);
+        dbus_error_free(&err);
+    }
 
     // connman_connect();
 
@@ -208,7 +216,7 @@ int main(int argc, char **argv)
 
     // dbus disconnect
     dbus_connection_close(conn);
-    
+
     // connman_disconnect();
     mpd_disconnect();
     mg_destroy_server(&server);

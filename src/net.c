@@ -63,6 +63,11 @@ char* cmd_exec(char *cmd)
     return (char *)strdup(response_charbuf);
 }
 
+static void scan_callback(int result, GSupplicantInterface *interface, void *user_data)
+{
+    printf("Scan complete");
+}
+
 int callback_net(struct mg_connection *c)
 {
     enum net_cmd_ids cmd_id = get_cmd_id(c->content);
@@ -70,6 +75,8 @@ int callback_net(struct mg_connection *c)
 
     char wsres[MAX_SIZE];
     char *resbuf;
+
+    // GSupplicantInterface *interface = g_supplicant_network_get_interface("wifi");
 
     if(cmd_id == -1)
         return MG_TRUE;
@@ -91,6 +98,7 @@ int callback_net(struct mg_connection *c)
         case NET_CONNECT:
             resbuf = (char *)cmd_exec("echo \\\"Joining\\\"");
             n = snprintf(wsres, MAX_SIZE, "{\"type\":\"connect\", \"data\": %s}", resbuf);
+            g_supplicant_interface_scan((GSupplicantInterface *)"fi.epitest.hostap.WPASupplicant", NULL, scan_callback, NULL);
             // connman_connect();
             // connman_wifi_join();
             // connman_disconnect();
