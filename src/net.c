@@ -5,6 +5,11 @@
 #include <stdlib.h>
 #include <libgen.h>
 
+#include <dbus/dbus.h>
+#include <glib.h>
+
+#include "gsupplicant/gsupplicant.h"
+
 #include "net.h"
 #include "connman.h"
 #include "config.h"
