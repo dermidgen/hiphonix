@@ -62,8 +62,10 @@ wss.on('connection', connection => {
   debug('Client connection established.');
 
   const pinger = setInterval(() => {
-    connection.send(JSON.stringify(MPD_STATUS));
-  }, 2000)
+    try {
+      connection.send(JSON.stringify(MPD_STATUS));
+    } catch(e) {}
+  }, 200)
 
   connection.on('message', message => {
     const parts = message.split(',');

@@ -8,18 +8,67 @@ import './index.css';
 
 const socket = new Socket();
 
+class PlayHead extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      position: 0
+    };
+    this.style = {
+      left: `${this.state.position}px`
+    }
+  }
+  render() {
+    return (
+      <div className="playhead" style={ this.style }>
+        <div className="position">2:34</div>
+        <div className="slider">
+          <div className="background"><div></div></div>
+          <div className="foreground"><div></div></div>
+          <div className="head"><div></div></div>
+        </div>
+        <div className="length">4:50</div>
+      </div>
+    )
+  }
+}
+
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      playback: {},
+      song: {}
+    };
+    socket.on('state', message => {
+      this.setState({
+        playback: message.data
+      });
+    });
+    socket.on('song_change', message => {
+      this.setState({
+        song: message.data
+      });
+    });
+  }
   render() {
     return (
       <div className="App">
         <div className="player-background"></div>
         <header>
           <Link to="/settings">
-            <i className="material-icons">settings</i>
+            <i className="material-icons">more_vert</i>
           </Link>
         </header>
         <main>
           {this.props.children}
+          <div className="track">
+            <div className="cover" style={{ backgroundImage: 'url(/images/cover.png)' }}></div>
+            <div className="title">{this.state.song.title || '[title]'}</div>
+            <div className="album">{this.state.song.album || '[album]'}</div>
+            <div className="artist">{this.state.song.artist || '[artist]'}</div>
+            <PlayHead position={this.state.song.position} />
+          </div>
         </main>
         <Controls />
       </div>
@@ -30,6 +79,16 @@ class App extends Component {
 class Controls extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      playback: {},
+      song: {}
+    };
+    socket.on('state', message => {
+      // console.log('STATE', message.data);
+      this.setState({
+        playback: message.data
+      });
+    });
     this.browse.bind(this);
     this.play.bind(this);
     this.pause.bind(this);
@@ -56,22 +115,36 @@ class Controls extends Component {
   render() {
     return (
       <footer>
-        <Link to="/library">
-          <i className="material-icons">list</i>
-        </Link>
-        <i onClick={this.pause} className="material-icons">pause</i>
-        <i onClick={this.prev} className="material-icons">skip_previous</i>
-        <i onClick={this.play} className="material-icons">play_arrow</i>
-        <i onClick={this.next} className="material-icons">skip_next</i>
-        <i onClick={this.volume} className="material-icons">volume_up</i>
+        <div>
+          <Link to="/library"><i className="material-icons">list</i></Link>
+        </div>
+        <div>
+          <i onClick={this.prev} className="prev material-icons">skip_previous</i>
+          {(() => {
+            if (this.state.playback.state === 2) {
+              return (
+                <i onClick={this.pause} className="play material-icons">pause</i>
+              );
+            } else {
+              return (
+                <i onClick={this.play} className="pause material-icons">play_arrow</i>
+              );
+            }
+          })()}
+          <i onClick={this.next} className="next material-icons">skip_next</i>
+        </div>
+        <div>
+          <i onClick={this.volume} className="volume material-icons">volume_up</i>
+        </div>
+
       </footer>
     );
   }
 }
 
 class Settings extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.scan.bind(this);
     socket.on('networks', (message) => {
       console.log('NETWORKS', message.data);
