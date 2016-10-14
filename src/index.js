@@ -167,9 +167,12 @@ class Settings extends Component {
       <div className="settings">
         <div>
           <strong>Settings</strong>
+          <div><Link to="/">Close</Link></div>
           <div><strong>Wifi Connection</strong></div>
           <div>
+            <select>
             {networks.map((name,index) => { return <option key={index}>{name}</option>; })}
+            </select>
           </div>
           <button onClick={this.scan}>Scan</button>
         </div>
@@ -181,17 +184,37 @@ class Settings extends Component {
 class Library extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.browse.bind(this);
+    socket.on('browse', (message) => {
+      console.log('BROWSE', message.data);
+      this.setState({
+        items: message.data,
+      });
+    });
+  }
+  browse() {
+    socket.command('MPD_API_GET_BROWSE',[0,'/']);
+  }
+  componentDidMount() {
+    this.setState({
+      items: [],
+    });
+    if (socket.state) this.browse();
+    else socket.on('connected', () => {
+      this.browse();
+    });
   }
   render() {
+    var items = (this.state && typeof this.state.items !== undefined) ? this.state.items : [];
     return (
       <div className="library">
         <div>
           <strong>Library</strong>
           <div><Link to="/">Close</Link></div>
-          <div><Link to="/library">/library</Link></div>
-          <div><Link to="/library/path/to/somewhere">/library/path/to/somewhere</Link></div>
-          {this.props.params.splat}
+
+          <ul>
+          {items.map((item,index) => { return <li key={index}>{item.title}</li>; })}
+          </ul>
         </div>
       </div>
     );
