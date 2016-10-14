@@ -1,70 +1,59 @@
-FIND_PACKAGE( PkgConfig REQUIRED )
-FIND_PATH( DBUS_INCLUDE_DIR dbus/dbus.h PATHS /usr/include/dbus-1.0 /usr/local/include/dbus-1.0 )
-FIND_PATH( DBUS_INCLUDE_LIB_DIR dbus/dbus-arch-deps.h PATHS /usr/lib/dbus-1.0/include /usr/local/lib/dbus-1.0/include /usr/lib/x86_64-linux-gnu/dbus-1.0/include)
-FIND_PATH( DBUS_GLIB_INCLUDE_DIR dbus/dbus-glib.h PATHS /usr/include/dbus-1.0 /usr/local/include/dbus-1.0 )
-FIND_LIBRARY( DBUS_LIBRARY NAME dbus-1 PATHS /usr/lib /usr/local/lib )
-FIND_LIBRARY( DBUS_GLIB_LIBRARY NAME dbus-glib-1 PATHS /usr/lib /usr/local/lib )
-FIND_PROGRAM( GLIB_DBUS_BINDING_TOOL NAME dbus-binding-tool PATHS /usr/bin /usr/local/bin )
-
-IF( DBUS_INCLUDE_DIR AND DBUS_INCLUDE_LIB_DIR AND DBUS_LIBRARY )
-   SET( DBUS_FOUND TRUE )
-ENDIF( DBUS_INCLUDE_DIR AND DBUS_INCLUDE_LIB_DIR AND DBUS_LIBRARY )
-
-IF( DBUS_INCLUDE_DIR AND DBUS_INCLUDE_LIB_DIR )
-   SET( DBUS_INCLUDES ${DBUS_INCLUDE_DIR} ${DBUS_INCLUDE_LIB_DIR} )
-ENDIF( DBUS_INCLUDE_DIR AND DBUS_INCLUDE_LIB_DIR )
-
-IF( DBUS_GLIB_INCLUDE_DIR AND DBUS_GLIB_LIBRARY )
-   SET( DBUS_GLIB_FOUND TRUE )
-ENDIF( DBUS_GLIB_INCLUDE_DIR AND DBUS_GLIB_LIBRARY )
-
-IF( DBUS_GLIB_FOUND )
-   IF( NOT dbus-glib_FIND_QUIETLY )
-      MESSAGE( STATUS "Found dbus-glib: ${DBUS_GLIB_LIBRARY}" )
-   ENDIF( NOT dbus-glib_FIND_QUIETLY )
-ELSE( DBUS_GLIB__FOUND )
-   IF( dbus-glib_FIND_REQUIRED )
-      MESSAGE( FATAL_ERROR "Could not find dbus-glib" )
-   ENDIF( dbus-glib_FIND_REQUIRED )
-ENDIF( DBUS_GLIB_FOUND )
-
-IF( DBUS_FOUND )
-   IF( NOT dbus_FIND_QUIETLY )
-      MESSAGE( STATUS "Found dbus: ${DBUS_LIBRARY}" )
-   ENDIF( NOT dbus_FIND_QUIETLY )
-ELSE( DBUS_FOUND )
-   IF( dbus_FIND_REQUIRED )
-      MESSAGE( FATAL_ERROR "Could not find dbus" )
-   ENDIF( dbus_FIND_REQUIRED )
-ENDIF( DBUS_FOUND )
-
-IF( GLIB_DBUS_BINDING_TOOL )
-  SET( GLIB_BIND_XML_SERVER "YES" )
-  SET( GLIB_BIND_XML_CLIENT "YES" )
-ENDIF( GLIB_DBUS_BINDING_TOOL )
-
-MACRO( GLIB_BIND_XML_SERVER outfiles prefix )
-  FOREACH( it ${ARGN} )
-    GET_FILENAME_COMPONENT( outfile ${it} NAME_WE )
-    GET_FILENAME_COMPONENT( in ${it} ABSOLUTE )
-    SET( outfile ${CMAKE_CURRENT_BINARY_DIR}/${outfile}glue.h )
-    ADD_CUSTOM_COMMAND(OUTPUT ${outfile}
-      COMMAND ${GLIB_DBUS_BINDING_TOOL}
-      ARGS --mode=glib-server --prefix=${prefix} --output=${outfile} ${in}
-      DEPENDS ${infile} )
-    SET( ${outfiles} "${${outfiles}}" ${outfile} )
-  ENDFOREACH( it )
-ENDMACRO( GLIB_BIND_XML_SERVER )
-
-MACRO( GLIB_BIND_XML_CLIENT outfiles prefix )
-  FOREACH( it ${ARGN} )
-    GET_FILENAME_COMPONENT( outfile ${it} NAME_WE )
-    GET_FILENAME_COMPONENT( in ${it} ABSOLUTE )
-    SET( outfile ${CMAKE_CURRENT_BINARY_DIR}/${outfile}glue.h )
-    ADD_CUSTOM_COMMAND(OUTPUT ${outfile}
-      COMMAND ${GLIB_DBUS_BINDING_TOOL}
-      ARGS --mode=glib-client --prefix=${prefix} --output=${outfile} ${in}
-      DEPENDS ${infile} )
-    SET( ${outfiles} "${${outfiles}}" ${outfile} )
-  ENDFOREACH( it )
-ENDMACRO( GLIB_BIND_XML_CLIENT )
+# - Try to find DBus
+# Once done, this will define
+#
+#  DBUS_FOUND - system has DBus
+#  DBUS_INCLUDE_DIRS - the DBus include directories
+#  DBUS_LIBRARIES - link these to use DBus
+#
+# Copyright (C) 2012 Raphael Kubo da Costa <rakuco@webkit.org>
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND ITS CONTRIBUTORS ``AS
+# IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR ITS
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+find_package(PkgConfig)
+pkg_check_modules(PC_DBUS QUIET dbus-1)
+find_library(DBUS_LIBRARIES
+    NAMES dbus-1
+    HINTS ${PC_DBUS_LIBDIR}
+          ${PC_DBUS_LIBRARY_DIRS}
+)
+find_path(DBUS_INCLUDE_DIR
+    NAMES dbus/dbus.h
+    HINTS ${PC_DBUS_INCLUDEDIR}
+          ${PC_DBUS_INCLUDE_DIRS}
+)
+get_filename_component(_DBUS_LIBRARY_DIR ${DBUS_LIBRARIES} PATH)
+find_path(DBUS_ARCH_INCLUDE_DIR
+    NAMES dbus/dbus-arch-deps.h
+    HINTS ${PC_DBUS_INCLUDEDIR}
+          ${PC_DBUS_INCLUDE_DIRS}
+          ${_DBUS_LIBRARY_DIR}
+          ${DBUS_INCLUDE_DIR}
+          /usr/lib${LIB_SUFFIX}/include
+          /usr/lib${LIB_SUFFIX}/dbus-1.0/include
+          /usr/lib64/include
+          /usr/lib64/dbus-1.0/include
+          /usr/lib/include
+          /usr/lib/dbus-1.0/include
+    PATH_SUFFIXES include
+)
+set(DBUS_INCLUDE_DIRS ${DBUS_INCLUDE_DIR} ${DBUS_ARCH_INCLUDE_DIR})
+include(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(DBUS REQUIRED_VARS DBUS_INCLUDE_DIRS DBUS_LIBRARIES)

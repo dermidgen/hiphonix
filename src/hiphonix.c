@@ -10,17 +10,25 @@
 #include "ympd/src/mongoose.h"
 #include "ympd/src/http_server.h"
 #include "ympd/src/mpd_client.h"
+
 #include "ympd.h"
+#include "gdbus/gdbus.h"
 #include "connman.h"
 #include "net.h"
 
 extern char *optarg;
 
-int force_exit = 0;
+static GMainLoop *main_loop = NULL;
+static struct mg_server *server;
+
+void byebye(gpointer data)
+{
+    g_main_loop_quit((GMainLoop *)data);
+}
 
 void bye()
 {
-    force_exit = 1;
+    byebye((gpointer *)main_loop);
 }
 
 static int server_callback(struct mg_connection *c, enum mg_event ev) {
@@ -51,16 +59,56 @@ static int server_callback(struct mg_connection *c, enum mg_event ev) {
     }
 }
 
+static gboolean serve(gpointer data)
+{
+    mg_poll_server(server, 200);
+    return TRUE;
+}
+
+static int main_callback()
+{
+    mpd_poll(server);
+    return TRUE;
+}
+
+static void disconnect_callback(DBusConnection *conn, void *user_data)
+{
+    printf("D-Bus disconnect");
+    g_main_loop_quit(main_loop);
+}
+
+gpointer thread(gpointer data)
+{
+    GMainContext *ctx;
+    GMainLoop *loop;
+
+    ctx = g_main_context_default();
+
+    loop = g_main_loop_new(ctx, FALSE);
+    g_timeout_add_seconds(1, main_callback, loop);
+    g_idle_add_full(G_PRIORITY_DEFAULT, serve, loop, byebye);
+
+    g_main_loop_run(loop);
+    g_main_loop_unref(loop);
+    return NULL;
+}
+
 int main(int argc, char **argv)
 {
     int n, option_index = 0;
-    struct mg_server *server = mg_create_server(NULL, server_callback);
-    unsigned int current_timer = 0, last_timer = 0;
     char *run_as_user = NULL;
     char const *error_msg = NULL;
     char *webport = "8080";
+    char const *scanType = "passive";
 
+    server = mg_create_server(NULL, server_callback);
+    GError *error = NULL;
+    GThread *t;
+    DBusConnection *conn;
+    DBusError err;
+    
     atexit(bye);
+
 #ifdef WITH_DYNAMIC_ASSETS
     mg_set_option(server, "document_root", SRC_PATH);
 #endif
@@ -136,21 +184,81 @@ int main(int argc, char **argv)
         }
     }
 
+    // Create our main loop
+    main_loop = g_main_loop_new(NULL, FALSE);
+
+    // dbus connect
+    dbus_error_init(&err);
+    conn = dbus_bus_get(DBUS_BUS_SYSTEM, &err);
+    if (conn == NULL) {
+        if (dbus_error_is_set(&err) == TRUE) {
+            fprintf(stderr, "%s\n", err.message);
+            dbus_error_free(&err);
+        } else
+            fprintf(stderr, "Can't connect to system bus.\n");
+        exit(1);
+    }
+
+    // dbus disconnect handling
+    g_dbus_set_disconnect_function(conn, disconnect_callback, NULL, NULL);
+
+    // I think this is if we're trying to OWN a service
+    dbus_bus_request_name(conn, "fi.epitest.hostap.WPASupplicant", 0, &err);
+    if (dbus_error_is_set(&err)) {
+        fprintf(stderr, "Name Error (%s)\n", err.message);
+        dbus_error_free(&err);
+    }
+
+    DBusMessageIter args;
+    DBusPendingCall *pending;
+    DBusMessage *reply;
+    DBusMessage *methodcall = dbus_message_new_method_call(WPAS_DBUS_SERVICE, WPAS_DBUS_PATH, WPAS_DBUS_INTERFACE, "Scan");
+
+    // append args
+    dbus_message_iter_init_append(methodcall, &args);
+    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &scanType)) { 
+      fprintf(stderr, "Out Of Memory!\n"); 
+      exit(1);
+    }
+
+    if (!dbus_connection_send_with_reply(conn, methodcall, &pending, -1))//Send and expect reply using pending call object
+    {
+        printf("failed to send message!\n");
+    }
+    dbus_connection_flush(conn);
+    dbus_message_unref(methodcall);
+    methodcall = NULL;
+
+    dbus_pending_call_block(pending);//Now block on the pending call
+    reply = dbus_pending_call_steal_reply(pending);//Get the reply message from the queue
+    dbus_pending_call_unref(pending);//Free pending call handle
+    // assert(reply != NULL);
+
+    if(dbus_message_get_type(reply) ==  DBUS_MESSAGE_TYPE_ERROR)    {
+        printf("Error : %s",dbus_message_get_error_name(reply));
+            dbus_message_unref(reply);
+            reply = NULL;
+    }
+
+    printf("Got dbus reply");
+
+
     // connman_connect();
 
-    while (!force_exit) {
-        mg_poll_server(server, 200);
-        current_timer = time(NULL);
-        if(current_timer - last_timer)
-        {
-            last_timer = current_timer;
-            mpd_poll(server);
-        }
-    }
+    // Start a thread for mongoose with its own main loop
+    t = g_thread_new("mongoose", thread, &error);
+    g_thread_join(t);
+
+    g_main_loop_run(main_loop);
+
+    // dbus disconnect
+    dbus_connection_close(conn);
 
     // connman_disconnect();
     mpd_disconnect();
     mg_destroy_server(&server);
+
+    g_main_loop_unref(main_loop);
 
     return EXIT_SUCCESS;
 }

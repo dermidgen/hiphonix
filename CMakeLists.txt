@@ -18,14 +18,23 @@ option(WITH_SSL "enable SSL support" ON)
 
 find_package(LibMPDClient REQUIRED)
 find_package(Threads REQUIRED)
-# find_package(DBus REQUIRED)
+find_package(DBus REQUIRED)
 find_package(Glib REQUIRED)
-find_package(DBusGLib)
+# find_package(DBusGLib)
 find_package(GObject)
 
 # Configure Build
 configure_file(ympd/src/config.h.in ${PROJECT_BINARY_DIR}/config.h)
-include_directories(${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR} ${LIBMPDCLIENT_INCLUDE_DIR} ${GLib_INCLUDE_DIRS} ${DBUS_GLIB_INCLUDE_DIR} ${GOBJECT_INCLUDE_DIR})
+include_directories(${PROJECT_BINARY_DIR} 
+    ${PROJECT_SOURCE_DIR} 
+    ${PROJECT_SOURCE_DIR}/gdbus 
+    ${PROJECT_SOURCE_DIR}/gsupplicant 
+    ${LIBMPDCLIENT_INCLUDE_DIR} 
+    ${DBUS_INCLUDE_DIRS} 
+    # ${DBUS_INCLUDE_LIB_DIR} 
+    ${GLib_INCLUDE_DIRS} 
+    # ${DBUS_GLIB_INCLUDE_DIR} 
+    ${GOBJECT_INCLUDE_DIR})
 
 include(CheckCSourceCompiles)
 
@@ -72,7 +81,16 @@ set(SOURCES
     src/hiphonix.c
     src/net.c
     src/connman.c
-    src/ympd.c
+    src/gdbus/client.c
+    src/gdbus/gdbus.h
+    src/gdbus/mainloop.c
+    src/gdbus/object.c
+    src/gdbus/polkit.c
+    src/gdbus/watch.c
+    src/gsupplicant/dbus.c
+    src/gsupplicant/dbus.h
+    src/gsupplicant/gsupplicant.h
+    src/gsupplicant/supplicant.c
     ympd/src/mpd_client.c
     ympd/src/mongoose.c
     ympd/src/json_encode.c
@@ -96,7 +114,14 @@ if(NOT WITH_DYNAMIC_ASSETS)
 endif()
 
 add_executable(hiphonix ${SOURCES})
-target_link_libraries(hiphonix ${LIBMPDCLIENT_LIBRARY} ${DBUS_GLIB_LIBRARIES} ${GOBJECT_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${OPENSSL_LIBRARIES})
+target_link_libraries(hiphonix 
+    ${LIBMPDCLIENT_LIBRARY} 
+    ${CMAKE_THREAD_LIBS_INIT} 
+    ${DBUS_LIBRARIES} 
+    # ${DBUS_INCLUDE_LIB_DIR} 
+    # ${DBUS_GLIB_LIBRARIES} 
+    ${GOBJECT_LIBRARIES} 
+    ${OPENSSL_LIBRARIES})
 
 install(TARGETS hiphonix DESTINATION bin)
 install(FILES ympd/ympd.1 DESTINATION ${CMAKE_INSTALL_PREFIX}/share/man/man1)

@@ -28,4 +28,20 @@ enum net_conn_states {
 
 int is_net_request(struct mg_connection *c);
 int callback_net(struct mg_connection *c);
+
+// DBusMessage *sendMethodCall(void);
+
+#define WPAS_DBUS_SERVICE   "fi.epitest.hostap.WPASupplicant"
+#define WPAS_DBUS_PATH      "/fi/w1/wpa_supplicant1/Interfaces/1"
+#define WPAS_DBUS_INTERFACE "fi.w1.wpa_supplicant1.Interface"
+
+#define WPAS_DBUS_PATH_INTERFACES   WPAS_DBUS_PATH "/Interfaces"
+#define WPAS_DBUS_IFACE_INTERFACE   WPAS_DBUS_INTERFACE ".Interface"
+
+#define WPAS_DBUS_NETWORKS_PART "Networks"
+#define WPAS_DBUS_IFACE_NETWORK WPAS_DBUS_INTERFACE ".Network"
+
+#define WPAS_DBUS_BSSIDS_PART   "BSSIDs"
+#define WPAS_DBUS_IFACE_BSSID   WPAS_DBUS_INTERFACE ".BSSID"
+
 #endif
