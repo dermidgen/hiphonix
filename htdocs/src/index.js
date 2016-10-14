@@ -239,6 +239,7 @@ class Library extends Component {
       <div className="library">
         <div>
           <strong>Library</strong>
+          <div><Link to="/queue">Queue</Link></div>
           <div><Link to="/">Close</Link></div>
 
           <ul>
@@ -250,11 +251,53 @@ class Library extends Component {
   }
 }
 
+class Queue extends Component {
+  constructor(props) {
+    super(props);
+    this.queue.bind(this);
+    socket.on('queue', (message) => {
+      this.setState({
+        items: message.data,
+      });
+    });
+  }
+  queue() {
+    socket.command('MPD_API_GET_QUEUE',[0]);
+  }
+  componentDidMount() {
+    this.setState({
+      items: [],
+    });
+    if (socket.state) this.queue();
+    else socket.on('connected', () => {
+      this.queue();
+    });
+  }
+  render() {
+    let items = (this.state && typeof this.state.items !== undefined) ? this.state.items : [];
+    return (
+      <div className="queue">
+        <div>
+          <strong>Queue</strong>
+          <div><Link to="/library">Library</Link></div>
+          <div><Link to="/">Close</Link></div>
+
+          <ul>
+          {items.map((item,index) => { return <li key={index}>{item.title}</li>; })}
+          </ul>
+        </div>
+      </div>
+    );
+  }
+}
+
+
 ReactDOM.render(
   <Router history={browserHistory}>
     <Route path="/" component={App}>
       <Route path="/settings" component={Settings}/>
       <Route path="/library*" component={Library}/>
+      <Route path="/queue*" component={Queue}/>
     </Route>
   </Router>,
   document.getElementById('root')
