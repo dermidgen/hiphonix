@@ -81,6 +81,7 @@ set(SOURCES
     src/hiphonix.c
     src/net.c
     src/connman.c
+    src/ympd.c
     src/gdbus/client.c
     src/gdbus/gdbus.h
     src/gdbus/mainloop.c
