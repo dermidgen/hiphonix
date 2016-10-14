@@ -2,6 +2,10 @@
   "type": "browse",
   "data": [
     {
+      "type": "directory",
+      "dir": "sda1"
+    },
+    {
       "type": "song",
       "uri": "Pink Floyd - The Thin Ice.mp3",
       "duration": 146,
@@ -66,6 +70,22 @@
       "uri": "Pink Floyd - Goodbye Cruel World.mp3",
       "duration": 73,
       "title": "Goodbye Cruel World"
+    },
+    {
+      "type": "playlist",
+      "plist": "abc-country"
+    },
+    {
+      "type": "playlist",
+      "plist": "Classical"
+    },
+    {
+      "type": "playlist",
+      "plist": "wdcb-chicago-fm-90.9-jazz-and-blues"
+    },
+    {
+      "type": "playlist",
+      "plist": "Jazz"
     }
   ]
 }
