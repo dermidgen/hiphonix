@@ -7,11 +7,13 @@ const host = 'ws://' + hostname + ':' + port + '/ws';
 class Socket extends EventEmitter {
   constructor() {
     super();
+    this.state = 0;
     this.ws = null;
     this.open();
   }
 
   close() {
+    this.state = 0;
     if (this.ws) this.ws.close();
   }
 
@@ -36,11 +38,13 @@ class Socket extends EventEmitter {
 
     this.ws.onopen = () => {
       console.info('[Socket::open]');
+      this.state = 1;
       this.emit('connected');
     };
 
     this.ws.onclose = state => {
       console.info('[Socket::close]');
+      this.state = 0;
       this.emit('disconnected', state);
       setTimeout(() => {
         this.open();
@@ -49,6 +53,7 @@ class Socket extends EventEmitter {
 
     this.ws.onerror = error => {
       console.error('[Socket::error]: %o', error);
+      this.state = 0;
       this.emit('error', error);
     };
 
