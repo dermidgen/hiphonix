@@ -63,10 +63,40 @@ char* cmd_exec(char *cmd)
     return (char *)strdup(response_charbuf);
 }
 
-static void scan_callback(int result, GSupplicantInterface *interface, void *user_data)
-{
-    printf("Scan complete");
-}
+// static void scan_callback(int result, GSupplicantInterface *interface, void *user_data)
+// {
+//     printf("Scan complete");
+// }
+
+// static DBusMessage *sendMethodCall(void)
+// {
+//     DBusPendingCall *pending;
+//     DBusMessage *reply;
+//     DBusMessage *methodcall = dbus_message_new_method_call(WPAS_DBUS_SERVICE, WPAS_DBUS_PATH, WPAS_DBUS_IFACE_INTERFACE, "ApScan");
+
+//     if (!dbus_connection_send_with_reply(conn, methodcall, &pending, -1))//Send and expect reply using pending call object
+//     {
+//         printf("failed to send message!\n");
+//     }
+//     dbus_connection_flush(conn);
+//     dbus_message_unref(methodcall);
+//     methodcall = NULL;
+
+//     dbus_pending_call_block(pending);//Now block on the pending call
+//     reply = dbus_pending_call_steal_reply(pending);//Get the reply message from the queue
+//     dbus_pending_call_unref(pending);//Free pending call handle
+//     assert(reply != NULL);
+
+//     if(dbus_message_get_type(reply) ==  DBUS_MESSAGE_TYPE_ERROR)    {
+//         printf("Error : %s",dbus_message_get_error_name(reply));
+//             dbus_message_unref(reply);
+//             reply = NULL;
+//     }
+
+//     printf("Got dbus reply");
+//     return reply;
+//     // g_supplicant_interface_scan((GSupplicantInterface *)"fi.epitest.hostap.WPASupplicant", NULL, scan_callback, NULL);
+// }
 
 int callback_net(struct mg_connection *c)
 {
@@ -98,7 +128,6 @@ int callback_net(struct mg_connection *c)
         case NET_CONNECT:
             resbuf = (char *)cmd_exec("echo \\\"Joining\\\"");
             n = snprintf(wsres, MAX_SIZE, "{\"type\":\"connect\", \"data\": %s}", resbuf);
-            g_supplicant_interface_scan((GSupplicantInterface *)"fi.epitest.hostap.WPASupplicant", NULL, scan_callback, NULL);
             // connman_connect();
             // connman_wifi_join();
             // connman_disconnect();

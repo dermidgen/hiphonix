@@ -94,10 +94,11 @@ gpointer thread(gpointer data)
 
 int main(int argc, char **argv)
 {
-    int n, option_index, ret = 0;
+    int n, option_index = 0;
     char *run_as_user = NULL;
     char const *error_msg = NULL;
     char *webport = "8080";
+    char const *scanType = "passive";
 
     server = mg_create_server(NULL, server_callback);
     GError *error = NULL;
@@ -200,11 +201,46 @@ int main(int argc, char **argv)
     // dbus disconnect handling
     g_dbus_set_disconnect_function(conn, disconnect_callback, NULL, NULL);
 
-    ret = dbus_bus_request_name(conn, "fi.epitest.hostap.WPASupplicant", 0, &err);
+    // I think this is if we're trying to OWN a service
+    dbus_bus_request_name(conn, "fi.epitest.hostap.WPASupplicant", 0, &err);
     if (dbus_error_is_set(&err)) {
         fprintf(stderr, "Name Error (%s)\n", err.message);
         dbus_error_free(&err);
     }
+
+    DBusMessageIter args;
+    DBusPendingCall *pending;
+    DBusMessage *reply;
+    DBusMessage *methodcall = dbus_message_new_method_call(WPAS_DBUS_SERVICE, WPAS_DBUS_PATH, WPAS_DBUS_INTERFACE, "Scan");
+
+    // append args
+    dbus_message_iter_init_append(methodcall, &args);
+    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &scanType)) { 
+      fprintf(stderr, "Out Of Memory!\n"); 
+      exit(1);
+    }
+
+    if (!dbus_connection_send_with_reply(conn, methodcall, &pending, -1))//Send and expect reply using pending call object
+    {
+        printf("failed to send message!\n");
+    }
+    dbus_connection_flush(conn);
+    dbus_message_unref(methodcall);
+    methodcall = NULL;
+
+    dbus_pending_call_block(pending);//Now block on the pending call
+    reply = dbus_pending_call_steal_reply(pending);//Get the reply message from the queue
+    dbus_pending_call_unref(pending);//Free pending call handle
+    // assert(reply != NULL);
+
+    if(dbus_message_get_type(reply) ==  DBUS_MESSAGE_TYPE_ERROR)    {
+        printf("Error : %s",dbus_message_get_error_name(reply));
+            dbus_message_unref(reply);
+            reply = NULL;
+    }
+
+    printf("Got dbus reply");
+
 
     // connman_connect();
 
