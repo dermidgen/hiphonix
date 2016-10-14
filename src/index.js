@@ -205,7 +205,30 @@ class Library extends Component {
     });
   }
   render() {
-    var items = (this.state && typeof this.state.items !== undefined) ? this.state.items : [];
+    let items = (this.state && typeof this.state.items !== undefined) ? this.state.items : [];
+    items = items.map(function(item) {
+      let ret = {};
+      if (typeof item.title !== undefined) {
+        ret = {
+          name: item.title,
+          type: 'song',
+          data: item,
+        };
+      } else if (typeof item.dir !== undefined) {
+        ret = {
+          name: item.dir,
+          type: 'dir',
+          data: item,
+        };
+      } else if (typeof item.plist !== undefined) {
+        ret = {
+          name: item.plist,
+          type: 'plist',
+          data: item,
+        };
+      }
+      return ret;
+    })
     return (
       <div className="library">
         <div>
@@ -213,7 +236,7 @@ class Library extends Component {
           <div><Link to="/">Close</Link></div>
 
           <ul>
-          {items.map((item,index) => { return <li key={index}>{item.title || item.dir || item.plist}</li>; })}
+          {items.map((item,index) => { return <li key={index}>{item.name}</li>; })}
           </ul>
         </div>
       </div>
