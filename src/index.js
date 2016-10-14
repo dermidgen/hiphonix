@@ -54,7 +54,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <div className="player-background"></div>
+        <div className="player-background" style={{ backgroundImage: `url(${this.state.song.cover})` }}></div>
         <header>
           <Link to="/settings">
             <i className="material-icons">more_vert</i>
@@ -63,7 +63,7 @@ class App extends Component {
         <main>
           {this.props.children}
           <div className="track">
-            <div className="cover" style={{ backgroundImage: 'url(/images/cover.png)' }}></div>
+            <div className="cover" style={{ backgroundImage: `url(${this.state.song.cover})` }}></div>
             <div className="title">{this.state.song.title || '[title]'}</div>
             <div className="album">{this.state.song.album || '[album]'}</div>
             <div className="artist">{this.state.song.artist || '[artist]'}</div>
