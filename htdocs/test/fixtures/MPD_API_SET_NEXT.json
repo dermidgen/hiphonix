@@ -4,6 +4,7 @@
     "pos": 0,
     "title": "The Thin Ice",
     "artist": "Pink Floyd",
-    "album": "the wall"
+    "album": "the wall",
+    "cover": "/images/cover.png"
   }
 }
