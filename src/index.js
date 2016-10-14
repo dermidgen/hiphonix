@@ -213,7 +213,7 @@ class Library extends Component {
           <div><Link to="/">Close</Link></div>
 
           <ul>
-          {items.map((item,index) => { return <li key={index}>{item.title}</li>; })}
+          {items.map((item,index) => { return <li key={index}>{item.title || item.dir || item.plist}</li>; })}
           </ul>
         </div>
       </div>
