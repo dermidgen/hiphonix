@@ -186,7 +186,6 @@ class Library extends Component {
     super(props);
     this.browse.bind(this);
     socket.on('browse', (message) => {
-      console.log('BROWSE', message.data);
       this.setState({
         items: message.data,
       });
@@ -205,7 +204,17 @@ class Library extends Component {
     });
   }
   render() {
-    var items = (this.state && typeof this.state.items !== undefined) ? this.state.items : [];
+    let items = (this.state && typeof this.state.items !== undefined) ? this.state.items : [];
+    items = items.map(function(item) {
+      if (item.type === 'song') {
+        item.name = item.title;
+      } else if (item.type === 'directory') {
+        item.name = item.dir;
+      } else if (item.type === 'playlist') {
+        item.name = item.plist;
+      }
+      return item;
+    });
     return (
       <div className="library">
         <div>
@@ -213,7 +222,7 @@ class Library extends Component {
           <div><Link to="/">Close</Link></div>
 
           <ul>
-          {items.map((item,index) => { return <li key={index}>{item.title}</li>; })}
+          {items.map((item,index) => { return <li key={index}>{item.type}: {item.name}</li>; })}
           </ul>
         </div>
       </div>
