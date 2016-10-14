@@ -26,10 +26,22 @@ let MPD_STATUS = {
     "random": 0,
     "songpos": -1,
     "elapsedTime": 0,
-    "totalTime": 0,
+    "totalTime": 235,
     "currentsongid": -1
   }
 };
+
+setInterval(function() {
+  if (MPD_STATUS.data.state === MPD_STATE.STOPPED) {
+    MPD_STATUS.data.elapsedTime = 0;
+  }
+  if (MPD_STATUS.data.state === MPD_STATE.PLAYING) {
+    MPD_STATUS.data.elapsedTime++;
+    if (MPD_STATUS.data.elapsedTime >= MPD_STATUS.data.totalTime) {
+      MPD_STATUS.data.state = MPD_STATE.STOPPED;
+    }
+  }
+}, 1000);
 
 function setState(cmd, args) {
   switch(cmd) {
@@ -65,7 +77,7 @@ wss.on('connection', connection => {
     try {
       connection.send(JSON.stringify(MPD_STATUS));
     } catch(e) {}
-  }, 200)
+  }, 1000)
 
   connection.on('message', message => {
     const parts = message.split(',');

@@ -12,22 +12,42 @@ class PlayHead extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      position: 0
+      position: 0,
+      elapsed: "00:00",
+      total: "00:00",
     };
-    this.style = {
-      left: `${this.state.position}px`
-    }
+    socket.on('state', (message) => {
+      let position = Math.round((message.data.elapsedTime/message.data.totalTime)*100);
+      let elapsed = new Date(null);
+      let total = new Date(null)
+      elapsed.setSeconds(message.data.elapsedTime);
+      total.setSeconds(message.data.totalTime);
+
+      this.setState({
+        position: position,
+        elapsed: elapsed.toISOString().substr(14, 5),
+        total: total.toISOString().substr(14, 5),
+      });
+    });
   }
   render() {
+    let headStyle = {
+      left: this.state.position + '%',
+    };
+
+    let foregroundStyle = {
+      width: this.state.position + '%',
+    };
+
     return (
-      <div className="playhead" style={ this.style }>
-        <div className="position">2:34</div>
+      <div className="playhead">
+        <div className="position">{ this.state.elapsed }</div>
         <div className="slider">
           <div className="background"><div></div></div>
-          <div className="foreground"><div></div></div>
-          <div className="head"><div></div></div>
+          <div className="foreground" style={foregroundStyle}><div></div></div>
+          <div className="head" style={headStyle}><div></div></div>
         </div>
-        <div className="length">4:50</div>
+        <div className="length">{ this.state.total }</div>
       </div>
     )
   }
