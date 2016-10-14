@@ -212,7 +212,10 @@ class Library extends Component {
     });
   }
   browse() {
-    socket.command('MPD_API_GET_BROWSE',[0,'/']);
+    let path = document.location.pathname.replace('/library','');
+    path = (path[0] === '/') ? path.substr(1) : '';
+    path = (path) ? path : '/';
+    socket.command('MPD_API_GET_BROWSE',[0,path]);
   }
   componentDidMount() {
     this.setState({
@@ -224,6 +227,21 @@ class Library extends Component {
     });
   }
   render() {
+    let backpath = ''; 
+    let path = document.location.pathname.replace('/library','');
+    path = (path[0] === '/') ? path.substr(1) : '';
+    path = (path) ? path : '/';
+
+    if (path !== '/') {
+      let parts = path.split('/');
+      if (parts.length > 1) {
+        parts.pop();
+        backpath = '/library/' + parts.join('/');
+      } else if (parts.length === 1) {
+        backpath = '/library';
+      }
+    }
+
     let items = (this.state && typeof this.state.items !== undefined) ? this.state.items : [];
     items = items.map(function(item) {
       if (item.type === 'song') {
@@ -238,12 +256,17 @@ class Library extends Component {
     return (
       <div className="library">
         <div>
-          <strong>Library</strong>
+          <strong>Library: {path}</strong>
           <div><Link to="/queue">Queue</Link></div>
           <div><Link to="/">Close</Link></div>
-
+          <div><Link to={backpath}>../</Link></div>
           <ul>
-          {items.map((item,index) => { return <li key={index}>{item.type}: {item.name}</li>; })}
+          {
+            items.map((item,index) => {
+              if (item.type === 'directory') return <Link key={index} to={ `/library/${ item.dir }` }>{item.type}: {item.name}</Link>;
+              else return <li key={index}>{item.type}: {item.name}</li>;
+            })
+          }
           </ul>
         </div>
       </div>
