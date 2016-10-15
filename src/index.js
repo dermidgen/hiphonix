@@ -16,11 +16,6 @@ class PlayHead extends Component {
       elapsed: "00:00",
       total: "00:00",
     };
-<<<<<<< HEAD
-    this.style = {
-      width: `${this.state.position}%`
-    }
-=======
     socket.on('state', (message) => {
       let position = Math.round((message.data.elapsedTime/message.data.totalTime)*100);
       let elapsed = new Date(null);
@@ -34,34 +29,17 @@ class PlayHead extends Component {
         total: total.toISOString().substr(14, 5),
       });
     });
->>>>>>> 6a20d12cab4be7ff50cc7e3c88eb5a7549e1a40c
   }
   render() {
-    let headStyle = {
-      left: this.state.position + '%',
-    };
-
-    let foregroundStyle = {
-      width: this.state.position + '%',
-    };
-
     return (
       <div className="playhead">
-<<<<<<< HEAD
-        <div className="position">2:34</div>
+        <div className="position">{ this.state.elapsed }</div>
         <div className="slider">
           <div className="background">
-            <div className="foreground" style={ this.style }>
+            <div className="foreground" style={ { width: `${this.state.position}%` } }>
               <div className="head"></div>
             </div>
           </div>
-=======
-        <div className="position">{ this.state.elapsed }</div>
-        <div className="slider">
-          <div className="background"><div></div></div>
-          <div className="foreground" style={foregroundStyle}><div></div></div>
-          <div className="head" style={headStyle}><div></div></div>
->>>>>>> 6a20d12cab4be7ff50cc7e3c88eb5a7549e1a40c
         </div>
         <div className="length">{ this.state.total }</div>
       </div>
@@ -296,7 +274,7 @@ class Library extends Component {
   render() {
     // Setup paths for navigating up and down a directory tree
     // TODO: This is a shit implementation; go ahead and optimize as needed
-    let backpath = ''; 
+    let backpath = '';
     let path = document.location.pathname.replace('/library','');
     path = (path[0] === '/') ? path.substr(1) : '';
     path = (path) ? path : '/';
@@ -327,7 +305,6 @@ class Library extends Component {
     return (
       <div className="library">
         <div>
-<<<<<<< HEAD
           <header>
             <div>
               <Link to={window.previousLocation}>
@@ -341,7 +318,6 @@ class Library extends Component {
               </Link>
             </div>
           </header>
-=======
           <strong>Library: {path}</strong>
           <div><Link to="/queue">Queue</Link></div>
           <div><Link to="/">Close</Link></div>
@@ -391,12 +367,9 @@ class Queue extends Component {
           <strong>Queue</strong>
           <div><Link to="/library">Library</Link></div>
           <div><Link to="/">Close</Link></div>
->>>>>>> 6a20d12cab4be7ff50cc7e3c88eb5a7549e1a40c
-
           <ul>
           {items.map((item,index) => { return <li key={index}>{item.title}</li>; })}
           </ul>
-
         </div>
       </div>
     );
