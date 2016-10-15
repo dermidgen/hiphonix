@@ -201,6 +201,54 @@ class Settings extends Component {
   }
 }
 
+class Search extends Component {
+  constructor(props) {
+    super(props);
+    this.search.bind(this);
+    socket.on('search', (message) => {
+      this.setState({
+        items: message.data,
+      });
+    });
+  }
+  search() {
+    console.log('SEARCH');
+    socket.command('MPD_API_SEARCH',[]);
+  }
+  componentDidMount() {
+    this.setState({
+      items: [],
+    });
+  }
+  render() {
+    // Setup our list of items in the library path
+    // TODO: possibly add icon classname to the item
+    let items = (this.state && typeof this.state.items !== undefined) ? this.state.items : [];
+    items = items.map(function(item) {
+      if (item.type === 'song') {
+        item.name = item.title;
+      } else if (item.type === 'directory') {
+        item.name = item.dir;
+      } else if (item.type === 'playlist') {
+        item.name = item.plist;
+      }
+      return item;
+    });
+    return (
+      <div className="search">
+        <input type="text" id="query"/> <button onClick={this.search}>Search</button>
+        <div>Results:</div>
+        {
+          items.map((item,index) => {
+            if (item.type === 'directory') return <Link key={index} to={ `/library/${ item.dir }` }>{item.type}: {item.name}</Link>;
+            else return <li key={index}>{item.type}: {item.name}</li>;
+          })
+        }
+      </div>
+    );
+  }
+}
+
 class Library extends Component {
   constructor(props) {
     super(props);
@@ -227,6 +275,8 @@ class Library extends Component {
     });
   }
   render() {
+    // Setup paths for navigating up and down a directory tree
+    // TODO: This is a shit implementation; go ahead and optimize as needed
     let backpath = ''; 
     let path = document.location.pathname.replace('/library','');
     path = (path[0] === '/') ? path.substr(1) : '';
@@ -242,6 +292,8 @@ class Library extends Component {
       }
     }
 
+    // Setup our list of items in the library path
+    // TODO: possibly add icon classname to the item
     let items = (this.state && typeof this.state.items !== undefined) ? this.state.items : [];
     items = items.map(function(item) {
       if (item.type === 'song') {
@@ -260,6 +312,7 @@ class Library extends Component {
           <div><Link to="/queue">Queue</Link></div>
           <div><Link to="/">Close</Link></div>
           <div><Link to={backpath}>../</Link></div>
+          <div><Search/></div>
           <ul>
           {
             items.map((item,index) => {
