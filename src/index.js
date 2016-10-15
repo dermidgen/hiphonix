@@ -15,17 +15,19 @@ class PlayHead extends Component {
       position: 0
     };
     this.style = {
-      left: `${this.state.position}px`
+      width: `${this.state.position}%`
     }
   }
   render() {
     return (
-      <div className="playhead" style={ this.style }>
+      <div className="playhead">
         <div className="position">2:34</div>
         <div className="slider">
-          <div className="background"><div></div></div>
-          <div className="foreground"><div></div></div>
-          <div className="head"><div></div></div>
+          <div className="background">
+            <div className="foreground" style={ this.style }>
+              <div className="head"></div>
+            </div>
+          </div>
         </div>
         <div className="length">4:50</div>
       </div>
@@ -50,6 +52,9 @@ class App extends Component {
         song: message.data
       });
     });
+  }
+  componentWillReceiveProps() {
+    window.previousLocation = this.props.location
   }
   render() {
     return (
@@ -218,12 +223,24 @@ class Library extends Component {
     return (
       <div className="library">
         <div>
-          <strong>Library</strong>
-          <div><Link to="/">Close</Link></div>
+          <header>
+            <div>
+              <Link to={window.previousLocation}>
+                <i className="material-icons">arrow_back</i>
+              </Link>
+            </div>
+            <div>Library</div>
+            <div>
+              <Link to="/">
+                <i className="material-icons">close</i>
+              </Link>
+            </div>
+          </header>
 
           <ul>
           {items.map((item,index) => { return <li key={index}>{item.type}: {item.name}</li>; })}
           </ul>
+
         </div>
       </div>
     );
