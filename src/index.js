@@ -316,7 +316,7 @@ class Library extends Component {
           <ul>
           {
             items.map((item,index) => {
-              if (item.type === 'directory') return <Link key={index} to={ `/library/${ item.dir }` }>{item.type}: {item.name}</Link>;
+              if (item.type === 'directory') return <Link key={index} to={ `/library/${ item.dir }` } onClick={this.browse}>{item.type}: {item.name}</Link>;
               else return <li key={index}>{item.type}: {item.name}</li>;
             })
           }
