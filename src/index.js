@@ -31,21 +31,15 @@ class PlayHead extends Component {
     });
   }
   render() {
-    let headStyle = {
-      left: this.state.position + '%',
-    };
-
-    let foregroundStyle = {
-      width: this.state.position + '%',
-    };
-
     return (
       <div className="playhead">
         <div className="position">{ this.state.elapsed }</div>
         <div className="slider">
-          <div className="background"><div></div></div>
-          <div className="foreground" style={foregroundStyle}><div></div></div>
-          <div className="head" style={headStyle}><div></div></div>
+          <div className="background">
+            <div className="foreground" style={ { width: `${this.state.position}%` } }>
+              <div className="head"></div>
+            </div>
+          </div>
         </div>
         <div className="length">{ this.state.total }</div>
       </div>
@@ -70,6 +64,9 @@ class App extends Component {
         song: message.data
       });
     });
+  }
+  componentWillReceiveProps() {
+    window.previousLocation = this.props.location
   }
   render() {
     return (
@@ -277,7 +274,7 @@ class Library extends Component {
   render() {
     // Setup paths for navigating up and down a directory tree
     // TODO: This is a shit implementation; go ahead and optimize as needed
-    let backpath = ''; 
+    let backpath = '';
     let path = document.location.pathname.replace('/library','');
     path = (path[0] === '/') ? path.substr(1) : '';
     path = (path) ? path : '/';
@@ -308,9 +305,21 @@ class Library extends Component {
     return (
       <div className="library">
         <div>
+          <header>
+            <div>
+              <Link to={window.previousLocation}>
+                <i className="material-icons">arrow_back</i>
+              </Link>
+            </div>
+            <div>Library</div>
+            <div>
+              <Link to="/">
+                <i className="material-icons">close</i>
+              </Link>
+            </div>
+          </header>
           <strong>Library: {path}</strong>
           <div><Link to="/queue">Queue</Link></div>
-          <div><Link to="/">Close</Link></div>
           <div><Link to={backpath}>../</Link></div>
           <div><Search/></div>
           <ul>
@@ -357,7 +366,6 @@ class Queue extends Component {
           <strong>Queue</strong>
           <div><Link to="/library">Library</Link></div>
           <div><Link to="/">Close</Link></div>
-
           <ul>
           {items.map((item,index) => { return <li key={index}>{item.title}</li>; })}
           </ul>
