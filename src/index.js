@@ -328,8 +328,8 @@ class Library extends Component {
         </header>
         <div>
           <h4>Library</h4>
-          // <strong>Path: {path}</strong>
-          // <div><Search/></div>
+          <strong>Path: {path}</strong>
+          <div><Search/></div>
           <ul>
           {
             items.map((item,index) => {
@@ -411,7 +411,11 @@ class Queue extends Component {
         <div>
           <h4>Queue</h4>
           <ul>
-          {items.map((item,index) => { return <li key={index}>{item.title}</li>; })}
+            {
+              items.map((item,index) => {
+                return <li key={index}>{item.title}</li>;
+              })
+            }
           </ul>
         </div>
       </div>
