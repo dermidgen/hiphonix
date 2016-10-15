@@ -12,15 +12,42 @@ class PlayHead extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      position: 0
+      position: 0,
+      elapsed: "00:00",
+      total: "00:00",
     };
+<<<<<<< HEAD
     this.style = {
       width: `${this.state.position}%`
     }
+=======
+    socket.on('state', (message) => {
+      let position = Math.round((message.data.elapsedTime/message.data.totalTime)*100);
+      let elapsed = new Date(null);
+      let total = new Date(null)
+      elapsed.setSeconds(message.data.elapsedTime);
+      total.setSeconds(message.data.totalTime);
+
+      this.setState({
+        position: position,
+        elapsed: elapsed.toISOString().substr(14, 5),
+        total: total.toISOString().substr(14, 5),
+      });
+    });
+>>>>>>> 6a20d12cab4be7ff50cc7e3c88eb5a7549e1a40c
   }
   render() {
+    let headStyle = {
+      left: this.state.position + '%',
+    };
+
+    let foregroundStyle = {
+      width: this.state.position + '%',
+    };
+
     return (
       <div className="playhead">
+<<<<<<< HEAD
         <div className="position">2:34</div>
         <div className="slider">
           <div className="background">
@@ -28,8 +55,15 @@ class PlayHead extends Component {
               <div className="head"></div>
             </div>
           </div>
+=======
+        <div className="position">{ this.state.elapsed }</div>
+        <div className="slider">
+          <div className="background"><div></div></div>
+          <div className="foreground" style={foregroundStyle}><div></div></div>
+          <div className="head" style={headStyle}><div></div></div>
+>>>>>>> 6a20d12cab4be7ff50cc7e3c88eb5a7549e1a40c
         </div>
-        <div className="length">4:50</div>
+        <div className="length">{ this.state.total }</div>
       </div>
     )
   }
@@ -186,6 +220,54 @@ class Settings extends Component {
   }
 }
 
+class Search extends Component {
+  constructor(props) {
+    super(props);
+    this.search.bind(this);
+    socket.on('search', (message) => {
+      this.setState({
+        items: message.data,
+      });
+    });
+  }
+  search() {
+    console.log('SEARCH');
+    socket.command('MPD_API_SEARCH',[]);
+  }
+  componentDidMount() {
+    this.setState({
+      items: [],
+    });
+  }
+  render() {
+    // Setup our list of items in the library path
+    // TODO: possibly add icon classname to the item
+    let items = (this.state && typeof this.state.items !== undefined) ? this.state.items : [];
+    items = items.map(function(item) {
+      if (item.type === 'song') {
+        item.name = item.title;
+      } else if (item.type === 'directory') {
+        item.name = item.dir;
+      } else if (item.type === 'playlist') {
+        item.name = item.plist;
+      }
+      return item;
+    });
+    return (
+      <div className="search">
+        <input type="text" id="query"/> <button onClick={this.search}>Search</button>
+        <div>Results:</div>
+        {
+          items.map((item,index) => {
+            if (item.type === 'directory') return <Link key={index} to={ `/library/${ item.dir }` }>{item.type}: {item.name}</Link>;
+            else return <li key={index}>{item.type}: {item.name}</li>;
+          })
+        }
+      </div>
+    );
+  }
+}
+
 class Library extends Component {
   constructor(props) {
     super(props);
@@ -197,7 +279,10 @@ class Library extends Component {
     });
   }
   browse() {
-    socket.command('MPD_API_GET_BROWSE',[0,'/']);
+    let path = document.location.pathname.replace('/library','');
+    path = (path[0] === '/') ? path.substr(1) : '';
+    path = (path) ? path : '/';
+    socket.command('MPD_API_GET_BROWSE',[0,path]);
   }
   componentDidMount() {
     this.setState({
@@ -209,6 +294,25 @@ class Library extends Component {
     });
   }
   render() {
+    // Setup paths for navigating up and down a directory tree
+    // TODO: This is a shit implementation; go ahead and optimize as needed
+    let backpath = ''; 
+    let path = document.location.pathname.replace('/library','');
+    path = (path[0] === '/') ? path.substr(1) : '';
+    path = (path) ? path : '/';
+
+    if (path !== '/') {
+      let parts = path.split('/');
+      if (parts.length > 1) {
+        parts.pop();
+        backpath = '/library/' + parts.join('/');
+      } else if (parts.length === 1) {
+        backpath = '/library';
+      }
+    }
+
+    // Setup our list of items in the library path
+    // TODO: possibly add icon classname to the item
     let items = (this.state && typeof this.state.items !== undefined) ? this.state.items : [];
     items = items.map(function(item) {
       if (item.type === 'song') {
@@ -223,6 +327,7 @@ class Library extends Component {
     return (
       <div className="library">
         <div>
+<<<<<<< HEAD
           <header>
             <div>
               <Link to={window.previousLocation}>
@@ -236,9 +341,60 @@ class Library extends Component {
               </Link>
             </div>
           </header>
+=======
+          <strong>Library: {path}</strong>
+          <div><Link to="/queue">Queue</Link></div>
+          <div><Link to="/">Close</Link></div>
+          <div><Link to={backpath}>../</Link></div>
+          <div><Search/></div>
+          <ul>
+          {
+            items.map((item,index) => {
+              if (item.type === 'directory') return <Link key={index} to={ `/library/${ item.dir }` }>{item.type}: {item.name}</Link>;
+              else return <li key={index}>{item.type}: {item.name}</li>;
+            })
+          }
+          </ul>
+        </div>
+      </div>
+    );
+  }
+}
+
+class Queue extends Component {
+  constructor(props) {
+    super(props);
+    this.queue.bind(this);
+    socket.on('queue', (message) => {
+      this.setState({
+        items: message.data,
+      });
+    });
+  }
+  queue() {
+    socket.command('MPD_API_GET_QUEUE',[0]);
+  }
+  componentDidMount() {
+    this.setState({
+      items: [],
+    });
+    if (socket.state) this.queue();
+    else socket.on('connected', () => {
+      this.queue();
+    });
+  }
+  render() {
+    let items = (this.state && typeof this.state.items !== undefined) ? this.state.items : [];
+    return (
+      <div className="queue">
+        <div>
+          <strong>Queue</strong>
+          <div><Link to="/library">Library</Link></div>
+          <div><Link to="/">Close</Link></div>
+>>>>>>> 6a20d12cab4be7ff50cc7e3c88eb5a7549e1a40c
 
           <ul>
-          {items.map((item,index) => { return <li key={index}>{item.type}: {item.name}</li>; })}
+          {items.map((item,index) => { return <li key={index}>{item.title}</li>; })}
           </ul>
 
         </div>
@@ -247,11 +403,13 @@ class Library extends Component {
   }
 }
 
+
 ReactDOM.render(
   <Router history={browserHistory}>
     <Route path="/" component={App}>
       <Route path="/settings" component={Settings}/>
       <Route path="/library*" component={Library}/>
+      <Route path="/queue*" component={Queue}/>
     </Route>
   </Router>,
   document.getElementById('root')
