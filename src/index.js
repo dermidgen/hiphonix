@@ -320,7 +320,6 @@ class Library extends Component {
           </header>
           <strong>Library: {path}</strong>
           <div><Link to="/queue">Queue</Link></div>
-          <div><Link to="/">Close</Link></div>
           <div><Link to={backpath}>../</Link></div>
           <div><Search/></div>
           <ul>
