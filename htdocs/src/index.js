@@ -304,23 +304,31 @@ class Library extends Component {
     });
     return (
       <div className="library">
+        <header>
+          <div>
+            <Link to={backpath}>
+              <i className="material-icons">arrow_back</i>
+            </Link>
+          </div>
+          <div>
+            <Link to="/library">
+              <i className="material-icons">library_music</i>
+            </Link>
+          </div>
+          <div>
+            <Link to="/queue">
+              <i className="material-icons">queue</i>
+            </Link>
+          </div>
+          <div>
+            <Link to="/">
+              <i className="material-icons">close</i>
+            </Link>
+          </div>
+        </header>
         <div>
-          <header>
-            <div>
-              <Link to={window.previousLocation}>
-                <i className="material-icons">arrow_back</i>
-              </Link>
-            </div>
-            <div>Library</div>
-            <div>
-              <Link to="/">
-                <i className="material-icons">close</i>
-              </Link>
-            </div>
-          </header>
-          <strong>Library: {path}</strong>
-          <div><Link to="/queue">Queue</Link></div>
-          <div><Link to={backpath}>../</Link></div>
+          <h4>Library</h4>
+          <strong>Path: {path}</strong>
           <div><Search/></div>
           <ul>
           {
@@ -359,15 +367,55 @@ class Queue extends Component {
     });
   }
   render() {
+
+    let backpath = '';
+    let path = document.location.pathname.replace('/library','');
+    path = (path[0] === '/') ? path.substr(1) : '';
+    path = (path) ? path : '/';
+
+    if (path !== '/') {
+      let parts = path.split('/');
+      if (parts.length > 1) {
+        parts.pop();
+        backpath = '/library/' + parts.join('/');
+      } else if (parts.length === 1) {
+        backpath = '/library';
+      }
+    }
+
     let items = (this.state && typeof this.state.items !== undefined) ? this.state.items : [];
     return (
       <div className="queue">
+        <header>
+          <div>
+            <Link to={backpath}>
+              <i className="material-icons">arrow_back</i>
+            </Link>
+          </div>
+          <div>
+            <Link to="/library">
+              <i className="material-icons">library_music</i>
+            </Link>
+          </div>
+          <div>
+            <Link to="/queue">
+              <i className="material-icons">queue</i>
+            </Link>
+          </div>
+          <div>
+            <Link to="/">
+              <i className="material-icons">close</i>
+            </Link>
+          </div>
+        </header>
         <div>
-          <strong>Queue</strong>
-          <div><Link to="/library">Library</Link></div>
-          <div><Link to="/">Close</Link></div>
+          <h4>Queue</h4>
           <ul>
-          {items.map((item,index) => { return <li key={index}>{item.title}</li>; })}
+            {
+              items.map((item,index) => {
+                return <li key={index}>{item.title}</li>;
+              })
+            }
           </ul>
         </div>
       </div>
