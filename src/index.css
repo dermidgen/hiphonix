@@ -75,7 +75,9 @@ main {
 .queue > div {
   padding: 20px;
 }
-.library {
+.library,
+.queue
+{
   position: absolute;
   top: 0;
   width: 100%;
@@ -84,8 +86,31 @@ main {
   color: #fff;
   z-index: 100;
 }
-.library > div {
-  padding: 20px;
+.library > header,
+.queue > header
+{
+  display: flex;
+  flex-direction: row;
+  /*align-items: center;*/
+
+  padding: 0;
+  background-color: rgba(19, 23, 27, 0.6);
+  border-top: 1px solid rgba(19, 23, 27, 1);
+  border-bottom: 1px solid rgba(19, 23, 27, 1);
+}
+.library > header > div,
+.queue > header > div
+{
+  /*flex: 0 0 auto;*/
+  flex-grow: 1;
+  justify-content: center;
+  text-align: center;
+  padding: 10px;
+}
+.library > header > div > i,
+.queue > header > div > i
+{
+  font-size: 0.6em;
 }
 .settings {
   position: absolute;
