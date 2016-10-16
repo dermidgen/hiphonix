@@ -1,0 +1,214 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: auto;
+  color: rgba(223, 224, 228, 1);
+  background: rgba(19, 23, 27, 1);
+  font-family: "Roboto", Helvetica, Arial, sans-serif;
+}
+a, i {
+  color: rgba(223, 224, 228, 1);
+  cursor: pointer;
+}
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+.App {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 100%;
+}
+.bgCover {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  /*overflow: auto;*/
+
+  background-image: url(/images/cover.png);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+
+  filter: blur(5px) grayscale(50%);
+  opacity: 0.1;
+  z-index: 0;
+
+}
+header {
+  z-index: 100;
+}
+main {
+  display: flex;
+  flex: 3 1 100%;
+  position: relative;
+  z-index: 100;
+}
+footer {
+  z-index: 100;
+}
+
+.current {
+  position: absolute;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 3 1 100%;
+  min-height: 100%;
+
+  /*margin: 0 20px;*/
+  /*width: 90%;*/
+  /*height: 90%;*/
+  /*background-color: rgba(255, 255, 255, .01);*/
+  /*border: 1px solid rgba(255, 255, 255, .03);*/
+}
+.current > .cover {
+  margin: 0 auto 10px;
+  width: 250px;
+  height: 250px;
+
+  /*background-image: url(/images/cover.png);*/
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  box-shadow: 0 0 15px rgba(0, 0, 0, .5);
+}
+.current > .song {
+  text-align: center;
+  color: rgba(255, 255, 255, .9);
+  margin-bottom: 5px;
+  /*border: 1px solid rgba(255, 255, 255, .03);*/
+}
+.current > .artist {
+  display: none;
+  text-align: center;
+  color: rgba(255, 255, 255, .7);
+  margin-bottom: 5px;
+  /*border: 1px solid rgba(255, 255, 255, .03);*/
+  font-size: 0.7em;
+}
+.current > .album {
+  display: none;
+  text-align: center;
+  color: rgba(255, 255, 255, .7);
+  margin-bottom: 5px;
+  /*border: 1px solid rgba(255, 255, 255, .03);*/
+  font-size: 0.7em;
+}
+
+
+/**/
+
+.playhead {
+  /*position: relative;*/
+  /*height: 30px;*/
+  display: flex;
+  /*align-items: center;*/
+  /*justify-content: center;*/
+  /*text-align: center;*/
+  /*flex-direction: row;*/
+  /*font-size: 0.7em;*/
+  /*display: flex;*/
+  /*align-items: center;*/
+  /*justify-content: center;*/
+}
+.playhead > div {
+  /*flex: 3 1 auto;*/
+  /*height:100%;*/
+  /*display: flex;*/
+  /*align-items: center;*/
+  /*justify-content: center;*/
+}
+.playhead > .position {
+  flex: 0 0 40px;
+  /*background-color: red;*/
+}
+.playhead > .slider {
+  flex: 3 1 auto;
+  /*height:100%;*/
+  /*position: relative;*/
+  /*padding: 0 10px;*/
+  /*background-color: green;*/
+}
+.playhead > .slider > div > div {
+  margin: 0 !important;
+}
+.playhead > .length {
+  flex: 0 0 40px;
+  /*background-color: yellow;*/
+}
+
+/**/
+
+
+.browser {
+  display: flex;
+  flex-direction: column;
+  flex: 3 1 100%;
+  min-height: 100%;
+}
+.browser > header {
+  background-color: rgba(19, 23, 27, 0.6);
+  color: #fff;
+  border-top: 1px solid rgba(19, 23, 27, 1);
+  border-bottom: 1px solid rgba(19, 23, 27, 1);
+}
+.browser > header {
+  display: flex;
+}
+.browser > header > div:first-child {
+  flex: 0 0 auto;
+  text-align: left;
+}
+.browser > header > div {
+  flex: 3 1 auto;
+  padding: 20px;
+  text-align: center;
+}
+.browser > header > div:last-child {
+  flex: 0 0 auto;
+  text-align: right;
+}
+.browser > main {
+  flex: 3 1 100%;
+  position: relative;
+  z-index: 100;
+  padding: 10px;
+}
+.browser > main > .list {
+  width: 100%;
+}
+
+.controls {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: rgba(19, 23, 27, 0.6);
+  color: #fff;
+  z-index: 1000;
+  border-top: 1px solid rgba(19, 23, 27, 1);
+  flex-direction: row;
+  padding: 10px 0;
+}
+.controls > div:first-child {
+  flex: 0 0 100px;
+}
+.controls > div {
+  flex: 3 1 auto;
+  height:100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.controls > div:last-child {
+  flex: 0 0 100px;
+}
+.controls .play,
+.controls .pause {
+  font-size: 3em;
+  margin: 0 10px;
+}

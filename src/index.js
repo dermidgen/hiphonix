@@ -1,10 +1,42 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, browserHistory, Link } from 'react-router'
+// import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import AppBar from 'material-ui/AppBar';
+import IconMenu from 'material-ui/IconMenu';
+import IconButton from 'material-ui/IconButton';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import TextField from 'material-ui/TextField';
+import {List, ListItem} from 'material-ui/List';
+import Subheader from 'material-ui/Subheader';
+import Divider from 'material-ui/Divider';
+import Avatar from 'material-ui/Avatar';
+import FileFolder from 'material-ui/svg-icons/file/folder';
+import PlaylistPlay from 'material-ui/svg-icons/av/playlist-play';
+import ActionInfo from 'material-ui/svg-icons/action/info';
+import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
+import PlayArrow from 'material-ui/svg-icons/av/play-arrow';
+import SongIcon from 'material-ui/svg-icons/image/music-note';
+import Album from 'material-ui/svg-icons/av/album';
+import Slider from 'material-ui/Slider';
+// import { BottomNavigation, BottomNavigationItem } from 'material-ui/BottomNavigation';
+// import Paper from 'material-ui/Paper';
+// import IconLocationOn from 'material-ui/svg-icons/communication/location-on';
+// import FontIcon from 'material-ui/FontIcon';
+// import SwipeableViews from 'react-swipeable-views';
+
+// const recentsIcon = <FontIcon className="material-icons">restore</FontIcon>;
+// const favoritesIcon = <FontIcon className="material-icons">favorite</FontIcon>;
+// const nearbyIcon = <IconLocationOn />;
 
 // import API from './api';
 import Socket from './socket';
-import './index.css';
+import './index2.css';
+
+const injectTapEventPlugin = require("react-tap-event-plugin");
+injectTapEventPlugin();
 
 const socket = new Socket();
 
@@ -35,17 +67,24 @@ class PlayHead extends Component {
       <div className="playhead">
         <div className="position">{ this.state.elapsed }</div>
         <div className="slider">
-          <div className="background">
-            <div className="foreground" style={ { width: `${this.state.position}%` } }>
-              <div className="head"></div>
-            </div>
-          </div>
+          <Slider defaultValue={0} />
         </div>
         <div className="length">{ this.state.total }</div>
       </div>
     )
   }
 }
+
+const muiTheme = getMuiTheme({
+  palette: {
+    canvasColor: 'rgba(19, 23, 27, 1)',
+    primary1Color: 'rgba(223, 224, 228, 1)',
+    textColor: 'rgba(223, 224, 228, 1)',
+  },
+  appBar: {
+    // height: 50,
+  },
+});
 
 class App extends Component {
   constructor(props) {
@@ -68,27 +107,46 @@ class App extends Component {
   componentWillReceiveProps() {
     window.previousLocation = this.props.location
   }
+  select = (index) => this.setState({selectedIndex: index});
   render() {
     return (
-      <div className="App">
-        <div className="player-background" style={{ backgroundImage: (this.state.song.cover) ? `url(${this.state.song.cover})` : `url(images/cover.png)` }}></div>
-        <header>
-          <Link to="/settings">
-            <i className="material-icons">more_vert</i>
-          </Link>
-        </header>
-        <main>
-          {this.props.children}
-          <div className="track">
-            <div className="cover" style={{ backgroundImage: (this.state.song.cover) ? `url(${this.state.song.cover})` : `url(images/cover.png)` }}></div>
-            <div className="title">{this.state.song.title || '[title]'}</div>
-            <div className="album">{this.state.song.album || '[album]'}</div>
-            <div className="artist">{this.state.song.artist || '[artist]'}</div>
-            <PlayHead position={this.state.song.position} />
-          </div>
-        </main>
-        <Controls />
-      </div>
+      <MuiThemeProvider muiTheme={muiTheme}>
+        <div className="App">
+          <div className="bgCover"></div>
+          <header>
+            <AppBar
+              style={{ backgroundColor: 'transparent' }}
+              zDepth={0}
+              showMenuIconButton={false}
+              iconElementRight={
+                <IconMenu
+                  iconButtonElement={
+                    <IconButton>
+                      <MoreVertIcon />
+                    </IconButton>
+                  }
+                />
+              }
+            />
+          </header>
+          <main>
+
+            <div className="current">
+              {/* <Album /> */}
+              <div className="cover" style={{ backgroundImage: 'url(images/cover.png)' }}></div>
+              <div className="song">Song Title</div>
+              <div className="album">Album Title</div>
+              <div className="artist">Artist Name</div>
+              <PlayHead position={this.state.song.position} />
+            </div>
+
+            {this.props.children}
+          </main>
+          <footer>
+            <Controls/>
+          </footer>
+        </div>
+      </MuiThemeProvider>
     );
   }
 }
@@ -131,7 +189,7 @@ class Controls extends Component {
   }
   render() {
     return (
-      <footer>
+      <div className="controls">
         <div>
           <Link to="/library"><i className="material-icons">list</i></Link>
         </div>
@@ -154,7 +212,7 @@ class Controls extends Component {
           <i onClick={this.volume} className="volume material-icons">volume_up</i>
         </div>
 
-      </footer>
+      </div>
     );
   }
 }
@@ -249,50 +307,19 @@ class Search extends Component {
 class Library extends Component {
   constructor(props) {
     super(props);
-    this.browse.bind(this);
-    socket.on('browse', (message) => {
-      this.setState({
-        items: message.data,
-      });
-    });
-  }
-  browse() {
-    let path = document.location.pathname.replace('/library','');
-    path = (path[0] === '/') ? path.substr(1) : '';
-    path = (path) ? path : '/';
-    socket.command('MPD_API_GET_BROWSE',[0,path]);
-  }
-  componentDidMount() {
+
+    // socket.on('browse', (message) => {
+    //   this.setState({
+    //     items: message.data,
+    //   });
+    // });
+
     this.setState({
       items: [],
     });
-    if (socket.state) this.browse();
-    else socket.on('connected', () => {
-      this.browse();
-    });
-  }
-  render() {
-    // Setup paths for navigating up and down a directory tree
-    // TODO: This is a shit implementation; go ahead and optimize as needed
-    let backpath = '';
-    let path = document.location.pathname.replace('/library','');
-    path = (path[0] === '/') ? path.substr(1) : '';
-    path = (path) ? path : '/';
 
-    if (path !== '/') {
-      let parts = path.split('/');
-      if (parts.length > 1) {
-        parts.pop();
-        backpath = '/library/' + parts.join('/');
-      } else if (parts.length === 1) {
-        backpath = '/library';
-      }
-    }
-
-    // Setup our list of items in the library path
-    // TODO: possibly add icon classname to the item
-    let items = (this.state && typeof this.state.items !== undefined) ? this.state.items : [];
-    items = items.map(function(item) {
+    this.items = (this.state && typeof this.state.items !== undefined) ? this.state.items : [];
+    this.items = this.items.map(function(item) {
       if (item.type === 'song') {
         item.name = item.title;
       } else if (item.type === 'directory') {
@@ -302,105 +329,26 @@ class Library extends Component {
       }
       return item;
     });
-    return (
-      <div className="library">
-        <header>
-          <div>
-            <Link to={backpath}>
-              <i className="material-icons">arrow_back</i>
-            </Link>
-          </div>
-          <div>
-            <Link to="/library">
-              <i className="material-icons">library_music</i>
-            </Link>
-          </div>
-          <div>
-            <Link to="/queue">
-              <i className="material-icons">queue</i>
-            </Link>
-          </div>
-          <div>
-            <Link to="/">
-              <i className="material-icons">close</i>
-            </Link>
-          </div>
-        </header>
-        <div>
-          <h4>Library</h4>
-          <strong>Path: {path}</strong>
-          <div><Search/></div>
-          <ul>
-          {
-            items.map((item,index) => {
-              if (item.type === 'directory') return <Link key={index} to={ `/library/${ item.dir }` } onClick={this.browse}>{item.type}: {item.name}</Link>;
-              else return <li key={index}>{item.type}: {item.name}</li>;
-            })
-          }
-          </ul>
-        </div>
-      </div>
-    );
-  }
-}
 
-class Queue extends Component {
-  constructor(props) {
-    super(props);
-    this.queue.bind(this);
-    socket.on('queue', (message) => {
-      this.setState({
-        items: message.data,
-      });
-    });
-  }
-  queue() {
-    socket.command('MPD_API_GET_QUEUE',[0]);
-  }
-  componentDidMount() {
-    this.setState({
-      items: [],
-    });
-    if (socket.state) this.queue();
-    else socket.on('connected', () => {
-      this.queue();
-    });
+    // {
+    //   this.items.map((item,index) => {
+    //     if (item.type === 'directory') return <Link key={index} to={ `/library/${ item.dir }` } onClick={this.browse}>{item.type}: {item.name}</Link>;
+    //     else return <li key={index}>{item.type}: {item.name}</li>;
+    //   })
+    // }
+
   }
   render() {
-
-    let backpath = '';
-    let path = document.location.pathname.replace('/library','');
-    path = (path[0] === '/') ? path.substr(1) : '';
-    path = (path) ? path : '/';
-
-    if (path !== '/') {
-      let parts = path.split('/');
-      if (parts.length > 1) {
-        parts.pop();
-        backpath = '/library/' + parts.join('/');
-      } else if (parts.length === 1) {
-        backpath = '/library';
-      }
-    }
-
-    let items = (this.state && typeof this.state.items !== undefined) ? this.state.items : [];
     return (
-      <div className="queue">
+      <article className="browser">
         <header>
           <div>
-            <Link to={backpath}>
+            <Link to={this.props.history.goBack}>
               <i className="material-icons">arrow_back</i>
             </Link>
           </div>
           <div>
-            <Link to="/library">
-              <i className="material-icons">library_music</i>
-            </Link>
-          </div>
-          <div>
-            <Link to="/queue">
-              <i className="material-icons">queue</i>
-            </Link>
+            { this.props.title }
           </div>
           <div>
             <Link to="/">
@@ -408,28 +356,39 @@ class Queue extends Component {
             </Link>
           </div>
         </header>
-        <div>
-          <h4>Queue</h4>
-          <ul>
-            {
-              items.map((item,index) => {
-                return <li key={index}>{item.title}</li>;
-              })
-            }
-          </ul>
-        </div>
-      </div>
+        <main>
+          <List className="list">
+            <Subheader>{this.props.location.pathname}</Subheader>
+            <ListItem
+              leftIcon={<FileFolder />}
+              rightIcon={<ChevronRight />}
+              primaryText="A folder"
+              secondaryText="20 Items"
+            />
+            <ListItem
+              leftIcon={<PlaylistPlay />}
+              rightIcon={<ChevronRight />}
+              primaryText="My Favorite Playlist"
+              secondaryText="100 Items"
+            />
+            <ListItem
+              leftIcon={<SongIcon />}
+              rightIcon={<PlayArrow />}
+              primaryText="A song item"
+              secondaryText="2:40 Seconds"
+            />
+          </List>
+        </main>
+      </article>
     );
   }
 }
-
 
 ReactDOM.render(
   <Router history={browserHistory}>
     <Route path="/" component={App}>
       <Route path="/settings" component={Settings}/>
-      <Route path="/library*" component={Library}/>
-      <Route path="/queue*" component={Queue}/>
+      <Route path="/*" component={Library}/>
     </Route>
   </Router>,
   document.getElementById('root')
