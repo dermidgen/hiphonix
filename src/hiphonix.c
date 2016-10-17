@@ -85,7 +85,7 @@ gpointer thread(gpointer data)
     ctx = g_main_context_default();
 
     loop = g_main_loop_new(ctx, FALSE);
-    g_timeout_add_seconds(1, main_callback, loop);
+    g_timeout_add(750, main_callback, loop);
     g_idle_add_full(G_PRIORITY_DEFAULT, serve, loop, byebye);
 
     g_main_loop_run(loop);
