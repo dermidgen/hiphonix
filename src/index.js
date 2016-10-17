@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import moment from 'moment';
 import { Router, Route, browserHistory, Link } from 'react-router'
 // import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -8,14 +9,14 @@ import AppBar from 'material-ui/AppBar';
 import IconMenu from 'material-ui/IconMenu';
 import IconButton from 'material-ui/IconButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import TextField from 'material-ui/TextField';
+// import TextField from 'material-ui/TextField';
 import {List, ListItem} from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
-import Divider from 'material-ui/Divider';
-import Avatar from 'material-ui/Avatar';
+// import Divider from 'material-ui/Divider';
+// import Avatar from 'material-ui/Avatar';
 import FileFolder from 'material-ui/svg-icons/file/folder';
 import PlaylistPlay from 'material-ui/svg-icons/av/playlist-play';
-import ActionInfo from 'material-ui/svg-icons/action/info';
+// import ActionInfo from 'material-ui/svg-icons/action/info';
 import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
 import PlayArrow from 'material-ui/svg-icons/av/play-arrow';
 import SongIcon from 'material-ui/svg-icons/image/music-note';
@@ -49,14 +50,16 @@ class PlayHead extends Component {
       total: "00:00",
     };
     socket.on('state', (message) => {
-      let position = Math.round((message.data.elapsedTime/message.data.totalTime)*100);
+      let position = parseFloat((Math.round((message.data.elapsedTime/message.data.totalTime)*100)/100).toFixed(2));
+      // let position = (moment.duration(message.data.elapsedTime, 'seconds')/10000);
+      // console.log(`pos: ${pos}`);
       let elapsed = new Date(null);
       let total = new Date(null)
       elapsed.setSeconds(message.data.elapsedTime);
       total.setSeconds(message.data.totalTime);
-
+      console.log(`position: ${position}`);
       this.setState({
-        position: position,
+        position,
         elapsed: elapsed.toISOString().substr(14, 5),
         total: total.toISOString().substr(14, 5),
       });
@@ -67,7 +70,7 @@ class PlayHead extends Component {
       <div className="playhead">
         <div className="position">{ this.state.elapsed }</div>
         <div className="slider">
-          <Slider defaultValue={0} />
+          <Slider defaultValue={this.state.position} />
         </div>
         <div className="length">{ this.state.total }</div>
       </div>
@@ -85,6 +88,31 @@ const muiTheme = getMuiTheme({
     // height: 50,
   },
 });
+
+class Cover extends Component {
+  render() {
+    return (
+      <div className="cover">
+        {(() => {
+          if (this.props.image) {
+            return (
+              <div style={{ backgroundImage: `url(${this.props.image})` }}></div>
+            );
+          } else {
+            return (
+              <SongIcon style={{
+                  width: '100%',
+                  height: '100%',
+                  color: '#000',
+                  opacity: 0.25
+              }} />
+            );
+          }
+        })()}
+      </div>
+    )
+  }
+}
 
 class App extends Component {
   constructor(props) {
@@ -104,10 +132,6 @@ class App extends Component {
       });
     });
   }
-  componentWillReceiveProps() {
-    window.previousLocation = this.props.location
-  }
-  select = (index) => this.setState({selectedIndex: index});
   render() {
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
@@ -132,11 +156,8 @@ class App extends Component {
           <main>
 
             <div className="current">
-              {/* <Album /> */}
-              <div className="cover" style={{ backgroundImage: 'url(images/cover.png)' }}></div>
+              <Cover image="/images/cover.png" />
               <div className="song">Song Title</div>
-              <div className="album">Album Title</div>
-              <div className="artist">Artist Name</div>
               <PlayHead position={this.state.song.position} />
             </div>
 
@@ -156,7 +177,8 @@ class Controls extends Component {
     super(props)
     this.state = {
       playback: {},
-      song: {}
+      song: {},
+      showVolume: false
     };
     socket.on('state', message => {
       // console.log('STATE', message.data);
@@ -185,7 +207,10 @@ class Controls extends Component {
     socket.command('MPD_API_SET_PAUSE',[]);
   }
   volume() {
-    socket.command('MPD_API_SET_VOLUME',[]);
+    this.setState({
+      showVolume: !this.state.showVolume
+    });
+    // socket.command('MPD_API_SET_VOLUME',[]);
   }
   render() {
     return (
@@ -209,9 +234,16 @@ class Controls extends Component {
           <i onClick={this.next} className="next material-icons">skip_next</i>
         </div>
         <div>
-          <i onClick={this.volume} className="volume material-icons">volume_up</i>
+          <i onClick={this.volume.bind(this)} className="volume material-icons">volume_up</i>
+          <div className="volumeSlider" style={{ display: (this.state.showVolume ? 'block' : 'none') }}>
+            <Slider
+              defaultValue={0}
+              axis="y"
+              style={{height: 100}}
+              onDragStop={this.volume.bind(this)}
+            />
+          </div>
         </div>
-
       </div>
     );
   }

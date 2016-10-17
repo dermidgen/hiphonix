@@ -37,6 +37,7 @@ a, i {
   z-index: 0;
 
 }
+
 header {
   z-index: 100;
 }
@@ -58,8 +59,8 @@ footer {
   flex: 3 1 100%;
   min-height: 100%;
 
-  /*margin: 0 20px;*/
-  /*width: 90%;*/
+  margin: 0 20px;
+  width: 90%;
   /*height: 90%;*/
   /*background-color: rgba(255, 255, 255, .01);*/
   /*border: 1px solid rgba(255, 255, 255, .03);*/
@@ -68,12 +69,20 @@ footer {
   margin: 0 auto 10px;
   width: 250px;
   height: 250px;
-
+  box-shadow: 0 0 15px rgba(0, 0, 0, .5);
+  position: relative;
+}
+.current > .cover > div,
+.current > .cover > svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   /*background-image: url(/images/cover.png);*/
   background-position: center center;
   background-repeat: no-repeat;
   background-size: auto 100%;
-  box-shadow: 0 0 15px rgba(0, 0, 0, .5);
 }
 .current > .song {
   text-align: center;
@@ -109,7 +118,7 @@ footer {
   /*justify-content: center;*/
   /*text-align: center;*/
   /*flex-direction: row;*/
-  /*font-size: 0.7em;*/
+  font-size: 0.8em;
   /*display: flex;*/
   /*align-items: center;*/
   /*justify-content: center;*/
@@ -120,16 +129,20 @@ footer {
   /*display: flex;*/
   /*align-items: center;*/
   /*justify-content: center;*/
+  line-height: 1.6em;
+  color: rgba(255, 255, 255, .5);
 }
 .playhead > .position {
   flex: 0 0 40px;
   /*background-color: red;*/
+  text-align: right;
+
 }
 .playhead > .slider {
   flex: 3 1 auto;
   /*height:100%;*/
   /*position: relative;*/
-  /*padding: 0 10px;*/
+  padding: 0 15px;
   /*background-color: green;*/
 }
 .playhead > .slider > div > div {
@@ -211,4 +224,21 @@ footer {
 .controls .pause {
   font-size: 3em;
   margin: 0 10px;
+}
+.volumeSlider {
+  position: absolute;
+  /*width: 50px;*/
+  /*height: 200px;*/
+  padding: 15px;
+  bottom: 68px;
+  right: 25px;
+  background-color: rgba(19, 23, 27, 0.6);
+  border-top: 1px solid rgba(19, 23, 27, 1);
+  border-right: 1px solid rgba(19, 23, 27, 1);
+  border-left: 1px solid rgba(19, 23, 27, 1);
+  border-radius: 10px 10px 0 0;
+  z-index: 200;
+}
+.volumeSlider > div > div {
+  margin: 0 !important;
 }
