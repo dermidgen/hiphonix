@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import moment from 'moment';
+// import moment from 'moment';
 import { Router, Route, browserHistory, Link } from 'react-router'
 // import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -20,7 +20,7 @@ import PlaylistPlay from 'material-ui/svg-icons/av/playlist-play';
 import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
 import PlayArrow from 'material-ui/svg-icons/av/play-arrow';
 import SongIcon from 'material-ui/svg-icons/image/music-note';
-import Album from 'material-ui/svg-icons/av/album';
+// import Album from 'material-ui/svg-icons/av/album';
 import Slider from 'material-ui/Slider';
 // import { BottomNavigation, BottomNavigationItem } from 'material-ui/BottomNavigation';
 // import Paper from 'material-ui/Paper';
@@ -57,7 +57,7 @@ class PlayHead extends Component {
       let total = new Date(null)
       elapsed.setSeconds(message.data.elapsedTime);
       total.setSeconds(message.data.totalTime);
-      console.log(`position: ${position}`);
+      // console.log(`position: ${position}`);
       this.setState({
         position,
         elapsed: elapsed.toISOString().substr(14, 5),
@@ -186,13 +186,11 @@ class Controls extends Component {
         playback: message.data
       });
     });
-    this.browse.bind(this);
+    this.prev.bind(this);
     this.play.bind(this);
+    this.next.bind(this);
     this.pause.bind(this);
     this.volume.bind(this);
-  }
-  browse() {
-    socket.command('MPD_API_GET_BROWSE',[]);
   }
   prev() {
     socket.command('MPD_API_SET_PREV',[]);
@@ -219,19 +217,19 @@ class Controls extends Component {
           <Link to="/library"><i className="material-icons">list</i></Link>
         </div>
         <div>
-          <i onClick={this.prev} className="prev material-icons">skip_previous</i>
+          <i onClick={this.prev.bind(this)} className="prev material-icons">skip_previous</i>
           {(() => {
             if (this.state.playback.state === 2) {
               return (
-                <i onClick={this.pause} className="play material-icons">pause</i>
+                <i onClick={this.pause.bind(this)} className="play material-icons">pause</i>
               );
             } else {
               return (
-                <i onClick={this.play} className="pause material-icons">play_arrow</i>
+                <i onClick={this.play.bind(this)} className="pause material-icons">play_arrow</i>
               );
             }
           })()}
-          <i onClick={this.next} className="next material-icons">skip_next</i>
+          <i onClick={this.next.bind(this)} className="next material-icons">skip_next</i>
         </div>
         <div>
           <i onClick={this.volume.bind(this)} className="volume material-icons">volume_up</i>
@@ -288,94 +286,33 @@ class Settings extends Component {
   }
 }
 
-class Search extends Component {
-  constructor(props) {
-    super(props);
-    this.search.bind(this);
-    socket.on('search', (message) => {
-      this.setState({
-        items: message.data,
-      });
-    });
-  }
-  search() {
-    console.log('SEARCH');
-    socket.command('MPD_API_SEARCH',[]);
-  }
-  componentDidMount() {
-    this.setState({
-      items: [],
-    });
-  }
-  render() {
-    // Setup our list of items in the library path
-    // TODO: possibly add icon classname to the item
-    let items = (this.state && typeof this.state.items !== undefined) ? this.state.items : [];
-    items = items.map(function(item) {
-      if (item.type === 'song') {
-        item.name = item.title;
-      } else if (item.type === 'directory') {
-        item.name = item.dir;
-      } else if (item.type === 'playlist') {
-        item.name = item.plist;
-      }
-      return item;
-    });
-    return (
-      <div className="search">
-        <input type="text" id="query"/> <button onClick={this.search}>Search</button>
-        <div>Results:</div>
-        {
-          items.map((item,index) => {
-            if (item.type === 'directory') return <Link key={index} to={ `/library/${ item.dir }` }>{item.type}: {item.name}</Link>;
-            else return <li key={index}>{item.type}: {item.name}</li>;
-          })
-        }
-      </div>
-    );
-  }
-}
-
 class Library extends Component {
   constructor(props) {
     super(props);
-
-    // socket.on('browse', (message) => {
-    //   this.setState({
-    //     items: message.data,
-    //   });
-    // });
-
-    this.setState({
-      items: [],
-    });
-
-    this.items = (this.state && typeof this.state.items !== undefined) ? this.state.items : [];
-    this.items = this.items.map(function(item) {
-      if (item.type === 'song') {
-        item.name = item.title;
-      } else if (item.type === 'directory') {
-        item.name = item.dir;
-      } else if (item.type === 'playlist') {
-        item.name = item.plist;
-      }
-      return item;
-    });
-
-    // {
-    //   this.items.map((item,index) => {
-    //     if (item.type === 'directory') return <Link key={index} to={ `/library/${ item.dir }` } onClick={this.browse}>{item.type}: {item.name}</Link>;
-    //     else return <li key={index}>{item.type}: {item.name}</li>;
-    //   })
-    // }
-
+    this.state = {
+      items: []
+    }
+    const items = (message) => {
+      console.log(`message received: %o`, message.data);
+      this.setState({
+        items: message.data || [],
+      });
+    }
+    socket.on('browse', items);
+    socket.on('search', items);
+  }
+  componentWillMount() {
+    socket.command('MPD_API_GET_BROWSE',[]);
+  }
+  search() {
+    socket.command('MPD_API_SEARCH',[]);
   }
   render() {
     return (
       <article className="browser">
         <header>
           <div>
-            <Link to={this.props.history.goBack}>
+            <Link onClick={this.props.history.goBack}>
               <i className="material-icons">arrow_back</i>
             </Link>
           </div>
@@ -391,24 +328,51 @@ class Library extends Component {
         <main>
           <List className="list">
             <Subheader>{this.props.location.pathname}</Subheader>
-            <ListItem
-              leftIcon={<FileFolder />}
-              rightIcon={<ChevronRight />}
-              primaryText="A folder"
-              secondaryText="20 Items"
-            />
-            <ListItem
-              leftIcon={<PlaylistPlay />}
-              rightIcon={<ChevronRight />}
-              primaryText="My Favorite Playlist"
-              secondaryText="100 Items"
-            />
-            <ListItem
-              leftIcon={<SongIcon />}
-              rightIcon={<PlayArrow />}
-              primaryText="A song item"
-              secondaryText="2:40 Seconds"
-            />
+            {this.state.items.map((item,index) => {
+              let linkTo = this.props.location.pathname;
+              let leftIcon = <SongIcon />;
+              let rightIcon = <PlayArrow />;
+              let primaryText = 'unrecognized';
+              let secondaryText = 'unrecognized';
+
+              if (item.type === 'song') {
+                linkTo = `${linkTo}/${item.dir}`;
+                leftIcon = <SongIcon />;
+                rightIcon = <PlayArrow />;
+                primaryText = item.title;
+                secondaryText = item.duration;
+              }
+
+              if (item.type === 'directory') {
+                linkTo = `${linkTo}/${item.dir}`;
+                leftIcon = <FileFolder />;
+                rightIcon = <ChevronRight />;
+                primaryText = item.dir;
+                secondaryText = "";
+              }
+
+              if (item.type === 'playlist') {
+                linkTo = `${linkTo}/${item.plist}`;
+                leftIcon = <PlaylistPlay />;
+                rightIcon = <ChevronRight />;
+                primaryText = item.plist;
+                secondaryText = "";
+              }
+
+              return (
+                <Link
+                  to={linkTo}
+                  key={index}
+                  >
+                  <ListItem
+                    leftIcon={leftIcon}
+                    rightIcon={rightIcon}
+                    primaryText={primaryText}
+                    secondaryText={secondaryText}
+                  />
+                </Link>
+              )
+            })}
           </List>
         </main>
       </article>
