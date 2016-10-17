@@ -1,43 +1,35 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-// import moment from 'moment';
 import { Router, Route, browserHistory, Link } from 'react-router'
-// import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import AppBar from 'material-ui/AppBar';
 import IconMenu from 'material-ui/IconMenu';
 import IconButton from 'material-ui/IconButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-// import TextField from 'material-ui/TextField';
 import {List, ListItem} from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
-// import Divider from 'material-ui/Divider';
-// import Avatar from 'material-ui/Avatar';
 import FileFolder from 'material-ui/svg-icons/file/folder';
 import PlaylistPlay from 'material-ui/svg-icons/av/playlist-play';
-// import ActionInfo from 'material-ui/svg-icons/action/info';
 import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
 import PlayArrow from 'material-ui/svg-icons/av/play-arrow';
 import SongIcon from 'material-ui/svg-icons/image/music-note';
-// import Album from 'material-ui/svg-icons/av/album';
 import Slider from 'material-ui/Slider';
-// import { BottomNavigation, BottomNavigationItem } from 'material-ui/BottomNavigation';
-// import Paper from 'material-ui/Paper';
-// import IconLocationOn from 'material-ui/svg-icons/communication/location-on';
-// import FontIcon from 'material-ui/FontIcon';
-// import SwipeableViews from 'react-swipeable-views';
-
-// const recentsIcon = <FontIcon className="material-icons">restore</FontIcon>;
-// const favoritesIcon = <FontIcon className="material-icons">favorite</FontIcon>;
-// const nearbyIcon = <IconLocationOn />;
-
-// import API from './api';
+// import TextField from 'material-ui/TextField';
+// import moment from 'moment';
 import Socket from './socket';
 import './index.css';
 
 const injectTapEventPlugin = require("react-tap-event-plugin");
 injectTapEventPlugin();
+
+const muiTheme = getMuiTheme({
+  palette: {
+    canvasColor: 'rgba(19, 23, 27, 1)',
+    primary1Color: 'rgba(223, 224, 228, 1)',
+    textColor: 'rgba(223, 224, 228, 1)',
+  }
+});
 
 const socket = new Socket();
 
@@ -77,17 +69,6 @@ class PlayHead extends Component {
     )
   }
 }
-
-const muiTheme = getMuiTheme({
-  palette: {
-    canvasColor: 'rgba(19, 23, 27, 1)',
-    primary1Color: 'rgba(223, 224, 228, 1)',
-    textColor: 'rgba(223, 224, 228, 1)',
-  },
-  appBar: {
-    // height: 50,
-  },
-});
 
 class Cover extends Component {
   render() {
@@ -186,11 +167,12 @@ class Controls extends Component {
         playback: message.data
       });
     });
-    this.prev.bind(this);
-    this.play.bind(this);
-    this.next.bind(this);
-    this.pause.bind(this);
-    this.volume.bind(this);
+    this.prev = this.prev.bind(this);
+    this.play = this.play.bind(this);
+    this.next = this.next.bind(this);
+    this.pause = this.pause.bind(this);
+    this.volume = this.volume.bind(this);
+    this.toggleVolume = this.toggleVolume.bind(this);
   }
   prev() {
     socket.command('MPD_API_SET_PREV',[]);
@@ -204,11 +186,18 @@ class Controls extends Component {
   pause() {
     socket.command('MPD_API_SET_PAUSE',[]);
   }
-  volume() {
+  toggleVolume() {
     this.setState({
       showVolume: !this.state.showVolume
     });
-    // socket.command('MPD_API_SET_VOLUME',[]);
+  }
+  volume(event, value) {
+    if (value) {
+      this.setState({
+        volume: value
+      });
+      // socket.command('MPD_API_SET_VOLUME',[value]);
+    }
   }
   render() {
     return (
@@ -217,28 +206,32 @@ class Controls extends Component {
           <Link to="/library"><i className="material-icons">list</i></Link>
         </div>
         <div>
-          <i onClick={this.prev.bind(this)} className="prev material-icons">skip_previous</i>
+          <i onClick={this.prev} className="prev material-icons">skip_previous</i>
           {(() => {
             if (this.state.playback.state === 2) {
               return (
-                <i onClick={this.pause.bind(this)} className="play material-icons">pause</i>
+                <i onClick={this.pause} className="play material-icons">pause</i>
               );
             } else {
               return (
-                <i onClick={this.play.bind(this)} className="pause material-icons">play_arrow</i>
+                <i onClick={this.play} className="pause material-icons">play_arrow</i>
               );
             }
           })()}
-          <i onClick={this.next.bind(this)} className="next material-icons">skip_next</i>
+          <i onClick={this.next} className="next material-icons">skip_next</i>
         </div>
         <div>
-          <i onClick={this.volume.bind(this)} className="volume material-icons">volume_up</i>
+          <i onClick={this.toggleVolume} className="volume material-icons">volume_up</i>
           <div className="volumeSlider" style={{ display: (this.state.showVolume ? 'block' : 'none') }}>
             <Slider
-              defaultValue={0}
+              defaultValue={50}
               axis="y"
               style={{height: 100}}
-              onDragStop={this.volume.bind(this)}
+              min={0}
+              max={100}
+              value={this.state.volume}
+              onChange={this.volume}
+              onDragStop={this.toggleVolume}
             />
           </div>
         </div>
