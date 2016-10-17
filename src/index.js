@@ -41,7 +41,6 @@ class PlayHead extends Component {
       totalTime: null
     };
     socket.on('state', state => {
-      console.log('PlayHead received state: %o', state);
       this.setState(state);
     });
     this.position = this.position.bind(this);
@@ -102,15 +101,13 @@ class App extends Component {
       playback: {},
       song: {}
     };
-    socket.on('state', message => {
+    socket.on('state', state => {
       this.setState({
-        playback: message.data
+        playback: state
       });
     });
-    socket.on('song_change', message => {
-      this.setState({
-        song: message.data
-      });
+    socket.on('song_change', song => {
+      this.setState({ song });
     });
   }
   render() {
@@ -161,10 +158,10 @@ class Controls extends Component {
       song: {},
       showVolume: false
     };
-    socket.on('state', message => {
+    socket.on('state', state => {
       // console.log('STATE', message.data);
       this.setState({
-        playback: message.data
+        playback: state
       });
     });
     this.prev = this.prev.bind(this);
@@ -201,7 +198,7 @@ class Controls extends Component {
       this.setState({
         volume: value
       });
-      // socket.command('MPD_API_SET_VOLUME',[value]);
+      socket.command('MPD_API_SET_VOLUME',[value]);
     }
   }
   render() {
@@ -249,10 +246,10 @@ class Settings extends Component {
   constructor(props) {
     super(props);
     this.scan.bind(this);
-    socket.on('networks', (message) => {
-      console.log('NETWORKS', message.data);
+    socket.on('networks', message => {
+      console.log('NETWORKS', message);
       this.setState({
-        networks: message.data,
+        networks: message,
       });
     });
   }
@@ -290,11 +287,9 @@ class Library extends Component {
     this.state = {
       items: []
     }
-    const items = (message) => {
-      console.log(`message received: %o`, message.data);
-      this.setState({
-        items: message.data || [],
-      });
+    const items = (items = []) => {
+      console.log(`items received: %o`, items);
+      this.setState({ items });
     }
     socket.on('browse', items);
     socket.on('search', items);
