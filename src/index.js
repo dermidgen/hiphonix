@@ -16,7 +16,7 @@ import PlayArrow from 'material-ui/svg-icons/av/play-arrow';
 import SongIcon from 'material-ui/svg-icons/image/music-note';
 import Slider from 'material-ui/Slider';
 // import TextField from 'material-ui/TextField';
-// import moment from 'moment';
+import moment from 'moment';
 import Socket from './socket';
 import './index.css';
 
@@ -34,37 +34,37 @@ const muiTheme = getMuiTheme({
 const socket = new Socket();
 
 class PlayHead extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
-      position: 0,
-      elapsed: "00:00",
-      total: "00:00",
+      elapsedTime: 0,
+      totalTime: null
     };
-    socket.on('state', (message) => {
-      let position = parseFloat((Math.round((message.data.elapsedTime/message.data.totalTime)*100)/100).toFixed(2));
-      // let position = (moment.duration(message.data.elapsedTime, 'seconds')/10000);
-      // console.log(`pos: ${pos}`);
-      let elapsed = new Date(null);
-      let total = new Date(null)
-      elapsed.setSeconds(message.data.elapsedTime);
-      total.setSeconds(message.data.totalTime);
-      // console.log(`position: ${position}`);
-      this.setState({
-        position,
-        elapsed: elapsed.toISOString().substr(14, 5),
-        total: total.toISOString().substr(14, 5),
-      });
+    socket.on('state', state => {
+      console.log('PlayHead received state: %o', state);
+      this.setState(state);
     });
+    this.position = this.position.bind(this);
+  }
+  position(event, value) {
+    if (value) {
+      console.warn('PlayHead.position unimplemented');
+      // set position here somehow
+    }
   }
   render() {
     return (
       <div className="playhead">
-        <div className="position">{ this.state.elapsed }</div>
+        <div className="position">{ moment(this.state.elapsedTime*1000).format('m:ss') }</div>
         <div className="slider">
-          <Slider defaultValue={this.state.position} />
+          <Slider
+            min={0}
+            max={this.state.totalTime || 1}
+            value={this.state.elapsedTime}
+            onChange={this.position}
+            />
         </div>
-        <div className="length">{ this.state.total }</div>
+        <div className="length">{ moment(this.state.totalTime*1000).format('m:ss') }</div>
       </div>
     )
   }
@@ -175,23 +175,28 @@ class Controls extends Component {
     this.toggleVolume = this.toggleVolume.bind(this);
   }
   prev() {
+    console.log('Controler.prev()');
     socket.command('MPD_API_SET_PREV',[]);
   }
   play() {
+    console.log('Controler.play()');
     socket.command('MPD_API_SET_PLAY',[]);
   }
   next() {
+    console.log('Controler.next()');
     socket.command('MPD_API_SET_NEXT',[]);
   }
   pause() {
+    console.log('Controler.pause()');
     socket.command('MPD_API_SET_PAUSE',[]);
   }
   toggleVolume() {
-    this.setState({
-      showVolume: !this.state.showVolume
-    });
+    const showVolume = !this.state.showVolume;
+    console.log('Controler.toggleVolume(): %o', showVolume);
+    this.setState({ showVolume });
   }
   volume(event, value) {
+    console.log('Controler.volume(event: %o, value: %o)', event, value);
     if (value) {
       this.setState({
         volume: value
@@ -293,12 +298,24 @@ class Library extends Component {
     }
     socket.on('browse', items);
     socket.on('search', items);
+    socket.on('queue', items);
   }
   componentWillMount() {
-    socket.command('MPD_API_GET_BROWSE',[]);
-  }
-  search() {
-    socket.command('MPD_API_SEARCH',[]);
+    let path = (this.props.params.splat || '/').split('/');
+    switch (path[0]) {
+      case 'library':
+        path = (path.shift()).join('/');
+        socket.command('MPD_API_GET_BROWSE',[0, path]);
+        break;
+      case 'queue':
+        socket.command('MPD_API_GET_QUEUE',[]);
+        break;
+      case 'search':
+        socket.command('MPD_API_SEARCH',[]);
+        break;
+      default:
+
+    }
   }
   render() {
     return (

@@ -7,44 +7,44 @@ const host = 'ws://' + hostname + ':' + port + '/ws';
 class Socket extends EventEmitter {
   constructor() {
     super();
-    this.state = 0;
     this.ws = null;
     this.open();
   }
 
   close() {
-    this.state = 0;
+    console.log('Socket.close()');
     if (this.ws) this.ws.close();
   }
 
   open() {
+    console.log('Socket.open()');
     this.ws = new WebSocket(host);
     this.ws.onmessage = message => {
       // Apparently the server sends empty frames
       if (!message.data) return;
 
       try {
-        var data = JSON.parse(message.data);
-        if (data.type !== 'state') {
-          console.groupCollapsed('[Socket::message]: %o', data.type, data.data);
-          console.log(message);
+        const logState = false;
+        const payload = JSON.parse(message.data);
+        if (logState) {
+          console.groupCollapsed('Socket::message');
+          console.log('message: %o', message);
+          console.log('payload: %o', payload);
           console.groupEnd();
         }
-        this.emit(data.type, data);
+        this.emit(payload.type, payload.data);
       } catch(error) {
-        console.error('[Socket::message]: %o, %o', error, message);
+        // console.trace(error);
       }
     };
 
     this.ws.onopen = () => {
-      console.info('[Socket::open]');
-      this.state = 1;
+      console.log('Socket::open');
       this.emit('connected');
     };
 
     this.ws.onclose = state => {
-      console.info('[Socket::close]');
-      this.state = 0;
+      console.log('Socket::close');
       this.emit('disconnected', state);
       setTimeout(() => {
         this.open();
@@ -52,14 +52,14 @@ class Socket extends EventEmitter {
     };
 
     this.ws.onerror = error => {
-      console.error('[Socket::error]: %o', error);
-      this.state = 0;
+      console.error('Socket::error: %o', error);
       this.emit('error', error);
     };
 
   }
 
   command(cmd, params) {
+    console.log('Socket.command(cmd: %o, params: %o)', cmd, params);
     const message = ([cmd].concat(params)).join(',');
     this.ws.send(message);
   }
