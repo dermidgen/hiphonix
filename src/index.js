@@ -32,6 +32,7 @@ const muiTheme = getMuiTheme({
 });
 
 const socket = new Socket();
+window.socket = socket;
 
 class PlayHead extends Component {
   constructor() {
