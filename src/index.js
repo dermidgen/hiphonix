@@ -60,7 +60,6 @@ class PlayHead extends Component {
             min={0}
             max={this.state.totalTime || 1}
             value={this.state.elapsedTime}
-            onChange={this.position}
             />
         </div>
         <div className="length">{ moment(this.state.totalTime*1000).format('m:ss') }</div>
