@@ -8,7 +8,6 @@ import IconMenu from 'material-ui/IconMenu';
 import IconButton from 'material-ui/IconButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import {List, ListItem} from 'material-ui/List';
-import Subheader from 'material-ui/Subheader';
 import FileFolder from 'material-ui/svg-icons/file/folder';
 import PlaylistPlay from 'material-ui/svg-icons/av/playlist-play';
 import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
@@ -285,23 +284,56 @@ class Library extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: []
+      items: [],
+      title: null
     }
     const items = (items = []) => {
-      console.log(`items received: %o`, items);
-      this.setState({ items });
+      // console.log(`items received: %o`, items);
+      const sticky = [];
+      if (this.props.params.splat !== 'queue') {
+        sticky.push({ type: 'directory', dir: 'queue' })
+      }
+      this.setState({
+        items: sticky.concat(items),
+        title: this.title()
+      });
     }
     socket.on('browse', items);
     socket.on('search', items);
     socket.on('queue', items);
+    this.title = this.title.bind(this);
+  }
+  title() {
+    console.group('Library.title()');
+    let parts = null;
+    let title = null;
+    try {
+      parts = this.props.params.splat.split('/');
+      title = parts[0] || 'library';
+    } catch (e) {
+      console.error(e);
+    }
+    console.log('splat: %o', this.props.params.splat);
+    console.log('parts: %o', parts);
+    console.log('title: %o', title);
+    console.groupEnd();
+    return title;
   }
   componentWillMount() {
+    this.fetch();
+  }
+  componentDidUpdate(props) {
+    if (props.params.splat !== this.props.params.splat) {
+      // console.log(`this.props.params.splat: ${this.props.params.splat}`);
+      this.fetch();
+    }
+  }
+  fetch() {
+    // console.log('Library.fetch()');
+    // console.log('splat: %o', this.props.params.splat);
     let path = (this.props.params.splat || '/').split('/');
+    // console.log('path: %o', path);
     switch (path[0]) {
-      case 'library':
-        path = (path.shift()).join('/');
-        socket.command('MPD_API_GET_BROWSE',[0, path]);
-        break;
       case 'queue':
         socket.command('MPD_API_GET_QUEUE',[]);
         break;
@@ -309,7 +341,9 @@ class Library extends Component {
         socket.command('MPD_API_SEARCH',[]);
         break;
       default:
-
+        path.shift();
+        path = path.join('/');
+        socket.command('MPD_API_GET_BROWSE',[0, path]);
     }
   }
   render() {
@@ -322,7 +356,7 @@ class Library extends Component {
             </Link>
           </div>
           <div>
-            { this.props.title }
+            {this.state.title}
           </div>
           <div>
             <Link to="/">
@@ -332,49 +366,32 @@ class Library extends Component {
         </header>
         <main>
           <List className="list">
-            <Subheader>{this.props.location.pathname}</Subheader>
             {this.state.items.map((item,index) => {
-              let linkTo = this.props.location.pathname;
-              let leftIcon = <SongIcon />;
-              let rightIcon = <PlayArrow />;
-              let primaryText = 'unrecognized';
-              let secondaryText = 'unrecognized';
+              let linkTo = item.dir;
+              const props = {};
 
               if (item.type === 'song') {
-                linkTo = `${linkTo}/${item.dir}`;
-                leftIcon = <SongIcon />;
-                rightIcon = <PlayArrow />;
-                primaryText = item.title;
-                secondaryText = item.duration;
+                props.leftIcon = <SongIcon />;
+                props.rightIcon = <PlayArrow />;
+                props.primaryText = item.title;
               }
 
               if (item.type === 'directory') {
-                linkTo = `${linkTo}/${item.dir}`;
-                leftIcon = <FileFolder />;
-                rightIcon = <ChevronRight />;
-                primaryText = item.dir;
-                secondaryText = "";
+                props.leftIcon = <FileFolder />;
+                props.rightIcon = <ChevronRight />;
+                props.primaryText = item.dir;
               }
 
               if (item.type === 'playlist') {
-                linkTo = `${linkTo}/${item.plist}`;
-                leftIcon = <PlaylistPlay />;
-                rightIcon = <ChevronRight />;
-                primaryText = item.plist;
-                secondaryText = "";
+                linkTo = item.plist;
+                props.leftIcon = <PlaylistPlay />;
+                props.rightIcon = <ChevronRight />;
+                props.primaryText = item.plist;
               }
-
+              // console.log(props);
               return (
-                <Link
-                  to={linkTo}
-                  key={index}
-                  >
-                  <ListItem
-                    leftIcon={leftIcon}
-                    rightIcon={rightIcon}
-                    primaryText={primaryText}
-                    secondaryText={secondaryText}
-                  />
+                <Link to={linkTo} key={index}>
+                  <ListItem {...props}/>
                 </Link>
               )
             })}
