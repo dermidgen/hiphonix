@@ -34,7 +34,7 @@ import Slider from 'material-ui/Slider';
 
 // import API from './api';
 import Socket from './socket';
-import './index2.css';
+import './index.css';
 
 const injectTapEventPlugin = require("react-tap-event-plugin");
 injectTapEventPlugin();
