@@ -2,10 +2,10 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: "Roboto", Helvetica, Arial, sans-serif;
   overflow: auto;
   color: rgba(223, 224, 228, 1);
   background: rgba(19, 23, 27, 1);
+  font-family: "Roboto", Helvetica, Arial, sans-serif;
 }
 a, i {
   color: rgba(223, 224, 228, 1);
@@ -14,135 +14,174 @@ a, i {
 #root {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
+  height: 100%;
 }
 .App {
   display: flex;
   flex-direction: column;
   flex: 1 1 100%;
 }
-.player-background {
-  /*display: none;*/
-  position:absolute;
-  top: 0;
-  left: 0;
+.bgCover {
+  height: 100%;
   width: 100%;
-  height:100%;
+  position: absolute;
+  /*overflow: auto;*/
+
   background-image: url(/images/cover.png);
   background-position: center center;
   background-repeat: no-repeat;
   background-size: auto 100%;
-  /*background-size: cover;*/
-  /*filter: blur(15px);*/
-  filter: grayscale(0%);
-  opacity: 0.2;
+
+  filter: blur(5px) grayscale(50%);
+  opacity: 0.1;
   z-index: 0;
+
 }
-.player-background:before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: inherit;
-  -webkit-filter: grayscale(1);
-  -webkit-filter: grayscale(100%);
-  -moz-filter: grayscale(100%);
-  filter: gray;
-  filter: grayscale(100%) blur(10px);
-}
+
 header {
-  /*height: 60px;*/
-  text-align: right;
   z-index: 100;
-  padding: 15px 20px;
 }
 main {
+  display: flex;
   flex: 3 1 100%;
   position: relative;
   z-index: 100;
+  align-items: center;
+  overflow: hidden;
+}
+footer {
+  z-index: 100;
 }
 
-.library,
-.queue
-{
+.current {
+  position: absolute;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 3 1 100%;
+  max-height: 100%;
+}
+.current > .cover {
+  margin: 0 auto 1em;
+  width: 90%;
+  padding-top: 90%;
+  box-shadow: 0 0 15px rgba(0, 0, 0, .5);
+  position: relative;
+}
+.current > .cover > div,
+.current > .cover > svg {
   position: absolute;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
+  /*background-image: url(/images/cover.png);*/
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+}
+.current > .song,
+.current > .artist,
+.current > .album
+{
+  text-align: center;
+  color: rgba(255, 255, 255, .9);
+  margin: 0 auto 5px;
+  width: 90%;
+}
+.current > .artist {
+  display: none;
+}
+.current > .album {
+  display: none;
+}
+
+
+/**/
+
+.playhead {
+  display: flex;
+  font-size: 0.8em;
+  margin: 0 auto 5px;
+  width: 90%;
+}
+.playhead > div {
+  /*flex: 3 1 auto;*/
+  /*height:100%;*/
+  /*display: flex;*/
+  /*align-items: center;*/
+  /*justify-content: center;*/
+  line-height: 1.6em;
+  color: rgba(255, 255, 255, .5);
+}
+.playhead > .position {
+  flex: 0 0 40px;
+  /*background-color: red;*/
+  text-align: right;
+
+}
+.playhead > .slider {
+  flex: 3 1 auto;
+  /*height:100%;*/
+  /*position: relative;*/
+  padding: 0 15px;
+  /*background-color: green;*/
+}
+.playhead > .slider > div > div {
+  margin: 0 !important;
+}
+.playhead > .length {
+  flex: 0 0 40px;
+  /*background-color: yellow;*/
+}
+
+/**/
+
+
+.browser {
+  display: flex;
+  flex-direction: column;
+  flex: 3 1 100%;
+  min-height: 100%;
+  height: 100%;
+}
+.browser > header {
+  /*background-color: rgba(19, 23, 27, 0.6);*/
   background-color: rgba(19, 23, 27, 0.9);
   color: #fff;
-  z-index: 100;
-  font-weight: lighter;
-  font-size: 0.8em;
-}
-.library > header,
-.queue > header
-{
-  display: flex;
-  flex-direction: row;
-  /*align-items: center;*/
-
-  padding: 0;
-  background-color: rgba(19, 23, 27, 0.6);
   border-top: 1px solid rgba(19, 23, 27, 1);
   border-bottom: 1px solid rgba(19, 23, 27, 1);
+  display: flex;
 }
-.library > header > div,
-.queue > header > div
-{
-  /*flex: 0 0 auto;*/
-  flex-grow: 1;
-  justify-content: center;
-  text-align: center;
-  padding: 10px;
+.browser > header > div:first-child {
+  flex: 0 0 auto;
+  text-align: left;
 }
-.library > header > div > i,
-.queue > header > div > i
-{
-  font-size: 0.6em;
-}
-.library > div,
-.queue > div
-{
+.browser > header > div {
+  flex: 3 1 auto;
   padding: 20px;
+  text-align: center;
 }
-.library ul,
-.queue ul
-{
-  padding: 0;
-  margin: 0;
-  list-style: none;
-  height: 300px;
-  overflow: scroll;
+.browser > header > div:last-child {
+  flex: 0 0 auto;
+  text-align: right;
 }
-.library li,
-.queue li
-{
-  padding: 4px;
-  border-top: 1px solid rgba(19, 23, 27, 1);
-
+.browser > main {
+  flex: 3 1 100%;
+  height: 100%;
+  position: relative;
+  z-index: 100;
+  padding: 10px;
+  background-color: rgba(19, 23, 27, 0.9);
 }
-
-.settings {
-  position: absolute;
-  top: 0;
+.browser > main > .list {
   width: 100%;
   height: 100%;
-  background-color: rgba(33, 33, 33, 0.7);
-  color: #fff;
-  z-index: 100;
-}
-.settings > div {
-  padding: 20px;
+  overflow: scroll;
 }
 
-footer {
-  position:absolute;
-  bottom: 0;
+.controls {
   width: 100%;
-  /*height:80px;*/
   display: flex;
   align-items: center;
   justify-content: center;
@@ -154,136 +193,38 @@ footer {
   flex-direction: row;
   padding: 10px 0;
 }
-footer > div:first-child {
+.controls > div:first-child {
   flex: 0 0 100px;
 }
-footer > div {
+.controls > div {
   flex: 3 1 auto;
   height:100%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-footer > div:last-child {
+.controls > div:last-child {
   flex: 0 0 100px;
 }
-footer .play,
-footer .pause
-{
+.controls .play,
+.controls .pause {
   font-size: 3em;
   margin: 0 10px;
 }
-
-.track {
-  margin: 0 20px;
-  /*width: 90%;*/
-  height: 90%;
-  /*background-color: rgba(255, 255, 255, .01);*/
-  /*border: 1px solid rgba(255, 255, 255, .03);*/
-}
-.cover {
-  margin: 0 auto 10px;
-  width: 250px;
-  height: 250px;
-
-  /*background-image: url(/images/cover.png);*/
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: auto 100%;
-  box-shadow: 0 0 15px rgba(0, 0, 0, .5);
-
-}
-.title {
-  text-align: center;
-  color: rgba(255, 255, 255, .9);
-  margin-bottom: 5px;
-  /*border: 1px solid rgba(255, 255, 255, .03);*/
-}
-.album {
-  display: none;
-  text-align: center;
-  color: rgba(255, 255, 255, .7);
-  margin-bottom: 5px;
-  /*border: 1px solid rgba(255, 255, 255, .03);*/
-  font-size: 0.7em;
-}
-.artist {
-  display: none;
-  text-align: center;
-  color: rgba(255, 255, 255, .7);
-  margin-bottom: 5px;
-  /*border: 1px solid rgba(255, 255, 255, .03);*/
-  font-size: 0.7em;
-}
-
-
-
-
-.playhead {
-  position: relative;
-  /*background-color: rgba(255, 255, 255, .01);*/
-
-  height: 30px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  flex-direction: row;
-  font-size: 0.7em;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-}
-.playhead > div {
-  flex: 3 1 auto;
-  height:100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.playhead > .position {
-  flex: 0 0 40px;
-  /*background-color: red;*/
-}
-.playhead > .slider {
-  flex: 3 1 auto;
-  height:100%;
-  position: relative;
-  padding: 0 10px;
-  /*background-color: green;*/
-}
-.playhead > .slider > .background {
-  position: relative;
-  height: 6px;
-  margin: 0;
-  width: 100%;
-  border-radius: 10px;
-  background-color: rgba(255, 255, 255, .2);
-  /*border: 1px solid rgba(255, 255, 255, .03);*/
-}
-.playhead > .slider > .background > .foreground {
-  height: 6px;
-  width: 30%;
-  margin: 0;
+.volumeSlider {
   position: absolute;
-  left: 0;
-  /*top: 10px;*/
-  border-radius: 10px;
-  background-color: rgba(255, 255, 255, .7);
+  /*width: 50px;*/
+  /*height: 200px;*/
+  padding: 15px;
+  bottom: 68px;
+  right: 25px;
+  background-color: rgba(19, 23, 27, 0.6);
+  border-top: 1px solid rgba(19, 23, 27, 1);
+  border-right: 1px solid rgba(19, 23, 27, 1);
+  border-left: 1px solid rgba(19, 23, 27, 1);
+  border-radius: 10px 10px 0 0;
+  z-index: 200;
 }
-.playhead > .slider > .background > .foreground > .head {
-  height: 14px;
-  width: 14px;
-  position: absolute;
-  right: -7px;
-  top: -4px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 1);
-}
-.playhead > .length {
-  flex: 0 0 40px;
-  /*background-color: yellow;*/
+.volumeSlider > div > div {
+  margin: 0 !important;
 }

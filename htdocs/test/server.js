@@ -81,19 +81,18 @@ wss.on('connection', connection => {
 
   connection.on('message', message => {
     const parts = message.split(',');
-    const cmd = parts.shift();
-    const args = parts;
+    const cmd = parts[0];
+    const args = parts.slice(1);
     const state = setState(cmd, args);
     const data = fixtures(cmd);
     const response = JSON.stringify(data)
 
     debug('Message', i({
-      message,
+      received: message,
       parts,
       cmd,
       args,
       data,
-      state,
     }, 3));
 
     if (data) {

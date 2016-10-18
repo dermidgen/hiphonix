@@ -1,0 +1,13 @@
+[
+  {
+    title: 'Project Manager'
+    group: 'Atom'
+    paths: [
+      '/path/to/project-manager'
+    ]
+    devMode: true
+    settings:
+      'editor.tabLength': 4
+      'editor.showInvisibles': true
+  }
+]
