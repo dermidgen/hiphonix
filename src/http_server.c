@@ -44,7 +44,7 @@ struct artwork_file find_artwork_file()
   // response_buf[0] = 0;
   if (fp) {
     while (fread(buf, sizeof(unsigned char), BUFSIZE, fp)) {
-      memcpy(response_buf + BUFSIZE, buf, BUFSIZE);
+      memcpy(response_buf + sizeof(response_buf), buf, BUFSIZE);
     }
 
     if(pclose(fp))  {
