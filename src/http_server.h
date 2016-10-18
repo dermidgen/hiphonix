@@ -28,7 +28,15 @@ struct embedded_file {
   size_t size;
 };
 
+struct artwork_file {
+  char *name;
+  unsigned char *data;
+  char *mimetype;
+  size_t size;
+};
+
 const struct embedded_file *find_embedded_file(const char *name);
+struct artwork_file find_artwork_file();
 int callback_http(struct mg_connection *c);
 
 #endif
