@@ -7,8 +7,8 @@
 #include <pthread.h>
 
 #include "config.h"
+#include "http_server.h"
 #include "ympd/src/mongoose.h"
-#include "ympd/src/http_server.h"
 #include "ympd/src/mpd_client.h"
 
 #include "ympd.h"

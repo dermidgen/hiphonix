@@ -111,7 +111,7 @@ if(NOT WITH_DYNAMIC_ASSETS)
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         DEPENDS ${RESOURCES} ${MKDATA_TARGET}
     )
-    list(APPEND SOURCES ympd/src/http_server.c assets.c)
+    list(APPEND SOURCES src/http_server.c assets.c)
 endif()
 
 add_executable(hiphonix ${SOURCES})
