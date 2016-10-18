@@ -33,7 +33,7 @@ struct artwork_file find_artwork_file()
   struct artwork_file p = {"cover.jpg", NULL, "image/jpeg", (size_t)0};
   char *cmd = "ffmpeg -i '/media/sda1/Johnny Paycheck/Johnny Paycheck - 11 Months And 29 Days.mp3' -loglevel panic -f mjpeg pipe:1 | cat -";
   char buf[BUFSIZE];
-  unsigned char *respose_buf = (unsigned char *) malloc(MAXSIZE);
+  unsigned char *response_buf = (unsigned char *) malloc(MAXSIZE);
   FILE *fp;
   // strcpy( p.name, "cover.jpg" );
 
@@ -41,10 +41,10 @@ struct artwork_file find_artwork_file()
       printf("Error opening pipe!\n");
   }
 
-  // respose_buf[0] = 0;
+  // response_buf[0] = 0;
   if (fp) {
     while (fread(buf, sizeof(unsigned char), BUFSIZE, fp)) {
-      memcpy(respose_buf, buf, BUFSIZE);
+      memcpy(response_buf + BUFSIZE, buf, BUFSIZE);
     }
 
     if(pclose(fp))  {
@@ -52,8 +52,9 @@ struct artwork_file find_artwork_file()
     }
   }
 
-  p.data = respose_buf;
-  p.size = sizeof(respose_buf);
+  p.data = response_buf;
+  p.size = sizeof(response_buf);
+  free(response_buf);
   return p;
 }
 
