@@ -31,7 +31,7 @@
 struct artwork_file find_artwork_file()
 {
   struct artwork_file p = {"cover.jpg", NULL, "image/jpeg", (size_t)0};
-  char *cmd = "ffmpeg -i /media/sda1/Johnny Paycheck/Johnny Paycheck - 11 Months And 29 Days.mp3 -loglevel panic -f mjpeg pipe:1 | cat -";
+  char *cmd = "ffmpeg -i '/media/sda1/Johnny Paycheck/Johnny Paycheck - 11 Months And 29 Days.mp3' -loglevel panic -f mjpeg pipe:1 | cat -";
   char buf[BUFSIZE];
   unsigned char *respose_buf = (unsigned char *) malloc(MAXSIZE);
   FILE *fp;
