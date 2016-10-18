@@ -22,46 +22,66 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #include "http_server.h"
 
 #define BUFSIZE 128
-#define MAXSIZE 2048
 
-struct artwork_file find_artwork_file()
+int file_exists(const char* filename){
+    struct stat buffer;
+    int exist = stat(filename,&buffer);
+    if(exist == 0)
+        return 1;
+    else // -1
+        return 0;
+}
+
+void send_artwork(struct mg_connection *c)
 {
-  struct artwork_file p = {"cover.jpg", NULL, "image/jpeg", (size_t)0};
-  char *cmd = "ffmpeg -i '/media/sda1/Johnny Paycheck/Johnny Paycheck - 11 Months And 29 Days.mp3' -loglevel panic -f mjpeg pipe:1 | cat -";
+  char command[256];
+  char path[256];
+  // char *cmd = "ffmpeg -i '/home/dgraham/Music/Pink Floyd - Another Brick in the Wall, III.mp3' -loglevel panic -f mjpeg pipe:1 | cat -";
   char buf[BUFSIZE];
-  unsigned char *response_buf = (unsigned char *) malloc(MAXSIZE);
   FILE *fp;
-  // strcpy( p.name, "cover.jpg" );
 
-  if ((fp = popen(cmd, "r")) == NULL) {
-      printf("Error opening pipe!\n");
-  }
+  // printf("Fetching artwork\n");
+  snprintf(path, sizeof(path), "%s", c->uri + 8);
+  snprintf(command, sizeof(command), "ffmpeg -i '%s' -loglevel panic -f mjpeg pipe:1 | cat -", (char * restrict)path);
+  // printf("Path: %s\n", (const char * restrict)path);
+  // printf("CMD: %s\n", (const char * restrict)command);
 
-  // response_buf[0] = 0;
-  if (fp) {
-    while (fread(buf, sizeof(unsigned char), BUFSIZE, fp)) {
-      memcpy(response_buf + sizeof(response_buf), buf, BUFSIZE);
+  // printf("Fetching album artwork\n");
+  // printf("URI: %s",(const char * restrict)c->uri);
+  // printf("\n");
+
+  if (file_exists(path)) {
+    if ((fp = popen(command, "r")) == NULL) {
+        printf("Error opening pipe!\n");
     }
 
-    if(pclose(fp))  {
-      printf("Command not found or exited with error status\n");
+    if (fp) {
+      mg_send_header(c, "Content-Type", "image/jpeg");
+      
+      while ((fread(buf, 1, sizeof(buf), fp)) > 0) {
+        mg_send_data(c, buf, sizeof(buf));
+      }
+
+      mg_send_data(c,"\r\n",2);
+      if(pclose(fp))  {
+        printf("Command not found or exited with error status\n");
+      }
     }
+  } else {
+    mg_send_status(c, 404);
+    mg_printf_data(c, "Not Found");
   }
 
-  p.data = response_buf;
-  p.size = sizeof(response_buf);
-  free(response_buf);
-  return p;
 }
 
 int callback_http(struct mg_connection *c)
 {
   const struct embedded_file *req_file;
-  struct artwork_file art_file;
 
   // If it's root - or a real file find it
   // or handle routes for album art
@@ -78,12 +98,10 @@ int callback_http(struct mg_connection *c)
 
     return MG_TRUE;
   }
-  else if (!strcmp(c->uri, "/artwork"))
+  else if (!strncmp(c->uri, "/artwork", strlen("/artwork")))
   {
-    art_file = find_artwork_file();
     // Return an album art file
-    mg_send_header(c, "Content-Type", art_file.mimetype);
-    mg_send_data(c, art_file.data, art_file.size);
+    send_artwork(c);
 
     return MG_TRUE;
   }
