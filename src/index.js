@@ -335,7 +335,7 @@ class Library extends Component {
     // console.log('path: %o', path);
     switch (path[0]) {
       case 'queue':
-        socket.command('MPD_API_GET_QUEUE',[]);
+        socket.command('MPD_API_GET_QUEUE',[0]);
         break;
       case 'search':
         socket.command('MPD_API_SEARCH',[]);
