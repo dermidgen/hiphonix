@@ -134,7 +134,7 @@ class App extends Component {
 
             <div className="current">
               <Cover image="/images/cover.png" />
-              <div className="song">Song Title</div>
+              <div className="song">{this.state.song.title || '[Song Title]'}</div>
               <PlayHead position={this.state.song.position} />
             </div>
 
@@ -288,7 +288,7 @@ class Library extends Component {
       title: null
     }
     const items = (items = []) => {
-      // console.log(`items received: %o`, items);
+      console.log(`items received: %o`, items);
       const sticky = [];
       // if (this.props.params.splat !== 'queue') {
       //   sticky.push({ type: 'directory', dir: 'queue' })
@@ -360,7 +360,10 @@ class Library extends Component {
             </Link>
           </div>
           <div>
-            {this.state.title}
+            <Link to="/library">Library</Link>
+          </div>
+          <div>
+            <Link to="/queue">Queue</Link>
           </div>
           <div>
             <Link to="/">
@@ -372,12 +375,16 @@ class Library extends Component {
           <List className="list">
             {this.state.items.map((item,index) => {
               let linkTo = item.dir;
+              let path = (this.props.params.splat || '/').split('/');
               const props = {};
 
               if (item.type === 'song') {
                 props.leftIcon = <SongIcon />;
                 props.rightIcon = <PlayArrow />;
                 props.primaryText = item.title;
+                props.onClick = function() {
+                  socket.command('MPD_API_ADD_TRACK', [path + '/' + item.title]);
+                };
               }
 
               if (item.type === 'directory') {
@@ -392,6 +399,12 @@ class Library extends Component {
                 props.leftIcon = <PlaylistPlay />;
                 props.rightIcon = <PlayArrow />;
                 props.primaryText = item.plist;
+              }
+
+              if (!item.type) {
+                props.leftIcon = <SongIcon />;
+                props.rightIcon = <PlayArrow />;
+                props.primaryText = item.title;
               }
               // console.log(props);
               return (
