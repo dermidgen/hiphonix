@@ -5,6 +5,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import AppBar from 'material-ui/AppBar';
 import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
 import IconButton from 'material-ui/IconButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import {List, ListItem} from 'material-ui/List';
@@ -126,7 +127,9 @@ class App extends Component {
                       <MoreVertIcon />
                     </IconButton>
                   }
-                />
+                >
+                  <MenuItem><Link to="/settings">Settings</Link></MenuItem>
+                </IconMenu>
               }
             />
           </header>
@@ -204,25 +207,29 @@ class Controls extends Component {
     return (
       <div className="controls">
         <div>
-          <Link to="/library"><i className="material-icons">list</i></Link>
+          <Link to="/library"><IconButton><i className="material-icons">list</i></IconButton></Link>
         </div>
         <div>
-          <i onClick={this.prev} className="prev material-icons">skip_previous</i>
-          {(() => {
-            if (this.state.playback.state === 2) {
-              return (
-                <i onClick={this.pause} className="play material-icons">pause</i>
-              );
-            } else {
-              return (
-                <i onClick={this.play} className="pause material-icons">play_arrow</i>
-              );
-            }
-          })()}
-          <i onClick={this.next} className="next material-icons">skip_next</i>
+          <IconButton onClick={this.prev}>
+            <i className="prev material-icons">skip_previous</i>
+          </IconButton>
+            {(() => {
+              if (this.state.playback.state === 2) {
+                return (
+                  <i onClick={this.pause} className="play material-icons">pause</i>
+                );
+              } else {
+                return (
+                  <i onClick={this.play} className="pause material-icons">play_arrow</i>
+                );
+              }
+            })()}
+          <IconButton onClick={this.next}>
+            <i className="next material-icons">skip_next</i>
+          </IconButton>
         </div>
         <div>
-          <i onClick={this.toggleVolume} className="volume material-icons">volume_up</i>
+          <IconButton onClick={this.toggleVolume}><i className="volume material-icons">volume_up</i></IconButton>
           <div className="volumeSlider" style={{ display: (this.state.showVolume ? 'block' : 'none') }}>
             <Slider
               defaultValue={50}
