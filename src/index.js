@@ -106,10 +106,12 @@ class App extends Component {
       });
     });
     socket.on('song_change', song => {
+      console.log(song);
       this.setState({ song });
     });
   }
   render() {
+    console.log(this.state);
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
         <div className="App">
@@ -134,7 +136,7 @@ class App extends Component {
 
             <div className="current">
               <Cover image="/images/cover.png" />
-              <div className="song">Song Title</div>
+              <div className="song">{this.state.song.title || '[Song Title]'}</div>
               <PlayHead position={this.state.song.position} />
             </div>
 
