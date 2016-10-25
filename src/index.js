@@ -343,6 +343,7 @@ class Library extends Component {
       default:
         path.shift();
         path = path.join('/');
+        if (!path || path === '') path = '/';
         socket.command('MPD_API_GET_BROWSE',[0, path]);
     }
   }
