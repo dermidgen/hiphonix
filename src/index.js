@@ -375,12 +375,16 @@ class Library extends Component {
           <List className="list">
             {this.state.items.map((item,index) => {
               let linkTo = item.dir;
+              let path = (this.props.params.splat || '/').split('/');
               const props = {};
 
               if (item.type === 'song') {
                 props.leftIcon = <SongIcon />;
                 props.rightIcon = <PlayArrow />;
                 props.primaryText = item.title;
+                props.onClick = function() {
+                  socket.command('MPD_API_ADD_TRACK', [path + '/' + item.title]);
+                };
               }
 
               if (item.type === 'directory') {
