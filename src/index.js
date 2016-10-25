@@ -327,7 +327,7 @@ class Library extends Component {
   }
   componentDidUpdate(props) {
     if (props.params.splat !== this.props.params.splat) {
-      console.log(`this.props.params.splat: ${this.props.params.splat}`);
+      // console.log(`this.props.params.splat: ${this.props.params.splat}`);
       this.fetch();
     }
   }
