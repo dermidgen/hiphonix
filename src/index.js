@@ -106,12 +106,10 @@ class App extends Component {
       });
     });
     socket.on('song_change', song => {
-      console.log(song);
       this.setState({ song });
     });
   }
   render() {
-    console.log(this.state);
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
         <div className="App">
@@ -290,7 +288,7 @@ class Library extends Component {
       title: null
     }
     const items = (items = []) => {
-      // console.log(`items received: %o`, items);
+      console.log(`items received: %o`, items);
       const sticky = [];
       // if (this.props.params.splat !== 'queue') {
       //   sticky.push({ type: 'directory', dir: 'queue' })
@@ -362,7 +360,10 @@ class Library extends Component {
             </Link>
           </div>
           <div>
-            {this.state.title}
+            <Link to="/library">Library</Link>
+          </div>
+          <div>
+            <Link to="/queue">Queue</Link>
           </div>
           <div>
             <Link to="/">
@@ -394,6 +395,12 @@ class Library extends Component {
                 props.leftIcon = <PlaylistPlay />;
                 props.rightIcon = <PlayArrow />;
                 props.primaryText = item.plist;
+              }
+
+              if (!item.type) {
+                props.leftIcon = <SongIcon />;
+                props.rightIcon = <PlayArrow />;
+                props.primaryText = item.title;
               }
               // console.log(props);
               return (
