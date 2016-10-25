@@ -8,6 +8,7 @@ class Socket extends EventEmitter {
   constructor() {
     super();
     this.ws = null;
+    this.connected = false;
     this.open();
   }
 
@@ -40,11 +41,13 @@ class Socket extends EventEmitter {
 
     this.ws.onopen = () => {
       console.log('Socket::open');
+      this.connected = true;
       this.emit('connected');
     };
 
     this.ws.onclose = state => {
       console.log('Socket::close');
+      this.connected = false;
       this.emit('disconnected', state);
       setTimeout(() => {
         this.open();

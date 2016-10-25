@@ -290,9 +290,9 @@ class Library extends Component {
     const items = (items = []) => {
       // console.log(`items received: %o`, items);
       const sticky = [];
-      if (this.props.params.splat !== 'queue') {
-        sticky.push({ type: 'directory', dir: 'queue' })
-      }
+      // if (this.props.params.splat !== 'queue') {
+      //   sticky.push({ type: 'directory', dir: 'queue' })
+      // }
       this.setState({
         items: sticky.concat(items),
         title: this.title()
@@ -320,11 +320,14 @@ class Library extends Component {
     return title;
   }
   componentWillMount() {
-    this.fetch();
+    if (!socket.connected) socket.once('connected', () => {
+      this.fetch();
+    });
+    else this.fetch();
   }
   componentDidUpdate(props) {
     if (props.params.splat !== this.props.params.splat) {
-      // console.log(`this.props.params.splat: ${this.props.params.splat}`);
+      console.log(`this.props.params.splat: ${this.props.params.splat}`);
       this.fetch();
     }
   }
@@ -378,15 +381,16 @@ class Library extends Component {
               }
 
               if (item.type === 'directory') {
+                linkTo = '/library/' + item.dir;
                 props.leftIcon = <FileFolder />;
                 props.rightIcon = <ChevronRight />;
                 props.primaryText = item.dir;
               }
 
               if (item.type === 'playlist') {
-                linkTo = item.plist;
+                // linkTo = item.plist;
                 props.leftIcon = <PlaylistPlay />;
-                props.rightIcon = <ChevronRight />;
+                props.rightIcon = <PlayArrow />;
                 props.primaryText = item.plist;
               }
               // console.log(props);
