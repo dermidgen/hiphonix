@@ -402,7 +402,9 @@ class Library extends Component {
               }
 
               if (item.type === 'playlist') {
-                // linkTo = item.plist;
+                props.onClick = function() {
+                  socket.command('MPD_API_ADD_PLAYLIST', [path + '/' + item.title]);
+                };
                 props.leftIcon = <PlaylistPlay />;
                 props.rightIcon = <PlayArrow />;
                 props.primaryText = item.plist;
