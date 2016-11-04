@@ -5,6 +5,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import AppBar from 'material-ui/AppBar';
 import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
 import IconButton from 'material-ui/IconButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import {List, ListItem} from 'material-ui/List';
@@ -126,7 +127,9 @@ class App extends Component {
                       <MoreVertIcon />
                     </IconButton>
                   }
-                />
+                >
+                  <MenuItem><Link to="/settings">Settings</Link></MenuItem>
+                </IconMenu>
               }
             />
           </header>
@@ -134,7 +137,7 @@ class App extends Component {
 
             <div className="current">
               <Cover image="/images/cover.png" />
-              <div className="song">Song Title</div>
+              <div className="song">{this.state.song.title || '[Song Title]'}</div>
               <PlayHead position={this.state.song.position} />
             </div>
 
@@ -204,25 +207,29 @@ class Controls extends Component {
     return (
       <div className="controls">
         <div>
-          <Link to="/library"><i className="material-icons">list</i></Link>
+          <Link to="/library"><IconButton><i className="material-icons">list</i></IconButton></Link>
         </div>
         <div>
-          <i onClick={this.prev} className="prev material-icons">skip_previous</i>
-          {(() => {
-            if (this.state.playback.state === 2) {
-              return (
-                <i onClick={this.pause} className="play material-icons">pause</i>
-              );
-            } else {
-              return (
-                <i onClick={this.play} className="pause material-icons">play_arrow</i>
-              );
-            }
-          })()}
-          <i onClick={this.next} className="next material-icons">skip_next</i>
+          <IconButton onClick={this.prev}>
+            <i className="prev material-icons">skip_previous</i>
+          </IconButton>
+            {(() => {
+              if (this.state.playback.state === 2) {
+                return (
+                  <i onClick={this.pause} className="play material-icons">pause</i>
+                );
+              } else {
+                return (
+                  <i onClick={this.play} className="pause material-icons">play_arrow</i>
+                );
+              }
+            })()}
+          <IconButton onClick={this.next}>
+            <i className="next material-icons">skip_next</i>
+          </IconButton>
         </div>
         <div>
-          <i onClick={this.toggleVolume} className="volume material-icons">volume_up</i>
+          <IconButton onClick={this.toggleVolume}><i className="volume material-icons">volume_up</i></IconButton>
           <div className="volumeSlider" style={{ display: (this.state.showVolume ? 'block' : 'none') }}>
             <Slider
               defaultValue={50}
@@ -288,11 +295,11 @@ class Library extends Component {
       title: null
     }
     const items = (items = []) => {
-      // console.log(`items received: %o`, items);
+      console.log(`items received: %o`, items);
       const sticky = [];
-      if (this.props.params.splat !== 'queue') {
-        sticky.push({ type: 'directory', dir: 'queue' })
-      }
+      // if (this.props.params.splat !== 'queue') {
+      //   sticky.push({ type: 'directory', dir: 'queue' })
+      // }
       this.setState({
         items: sticky.concat(items),
         title: this.title()
@@ -320,7 +327,10 @@ class Library extends Component {
     return title;
   }
   componentWillMount() {
-    this.fetch();
+    if (!socket.connected) socket.once('connected', () => {
+      this.fetch();
+    });
+    else this.fetch();
   }
   componentDidUpdate(props) {
     if (props.params.splat !== this.props.params.splat) {
@@ -335,7 +345,7 @@ class Library extends Component {
     // console.log('path: %o', path);
     switch (path[0]) {
       case 'queue':
-        socket.command('MPD_API_GET_QUEUE',[]);
+        socket.command('MPD_API_GET_QUEUE',[0]);
         break;
       case 'search':
         socket.command('MPD_API_SEARCH',[]);
@@ -343,6 +353,7 @@ class Library extends Component {
       default:
         path.shift();
         path = path.join('/');
+        if (!path || path === '') path = '/';
         socket.command('MPD_API_GET_BROWSE',[0, path]);
     }
   }
@@ -356,7 +367,10 @@ class Library extends Component {
             </Link>
           </div>
           <div>
-            {this.state.title}
+            <Link to="/library">Library</Link>
+          </div>
+          <div>
+            <Link to="/queue">Queue</Link>
           </div>
           <div>
             <Link to="/">
@@ -368,25 +382,38 @@ class Library extends Component {
           <List className="list">
             {this.state.items.map((item,index) => {
               let linkTo = item.dir;
+              let path = (this.props.params.splat || '/').split('/');
               const props = {};
 
               if (item.type === 'song') {
                 props.leftIcon = <SongIcon />;
                 props.rightIcon = <PlayArrow />;
                 props.primaryText = item.title;
+                props.onClick = function() {
+                  socket.command('MPD_API_ADD_TRACK', [path + '/' + item.title]);
+                };
               }
 
               if (item.type === 'directory') {
+                linkTo = '/library/' + item.dir;
                 props.leftIcon = <FileFolder />;
                 props.rightIcon = <ChevronRight />;
                 props.primaryText = item.dir;
               }
 
               if (item.type === 'playlist') {
-                linkTo = item.plist;
+                props.onClick = function() {
+                  socket.command('MPD_API_ADD_PLAYLIST', [path + '/' + item.title]);
+                };
                 props.leftIcon = <PlaylistPlay />;
-                props.rightIcon = <ChevronRight />;
+                props.rightIcon = <PlayArrow />;
                 props.primaryText = item.plist;
+              }
+
+              if (!item.type) {
+                props.leftIcon = <SongIcon />;
+                props.rightIcon = <PlayArrow />;
+                props.primaryText = item.title;
               }
               // console.log(props);
               return (
