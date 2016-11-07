@@ -1,6 +1,7 @@
 html, body {
   margin: 0;
   padding: 0;
+  width: 100%;
   height: 100%;
   overflow: auto;
   color: rgba(223, 224, 228, 1);
@@ -11,236 +12,58 @@ a, i {
   color: rgba(223, 224, 228, 1);
   cursor: pointer;
 }
+ul, li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
 #root {
-  display: flex;
-  flex-direction: column;
   height: 100%;
-}
-.App {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 100%;
-}
-.bgCover {
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  /*overflow: auto;*/
-
-  background-image: url(/images/cover.png);
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: auto 100%;
-
-  filter: blur(5px) grayscale(50%);
-  opacity: 0.1;
-  z-index: 0;
-
-}
-
-header {
-  z-index: 100;
+  position: relative;
 }
 main {
-  display: flex;
-  flex: 3 1 100%;
+  width: 100%;
+  height: 100%;
   position: relative;
-  z-index: 100;
-  align-items: center;
-  overflow: hidden;
-}
-footer {
-  z-index: 100;
 }
 
-.current {
-  position: absolute;
+/* Sections */
+main > section {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  flex: 3 1 100%;
-  max-height: 100%;
-}
-.current > .cover {
-  margin: 0 auto 1em;
-  width: 90%;
-  padding-top: 90%;
-  box-shadow: 0 0 15px rgba(0, 0, 0, .5);
+  /*height: 100%;*/
   position: relative;
 }
-.current > .cover > div,
-.current > .cover > svg {
-  position: absolute;
+main > section > header {
+  width: 100%;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  /*background-image: url(/images/cover.png);*/
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: auto 100%;
-}
-.current > .song,
-.current > .artist,
-.current > .album
-{
-  text-align: center;
-  color: rgba(255, 255, 255, .9);
-  margin: 0 auto 5px;
-  width: 90%;
-}
-.current > .artist {
-  display: none;
-}
-.current > .album {
-  display: none;
-}
-
-
-/**/
-
-.playhead {
-  display: flex;
-  font-size: 0.8em;
-  margin: 0 auto 5px;
-  width: 90%;
-}
-.playhead > div {
-  /*flex: 3 1 auto;*/
-  /*height:100%;*/
-  /*display: flex;*/
-  /*align-items: center;*/
-  /*justify-content: center;*/
-  line-height: 1.6em;
-  color: rgba(255, 255, 255, .5);
-}
-.playhead > .position {
-  flex: 0 0 40px;
-  /*background-color: red;*/
-  text-align: right;
-
-}
-.playhead > .slider {
-  flex: 3 1 auto;
-  /*height:100%;*/
-  /*position: relative;*/
-  padding: 0 15px;
-  /*background-color: green;*/
-}
-.playhead > .slider > div > div {
-  margin: 0 !important;
-}
-.playhead > .length {
-  flex: 0 0 40px;
-  /*background-color: yellow;*/
-}
-
-/**/
-
-
-.browser {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 100%;
-  height: 100%;
-}
-.browser > header {
-  /*background-color: rgba(19, 23, 27, 0.6);*/
-  background-color: rgba(19, 23, 27, 0.9);
-  color: #fff;
-  border-top: 1px solid rgba(19, 23, 27, 1);
-  border-bottom: 1px solid rgba(19, 23, 27, 1);
-  // display: flex;
-  // flex-direction: column;
-}
-.browser > header > div:first-child {
-  // flex: 0 0 auto;
-  text-align: left;
-  float: left;
-}
-.browser > header > div {
-  // flex: 1 1 auto;
-  padding: 20px;
-  text-align: center;
-  float: left;
-}
-.browser > header > div:last-child {
-  // flex: 0 0 auto;
-  text-align: right;
-  float: right;
-}
-.browser > main {
-  // display: flex;
-  // flex: 1;
-  height: 100%;
-  min-height: 350px;
-  // position: relative;
-  z-index: 100;
-  padding: 20px 5px;
-  background-color: rgba(19, 23, 27, 0.9);
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-}
-.browser > main > .list {
-  width: 100%;
-  height: 100%;
-}
-
-.controls {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  background-color: rgba(19, 23, 27, 0.6);
-  color: #fff;
-  z-index: 1000;
-  border-top: 1px solid rgba(19, 23, 27, 1);
-  flex-direction: row;
-  padding: 10px 0;
-}
-.controls > div:first-child {
-  flex: 0 0 100px;
-}
-.controls > div {
-  flex: 3 1 auto;
-  height:100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.controls > div:last-child {
-  flex: 0 0 100px;
-}
-.controls .play,
-.controls .pause {
-  font-size: 3em;
-  margin: 0 10px;
-}
-.volumeSlider {
   position: absolute;
-  /*width: 50px;*/
-  /*height: 200px;*/
-  padding: 15px;
-  bottom: 68px;
-  right: 25px;
-  background-color: rgba(19, 23, 27, 0.6);
-  border-top: 1px solid rgba(19, 23, 27, 1);
-  border-right: 1px solid rgba(19, 23, 27, 1);
-  border-left: 1px solid rgba(19, 23, 27, 1);
-  border-radius: 10px 10px 0 0;
-  z-index: 200;
-}
-.volumeSlider > div > div {
-  margin: 0 !important;
 }
 
-.settings {
-  z-index: 300;
+/* Controls */
+main > footer {
+  width: 100%;
+  bottom: 0;
+  position: absolute;
+}
+
+/* Menu */
+main > nav {
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.92);
-  padding: 20px;
-  padding-top: 100px;
+  bottom: 0;
+  position: absolute;
+  z-index: 10000;
+}
+main > nav > div {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background: rgba(19, 23, 27, 0.8);
+}
+main > nav > ul {
+  width: 100%;
+  bottom: 0;
+  position: absolute;
+  color: rgba(19, 23, 27, 1);
+  background: rgba(255, 255, 255, 1);
 }
