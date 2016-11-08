@@ -1,25 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, browserHistory, Link, IndexRoute } from 'react-router'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import {Toolbar, ToolbarGroup, ToolbarTitle} from 'material-ui/Toolbar';
-// import AppBar from 'material-ui/AppBar';
-// import IconMenu from 'material-ui/IconMenu';
-// import MenuItem from 'material-ui/MenuItem';
-import IconButton from 'material-ui/IconButton';
-// import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import SettingsIcon from 'material-ui/svg-icons/action/settings';
-import VolumeUpIcon from 'material-ui/svg-icons/av/volume-up';
-import LibraryMusicIcon from 'material-ui/svg-icons/av/library-music';
-// import {List, ListItem} from 'material-ui/List';
-// import FileFolder from 'material-ui/svg-icons/file/folder';
-// import PlaylistPlay from 'material-ui/svg-icons/av/playlist-play';
-// import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
-// import PlayArrow from 'material-ui/svg-icons/av/play-arrow';
-// import SongIcon from 'material-ui/svg-icons/image/music-note';
-// import Slider from 'material-ui/Slider';
-// import TextField from 'material-ui/TextField';
 // import moment from 'moment';
 import Socket from './socket';
 import './index.css';
@@ -27,22 +8,9 @@ import './index.css';
 const injectTapEventPlugin = require("react-tap-event-plugin");
 injectTapEventPlugin();
 
-const muiTheme = getMuiTheme({
-  palette: {
-    canvasColor: 'rgba(19, 23, 27, 1)',
-    primary1Color: 'rgba(223, 224, 228, 1)',
-    textColor: 'rgba(223, 224, 228, 1)',
-  }
-});
-
 const socket = new Socket();
 window.socket = socket;
 
-// overlay
-// menu
-//   item
-//     icon
-//     title
 class Menu extends Component {
   cancel() {
     console.log('Cancel out of menu');
@@ -79,31 +47,41 @@ class Controls extends Component {
     return (
       <footer>
         <Link to="/queue">
-          Controls
+          <div className="cover"></div>
+          <div className="title">title</div>
+          <div className="subtitle">subtitle</div>
         </Link>
+        <div className="play-pause"><i className="material-icons">play_arrow</i></div>
+        <div className="progress-bar"><div></div></div>
       </footer>
     )
   }
 }
 
-// header
-//   left actions
-//     left arrow
-//   title
-//   right actions
-//     more actions
-//     volume
-//     settings
+class Header extends Component {
+  openSettings(event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  render() {
+    return (
+      <header>
+        <Link id="left" onClick={browserHistory.goBack} className="material-icons">close</Link>
+        <span id="title">{this.props.title}</span>
+        <i id="volume" className="material-icons">volume_up</i>
+        <Link id="settings" to="/settings" className="material-icons">settings</Link>
+      </header>
+    );
+  }
+}
+
 class App extends Component {
   render() {
     return (
-      <MuiThemeProvider muiTheme={muiTheme}>
-        <main>
-          {this.props.children}
-          <Controls/>
-          {/* <Menu/> */}
-        </main>
-      </MuiThemeProvider>
+      <main>
+        {this.props.children}
+        <Controls/>
+      </main>
     );
   }
 }
@@ -111,31 +89,13 @@ class App extends Component {
 class Settings extends Component {
   render() {
     return (
-      <form>
-        <Toolbar style={{ backgroundColor: 'transparent' }}>
-          <ToolbarGroup firstChild={true}>
-            <IconButton onClick={this.props.history.goBack}>
-              <i className="material-icons">close</i>
-            </IconButton>
-            <ToolbarTitle text="Settings" />
-          </ToolbarGroup>
-          <ToolbarGroup>
-            <Link to="/">
-              <IconButton>
-                <i className="material-icons">volume_up</i>
-              </IconButton>
-            </Link>
-            <Link to="/settings">
-              <IconButton>
-                <i className="material-icons">settings</i>
-              </IconButton>
-            </Link>
-          </ToolbarGroup>
-        </Toolbar>
-        <ul>
+      <section>
+        <Header title="Settings"/>
+        <form>
           Settings
-        </ul>
-      </form>
+        </form>
+        <Menu/>
+      </section>
     )
   }
 }
@@ -144,72 +104,46 @@ class Queue extends Component {
   render() {
     return (
       <section>
-        <Toolbar style={{ backgroundColor: 'transparent' }}>
-          <ToolbarGroup firstChild={true}>
-            <Link to="/">
-              <IconButton>
-                <i className="material-icons">close</i>
-              </IconButton>
-            </Link>
-            <ToolbarTitle text="Queue" />
-          </ToolbarGroup>
-          <ToolbarGroup>
-            <Link to="/">
-              <IconButton>
-                <VolumeUpIcon/>
-              </IconButton>
-            </Link>
-            <Link to="/settings">
-              <IconButton>
-                <SettingsIcon/>
-              </IconButton>
-            </Link>
-          </ToolbarGroup>
-        </Toolbar>
-        <ul>
-          QUeue
-        </ul>
+        <Header title="Queue"/>
+        <List/>
+        <Menu/>
       </section>
     )
   }
 }
 
-// Lists items (folders, playlists)
-//   icon
-//   title
-//   subtitle
-//   action
-// song items
-//   subtitle
+class List extends Component {
+  render() {
+    return (
+      <ul>
+        {[1,2,3].map(item => {
+          return <Item key={item} title={`Title ${item}`} subtitle={`Subtitle ${item}`} />;
+        })}
+      </ul>
+    )
+  }
+}
+
+class Item extends Component {
+  render() {
+    return (
+      <li>
+        <div className="icon"></div>
+        <div className="title">{this.props.title}</div>
+        <div className="subtitle">{this.props.subtitle}</div>
+        <a className="action material-icons">play_arrow</a>
+      </li>
+    )
+  }
+}
+
 class Library extends Component {
   render() {
     return (
       <section>
-        <Toolbar style={{ backgroundColor: 'transparent' }}>
-          <ToolbarGroup firstChild={true}>
-            <Link to="/">
-              <IconButton>
-                <LibraryMusicIcon/>
-              </IconButton>
-            </Link>
-            <ToolbarTitle text="Library" />
-          </ToolbarGroup>
-          <ToolbarGroup>
-            <Link to="/">
-              <IconButton>
-                <VolumeUpIcon/>
-              </IconButton>
-            </Link>
-            <Link to="/settings">
-              <IconButton>
-                <SettingsIcon/>
-              </IconButton>
-            </Link>
-          </ToolbarGroup>
-        </Toolbar>
-        <ul>
-          Library
-        </ul>
+        <Header title="Library"/>
+        <List/>
+        <Menu/>
       </section>
     )
   }
