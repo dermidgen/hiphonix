@@ -6,13 +6,15 @@
 #include <sys/time.h>
 #include <pthread.h>
 
+#include <gio/gio.h>
+#include <NetworkManager.h>
+
 #include "config.h"
 #include "http_server.h"
 #include "ympd/src/mongoose.h"
 #include "ympd/src/mpd_client.h"
 
 #include "ympd.h"
-#include "gdbus/gdbus.h"
 #include "connman.h"
 #include "net.h"
 
@@ -71,12 +73,6 @@ static int main_callback()
     return TRUE;
 }
 
-static void disconnect_callback(DBusConnection *conn, void *user_data)
-{
-    printf("D-Bus disconnect");
-    g_main_loop_quit(main_loop);
-}
-
 gpointer thread(gpointer data)
 {
     GMainContext *ctx;
@@ -103,8 +99,6 @@ int main(int argc, char **argv)
     server = mg_create_server(NULL, server_callback);
     GError *error = NULL;
     GThread *t;
-    DBusConnection *conn;
-    DBusError err;
     
     atexit(bye);
 
@@ -186,75 +180,12 @@ int main(int argc, char **argv)
     // Create our main loop
     main_loop = g_main_loop_new(NULL, FALSE);
 
-    // dbus connect
-    dbus_error_init(&err);
-    conn = dbus_bus_get(DBUS_BUS_SYSTEM, &err);
-    if (conn == NULL) {
-        if (dbus_error_is_set(&err) == TRUE) {
-            fprintf(stderr, "%s\n", err.message);
-            dbus_error_free(&err);
-        } else
-            fprintf(stderr, "Can't connect to system bus.\n");
-        exit(1);
-    }
-
-    // dbus disconnect handling
-    g_dbus_set_disconnect_function(conn, disconnect_callback, NULL, NULL);
-
-    // I think this is if we're trying to OWN a service
-    // dbus_bus_request_name(conn, "fi.epitest.hostap.WPASupplicant", 0, &err);
-    // if (dbus_error_is_set(&err)) {
-    //     fprintf(stderr, "Name Error (%s)\n", err.message);
-    //     dbus_error_free(&err);
-    // }
-
-    // char const *scanType = "passive";
-    // DBusMessageIter args;
-    // DBusPendingCall *pending;
-    // DBusMessage *reply;
-    // DBusMessage *methodcall = dbus_message_new_method_call(WPAS_DBUS_SERVICE, WPAS_DBUS_PATH, WPAS_DBUS_INTERFACE, "Scan");
-
-    // append args
-    // dbus_message_iter_init_append(methodcall, &args);
-    // if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &scanType)) { 
-    //   fprintf(stderr, "Out Of Memory!\n"); 
-    //   exit(1);
-    // }
-
-    // if (!dbus_connection_send_with_reply(conn, methodcall, &pending, -1))//Send and expect reply using pending call object
-    // {
-    //     printf("failed to send message!\n");
-    // }
-    // dbus_connection_flush(conn);
-    // dbus_message_unref(methodcall);
-    // methodcall = NULL;
-
-    // dbus_pending_call_block(pending);//Now block on the pending call
-    // reply = dbus_pending_call_steal_reply(pending);//Get the reply message from the queue
-    // dbus_pending_call_unref(pending);//Free pending call handle
-    // // assert(reply != NULL);
-
-    // if(dbus_message_get_type(reply) ==  DBUS_MESSAGE_TYPE_ERROR)    {
-    //     printf("Error : %s",dbus_message_get_error_name(reply));
-    //         dbus_message_unref(reply);
-    //         reply = NULL;
-    // }
-
-    // printf("Got dbus reply");
-
-
-    // connman_connect();
-
     // Start a thread for mongoose with its own main loop
     t = g_thread_new("mongoose", thread, &error);
     g_thread_join(t);
 
     g_main_loop_run(main_loop);
 
-    // dbus disconnect
-    dbus_connection_close(conn);
-
-    // connman_disconnect();
     mpd_disconnect();
     mg_destroy_server(&server);
 

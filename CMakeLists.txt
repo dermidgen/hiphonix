@@ -16,29 +16,28 @@ option(WITH_DYNAMIC_ASSETS "Serve assets dynamically (e.g for development/packag
 option(WITH_IPV6 "enable IPv6 support" ON)
 option(WITH_SSL "enable SSL support" ON)
 
-find_package(LibMPDClient REQUIRED)
 find_package(Threads REQUIRED)
-find_package(DBus REQUIRED)
 find_package(Glib REQUIRED)
-# find_package(DBusGLib)
-find_package(GObject)
+find_package(GObject REQUIRED)
+find_package(Gio REQUIRED)
+find_package(NM REQUIRED)
+find_package(LibMPDClient REQUIRED)
 
 # Configure Build
 configure_file(ympd/src/config.h.in ${PROJECT_BINARY_DIR}/config.h)
 include_directories(${PROJECT_BINARY_DIR} 
-    ${PROJECT_SOURCE_DIR} 
-    ${PROJECT_SOURCE_DIR}/gdbus 
-    ${PROJECT_SOURCE_DIR}/gsupplicant 
-    ${LIBMPDCLIENT_INCLUDE_DIR} 
-    ${DBUS_INCLUDE_DIRS} 
-    # ${DBUS_INCLUDE_LIB_DIR} 
-    ${GLib_INCLUDE_DIRS} 
-    # ${DBUS_GLIB_INCLUDE_DIR} 
-    ${GOBJECT_INCLUDE_DIR})
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/gdbus
+    ${LIBMPDCLIENT_INCLUDE_DIR}
+    /usr/include/libnm
+    ${GLib_INCLUDE_DIRS}
+    ${GOBJECT_INCLUDE_DIR}
+    ${GIO_INCLUDE_DIR}
+)
 
 include(CheckCSourceCompiles)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -Wall -lgobject-2.0")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread -std=gnu99 -Wall -I/usr/include/libnm -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -lgio-2.0 -lgobject-2.0 -lglib-2.0")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -ggdb -pedantic")
 if(WITH_IPV6)
     set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS NS_ENABLE_IPV6)
@@ -82,16 +81,7 @@ set(SOURCES
     src/net.c
     src/connman.c
     src/ympd.c
-    src/gdbus/client.c
-    src/gdbus/gdbus.h
-    src/gdbus/mainloop.c
-    src/gdbus/object.c
-    src/gdbus/polkit.c
-    src/gdbus/watch.c
-    src/gsupplicant/dbus.c
-    src/gsupplicant/dbus.h
-    src/gsupplicant/gsupplicant.h
-    src/gsupplicant/supplicant.c
+    src/gdbus/list-connections.c
     ympd/src/mpd_client.c
     ympd/src/mongoose.c
     ympd/src/json_encode.c
@@ -118,11 +108,11 @@ add_executable(hiphonix ${SOURCES})
 target_link_libraries(hiphonix 
     ${LIBMPDCLIENT_LIBRARY} 
     ${CMAKE_THREAD_LIBS_INIT} 
-    ${DBUS_LIBRARIES} 
-    # ${DBUS_INCLUDE_LIB_DIR} 
-    # ${DBUS_GLIB_LIBRARIES} 
-    ${GOBJECT_LIBRARIES} 
-    ${OPENSSL_LIBRARIES})
+    ${GOBJECT_LIBRARIES}
+    ${GLib_LIBRARY}
+    ${GIO_LIBRARIES}
+    ${OPENSSL_LIBRARIES}
+)
 
 install(TARGETS hiphonix DESTINATION bin)
 install(FILES ympd/ympd.1 DESTINATION ${CMAKE_INSTALL_PREFIX}/share/man/man1)
