@@ -31,7 +31,7 @@ int callback_net(struct mg_connection *c);
 
 // DBusMessage *sendMethodCall(void);
 
-#define WPAS_DBUS_SERVICE   "fi.epitest.hostap.WPASupplicant"
+#define WPAS_DBUS_SERVICE   "fi.w1.wpa_supplicant1"
 #define WPAS_DBUS_PATH      "/fi/w1/wpa_supplicant1/Interfaces/1"
 #define WPAS_DBUS_INTERFACE "fi.w1.wpa_supplicant1.Interface"
 

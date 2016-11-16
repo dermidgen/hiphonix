@@ -30,18 +30,25 @@
 #include <gio/gio.h>
 #include <NetworkManager.h>
 
+#include "../net.h"
+
 static void
 list_connections (GDBusProxy *proxy)
 {
 	int i;
+	GVariantBuilder builder;
 	GError *error = NULL;
 	GVariant *ret;
 	char **paths;
 
+	/* Scan params */
+	g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
+	g_variant_builder_add(&builder, "{sv}", "Type", g_variant_new_string("passive"));
+
 	/* Call ListConnections D-Bus method */
 	ret = g_dbus_proxy_call_sync (proxy,
-	                              "ListConnections",
-	                              NULL,
+	                              "Scan",
+	                              g_variant_new("(a{sv})", &builder),
 	                              G_DBUS_CALL_FLAGS_NONE, -1,
 	                              NULL, &error);
 	if (!ret) {
@@ -51,12 +58,12 @@ list_connections (GDBusProxy *proxy)
 		return;
 	}
 
-	g_variant_get (ret, "(^ao)", &paths);
-	g_variant_unref (ret);
-
-	for (i = 0; paths[i]; i++)
-		g_print ("%s\n", paths[i]);
-	g_strfreev (paths);
+//	g_variant_get (ret, "(^ao)", &paths);
+//	g_variant_unref (ret);
+//
+//	for (i = 0; paths[i]; i++)
+//		g_print ("%s\n", paths[i]);
+//	g_strfreev (paths);
 }
 
 void nm_list_connections ()
@@ -72,9 +79,9 @@ void nm_list_connections ()
 	proxy = g_dbus_proxy_new_for_bus_sync (G_BUS_TYPE_SYSTEM,
 	                                       G_DBUS_PROXY_FLAGS_NONE,
 	                                       NULL,
-	                                       NM_DBUS_SERVICE,
-	                                       NM_DBUS_PATH_SETTINGS,
-	                                       NM_DBUS_INTERFACE_SETTINGS,
+										   WPAS_DBUS_SERVICE,
+										   WPAS_DBUS_PATH,
+										   WPAS_DBUS_INTERFACE,
 	                                       NULL, NULL);
 	g_assert (proxy != NULL);
 
