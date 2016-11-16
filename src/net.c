@@ -6,6 +6,7 @@
 #include <libgen.h>
 
 #include "net.h"
+#include "gdbus/list-connections.h"
 #include "connman.h"
 #include "config.h"
 #include "ympd/src/json_encode.h"
@@ -113,7 +114,9 @@ int callback_net(struct mg_connection *c)
             n = snprintf(wsres, MAX_SIZE, "{\"type\":\"ehlo\", \"data\": %s}", resbuf);
             break;
         case NET_SCAN:
-            resbuf = (char *)cmd_exec("iw dev wlan0 scan ap-force > /dev/null && echo \\\"Scanned\\\"");
+//            resbuf = (char *)cmd_exec("iw dev wlan0 scan ap-force > /dev/null && echo \\\"Scanned\\\"");
+            resbuf = (char *)cmd_exec("echo \\\"Scanned\\\"");
+            nm_list_connections();
             n = snprintf(wsres, MAX_SIZE, "{\"type\":\"scanned\", \"data\": %s}", resbuf);
             break;
         case NET_LIST:

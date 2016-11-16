@@ -14,6 +14,7 @@
 #include "ympd/src/mongoose.h"
 #include "ympd/src/mpd_client.h"
 
+#include "net.h"
 #include "ympd.h"
 
 extern char *optarg;
