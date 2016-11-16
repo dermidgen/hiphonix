@@ -15,8 +15,6 @@
 #include "ympd/src/mpd_client.h"
 
 #include "ympd.h"
-#include "connman.h"
-#include "net.h"
 
 extern char *optarg;
 
