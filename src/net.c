@@ -6,7 +6,7 @@
 #include <libgen.h>
 
 #include "net.h"
-#include "gdbus/list-connections.h"
+#include "supplicant.h"
 #include "connman.h"
 #include "config.h"
 #include "ympd/src/json_encode.h"
@@ -102,8 +102,6 @@ int callback_net(struct mg_connection *c)
     char wsres[MAX_SIZE];
     char *resbuf;
 
-    // GSupplicantInterface *interface = g_supplicant_network_get_interface("wifi");
-
     if(cmd_id == -1)
         return MG_TRUE;
 
@@ -116,7 +114,7 @@ int callback_net(struct mg_connection *c)
         case NET_SCAN:
 //            resbuf = (char *)cmd_exec("iw dev wlan0 scan ap-force > /dev/null && echo \\\"Scanned\\\"");
             resbuf = (char *)cmd_exec("echo \\\"Scanned\\\"");
-            nm_list_connections();
+            wpas_scan();
             n = snprintf(wsres, MAX_SIZE, "{\"type\":\"scanned\", \"data\": %s}", resbuf);
             break;
         case NET_LIST:

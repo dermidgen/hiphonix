@@ -14,6 +14,7 @@
 #include "ympd/src/mongoose.h"
 #include "ympd/src/mpd_client.h"
 
+#include "supplicant.h"
 #include "net.h"
 #include "ympd.h"
 
@@ -176,6 +177,8 @@ int main(int argc, char **argv)
         }
     }
 
+    wpas_dbus_setup();
+
     // Create our main loop
     main_loop = g_main_loop_new(NULL, FALSE);
 
@@ -185,6 +188,7 @@ int main(int argc, char **argv)
 
     g_main_loop_run(main_loop);
 
+    wpas_dbus_destroy();
     mpd_disconnect();
     mg_destroy_server(&server);
 
