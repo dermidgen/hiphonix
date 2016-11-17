@@ -5,18 +5,17 @@
 
 static void scan_request_cb (GDBusProxy *proxy, GAsyncResult *result, gpointer user_data)
 {
-	GVariant *reply = NULL;
 	GError *error = NULL;
 
-	reply = g_dbus_proxy_call_finish (proxy, result, &error);
+	g_dbus_proxy_call_finish (proxy, result, &error);
 	if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
 		return;
 
 	if (error) {
-		g_print("Scan Error");
+		g_print ("Scan failed: %s\n", error->message);
 	}
 
-	g_print("Scan Done");
+	g_print("Scan Done\n");
 }
 
 static void wpas_scan_async()
@@ -68,5 +67,5 @@ static void wpas_scan_sync()
 
 void wpas_scan()
 {
-	wpas_scan_sync();
+	wpas_scan_async();
 }
