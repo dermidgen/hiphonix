@@ -77,11 +77,13 @@ file(GLOB RESOURCES
 )
 
 set(SOURCES
+    src/connman.c
     src/hiphonix.c
     src/net.c
-    src/connman.c
-    src/ympd.c
+    src/nm.c
     src/supplicant.c
+    src/ympd.c
+    src/gdbus/proxy.c
     ympd/src/mpd_client.c
     ympd/src/mongoose.c
     ympd/src/json_encode.c

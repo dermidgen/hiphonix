@@ -22,6 +22,5 @@
 #define WPAS_DBUS_IFACE_BSSID   WPAS_DBUS_INTERFACE ".BSSID"
 
 void wpas_scan();
-void wpas_dbus_setup();
 
 #endif /* SRC_SUPPLICANT_H_ */
