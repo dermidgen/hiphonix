@@ -53,6 +53,7 @@ header {
   line-height: 70px;
   background-color: rgba(21, 57, 84, 1);
   border-bottom: 1px solid rgba(62, 82, 97, 1);
+  z-index: 2000;
 }
 header > a,
 header > i,
