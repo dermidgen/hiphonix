@@ -6,10 +6,10 @@
  */
 
 #include <gio/gio.h>
-#include <NetworkManager.h>
+// #include <NetworkManager.h>
 
 #include "../supplicant.h"
-#include "../connman.h"
+// #include "../connman.h"
 
 GDBusProxy *wpas_dbus_proxy;
 GDBusProxy *nm_dbus_proxy;
@@ -73,17 +73,17 @@ void dbus_init()
 					   (GAsyncReadyCallback) on_wpas_proxy_acquired);
 
 #if USE_NetworkManager > 0
-	nm_dbus_proxy = proxy_create_sync(
+	/*nm_dbus_proxy = proxy_create_sync(
                       NM_DBUS_SERVICE,
                       NM_DBUS_PATH,
-                      NM_DBUS_INTERFACE);
+                      NM_DBUS_INTERFACE);*/
 #endif
 
 #if USE_CONNMAN > 0
-	connman_dbus_proxy = proxy_create_sync(
+	/*connman_dbus_proxy = proxy_create_sync(
                       CONNMAN_DBUS_SERVICE,
 					  CONNMAN_DBUS_PATH,
-					  CONNMAN_DBUS_INTERFACE);
+					  CONNMAN_DBUS_INTERFACE);*/
 #endif
 }
 

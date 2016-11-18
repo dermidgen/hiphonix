@@ -7,7 +7,6 @@
 #include <pthread.h>
 
 #include <gio/gio.h>
-#include <NetworkManager.h>
 
 #include "config.h"
 #include "http_server.h"

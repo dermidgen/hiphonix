@@ -20,7 +20,7 @@ find_package(Threads REQUIRED)
 find_package(Glib REQUIRED)
 find_package(GObject REQUIRED)
 find_package(Gio REQUIRED)
-find_package(NM REQUIRED)
+#find_package(NM REQUIRED)
 find_package(LibMPDClient REQUIRED)
 
 # Configure Build
@@ -29,7 +29,6 @@ include_directories(${PROJECT_BINARY_DIR}
     ${PROJECT_SOURCE_DIR}
     ${PROJECT_SOURCE_DIR}/gdbus
     ${LIBMPDCLIENT_INCLUDE_DIR}
-    /usr/include/libnm
     ${GLib_INCLUDE_DIRS}
     ${GOBJECT_INCLUDE_DIR}
     ${GIO_INCLUDE_DIR}
@@ -80,7 +79,6 @@ set(SOURCES
     src/connman.c
     src/hiphonix.c
     src/net.c
-    src/nm.c
     src/supplicant.c
     src/ympd.c
     src/gdbus/proxy.c
