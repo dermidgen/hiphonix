@@ -424,6 +424,7 @@ ReactDOM.render(
       <Route path="/settings" component={Settings}/>
       <Route path="/queue" component={Queue}/>
       <Route path="/search" component={Search}/>
+      <Route path="/welcome" component={Search}/>
       <Route path="/*" component={Library}/>
     </Route>
   </Router>,
