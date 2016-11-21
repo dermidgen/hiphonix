@@ -44,6 +44,7 @@ class Controls extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      playing: false,
       playback: {},
       song: {}
     };
@@ -59,6 +60,7 @@ class Controls extends Component {
     this.play = this.play.bind(this);
     this.next = this.next.bind(this);
     this.pause = this.pause.bind(this);
+    // this.togglePlayback = this.togglePlayback.bind(this);
     // this.volume = this.volume.bind(this);
     // this.toggleVolume = this.toggleVolume.bind(this);
   }
@@ -87,11 +89,16 @@ class Controls extends Component {
   togglePlayback(event) {
     event.preventDefault();
     event.stopPropagation();
-    console.log('Toggle Playback');
+    console.log('Controler.togglePlayback()');
+    if (this.state.playing) {
+      this.pause();
+    } else {
+      this.play();
+    }
   }
   render() {
     return (
-      <footer onClick={ this.toggleQueue.bind(this) }>
+      <footer className="" onClick={ this.toggleQueue.bind(this) }>
         <div className="cover"></div>
         <div className="titles">
           <div className="title">title</div>
@@ -315,6 +322,12 @@ class Item extends Component {
         break;
     }
   }
+  play() {
+    event.preventDefault();
+    event.stopPropagation();
+    console.log('Item.play()');
+    socket.command('MPD_API_SET_PLAY',[]);
+  }
   handleClick(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -334,7 +347,7 @@ class Item extends Component {
             }
           })()}
         </div>
-        <a className="action material-icons">{this.action}</a>
+        <a className="action material-icons" onClick={ this.play.bind(this) }>{this.action}</a>
       </li>
     )
   }
