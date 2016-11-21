@@ -72,12 +72,27 @@ header > #left {
 }
 header > #title {
   left: 70px;
+  text-align: left;
 }
 header > #volume {
   right: 70px;
 }
 header > #settings {
   right: 0;
+}
+header > .volume {
+  position: absolute;
+  right: 85px;
+  top: 100%;
+  background-color: rgba(21, 57, 84, 1);
+  border-right: 1px solid rgba(62, 82, 97, 1);
+  border-bottom: 1px solid rgba(62, 82, 97, 1);
+  border-left: 1px solid rgba(62, 82, 97, 1);
+  border-radius: 0 0 5px 5px;
+  /*width: 50px;*/
+  height: 150px;
+  padding: 0 10px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, .4);
 }
 
 /* Lists or forms */
@@ -150,6 +165,15 @@ footer > .progress-bar > div {
 footer .material-icons {
   line-height: 70px;
 }
+footer.full {
+  height: 90px;
+}
+footer.full > .cover,
+footer.full > .titles
+{
+  display: none;
+}
+
 
 /* List */
 ul {

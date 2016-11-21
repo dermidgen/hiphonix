@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, browserHistory, Link, IndexRoute } from 'react-router'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import Slider from 'material-ui/Slider';
 import moment from 'moment';
 import Socket from './socket';
 import './index.css';
@@ -12,6 +15,14 @@ const socket = new Socket();
 window.socket = socket;
 
 document.addEventListener('gesturestart', e => { e.preventDefault(); });
+
+const muiTheme = getMuiTheme({
+  palette: {
+    canvasColor: 'rgba(19, 23, 27, 1)',
+    primary1Color: 'rgba(223, 224, 228, 1)',
+    textColor: 'rgba(223, 224, 228, 1)',
+  }
+});
 
 class Menu extends Component {
   cancel() {
@@ -67,20 +78,6 @@ class Controls extends Component {
     console.log('Controler.pause()');
     socket.command('MPD_API_SET_PAUSE',[]);
   }
-  // toggleVolume() {
-  //   const showVolume = !this.state.showVolume;
-  //   console.log('Controler.toggleVolume(): %o', showVolume);
-  //   this.setState({ showVolume });
-  // }
-  // volume(event, value) {
-  //   console.log('Controler.volume(event: %o, value: %o)', event, value);
-  //   if (value) {
-  //     this.setState({
-  //       volume: value
-  //     });
-  //     socket.command('MPD_API_SET_VOLUME',[value]);
-  //   }
-  // }
   toggleQueue(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -108,6 +105,26 @@ class Controls extends Component {
 }
 
 class Header extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      volume: 0
+    };
+  }
+  toggleVolume() {
+    const showVolume = !this.state.showVolume;
+    console.log('Header.toggleVolume(): %o', showVolume);
+    this.setState({ showVolume });
+  }
+  volume(event, value) {
+    console.log('Header.volume(event: %o, value: %o)', event, value);
+    if (value) {
+      this.setState({
+        volume: value
+      });
+      socket.command('MPD_API_SET_VOLUME',[value]);
+    }
+  }
   render() {
     return (
       <header>
@@ -119,7 +136,7 @@ class Header extends Component {
           }
         })()}
         <span id="title">{this.props.title}</span>
-        <i id="volume" className="material-icons">volume_up</i>
+        <i id="volume" className="material-icons" onClick={ this.toggleVolume.bind(this) }>volume_up</i>
         {(() => {
           if (this.props.title !== "Settings") {
             return (
@@ -127,6 +144,18 @@ class Header extends Component {
             );
           }
         })()}
+        <div className="volume" style={{ display: (this.state.showVolume ? 'block' : 'none') }}>
+          <Slider
+            defaultValue={50}
+            axis="y"
+            style={{height: 100}}
+            min={0}
+            max={100}
+            value={this.state.volume}
+            onChange={this.volume.bind(this)}
+            onDragStop={this.toggleVolume.bind(this)}
+          />
+        </div>
       </header>
     );
   }
@@ -135,10 +164,12 @@ class Header extends Component {
 class App extends Component {
   render() {
     return (
-      <main>
-        {this.props.children}
-        <Controls/>
-      </main>
+      <MuiThemeProvider muiTheme={muiTheme}>
+        <main>
+          {this.props.children}
+          <Controls/>
+        </main>
+      </MuiThemeProvider>
     );
   }
 }
