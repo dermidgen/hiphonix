@@ -140,12 +140,25 @@ class Header extends Component {
     }
   }
   render() {
+    var icon = null;
+    switch (this.props.title) {
+      case 'Settings':
+        icon = 'close';
+        break;
+      case 'Queue':
+        icon = 'close';
+        break;
+      case 'Library':
+        break;
+      default:
+        icon = 'arrow_back';
+    }
     return (
       <header>
         {(() => {
-          if (this.props.title !== "Library") {
+          if (icon) {
             return (
-              <Link id="left" onClick={browserHistory.goBack} className="material-icons">close</Link>
+              <Link id="left" onClick={browserHistory.goBack} className="material-icons">{icon}</Link>
             );
           }
         })()}
@@ -369,16 +382,30 @@ class Item extends Component {
         break;
     }
   }
-  play() {
+  play(uri) {
     event.preventDefault();
     event.stopPropagation();
-    console.log('Item.play()');
-    socket.command('MPD_API_SET_PLAY',[]);
+    console.log('Item.play(): %o', uri);
+    socket.command('MPD_API_SET_PLAY',[uri]);
   }
   handleClick(event) {
     event.preventDefault();
     event.stopPropagation();
-    console.log('Handling Click');
+    switch (this.props.type) {
+      case 'directory':
+        console.log('Open Folder: %o', this.props.dir);
+        browserHistory.push(this.props.dir);
+        break;
+      case 'playlist':
+        console.log('Open Playlist: %o', this.props.plist);
+        this.play(this.props.plist);
+        break;
+      default:
+        console.log('Play Song: %o', this.props.uri);
+        this.play(this.props.uri);
+        break;
+    }
+
   }
   render() {
     return (
@@ -415,21 +442,20 @@ class Library extends Component {
     this.title = this.title.bind(this);
   }
   title() {
-    // console.group('Library.title()');
-    // let parts = null;
-    // let title = null;
-    // try {
-    //   parts = this.props.params.splat.split('/');
-    //   title = parts[0] || 'library';
-    // } catch (e) {
-    //   console.error(e);
-    // }
-    // console.log('splat: %o', this.props.params.splat);
-    // console.log('parts: %o', parts);
-    // console.log('title: %o', title);
-    // console.groupEnd();
-    // return title;
-    return 'Library';
+    console.group('Library.title()');
+    let parts = null;
+    let title = null;
+    try {
+      parts = this.props.params.splat.split('/');
+      title = parts[0] || 'library';
+    } catch (e) {
+      console.error(e);
+    }
+    console.log('splat: %o', this.props.params.splat);
+    console.log('parts: %o', parts);
+    console.log('title: %o', title);
+    console.groupEnd();
+    return title || 'Library';
   }
   componentWillMount() {
     if (!socket.connected) {
