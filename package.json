@@ -1,10 +1,10 @@
 {
   "name": "player",
-  "version": "0.5.6",
+  "version": "0.5.7",
   "private": true,
   "repository": {
-    "type" : "git",
-    "url" : "git@github.com:dermidgen/hiphonix-player.git"
+    "type": "git",
+    "url": "git@github.com:dermidgen/hiphonix-player.git"
   },
   "devDependencies": {
     "babel-core": "^6.17.0",
