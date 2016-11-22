@@ -3,6 +3,11 @@ import ReactDOM from 'react-dom';
 import { Router, Route, browserHistory, Link, IndexRoute } from 'react-router'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import TextField from 'material-ui/TextField';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import RaisedButton from 'material-ui/RaisedButton';
+import Toggle from 'material-ui/Toggle';
 import Slider from 'material-ui/Slider';
 import moment from 'moment';
 import Socket from './socket';
@@ -119,6 +124,8 @@ class Header extends Component {
     };
   }
   toggleVolume() {
+    event.preventDefault();
+    event.stopPropagation();
     const showVolume = !this.state.showVolume;
     console.log('Header.toggleVolume(): %o', showVolume);
     this.setState({ showVolume });
@@ -194,29 +201,69 @@ class Settings extends Component {
       });
     });
 
-    // bindings
-    this.scan.bind(this);
-  }
-  scan() {
-    socket.command('NET_LIST',[]);
+    // socket.command('NET_LIST',[]);
   }
   componentDidMount() {
     this.setState({
       networks: [],
     });
   }
+  setWirelessNetwork() {
+    this.setState({
+      networks: [],
+    });
+  }
+  setOutputChannel() {
+    console.log('Settings.setOutputChannel()');
+  }
+  setStreamingRate() {
+    console.log('Settings.setStreamingRate()');
+  }
   render() {
     return (
       <section>
         <Header title="Settings"/>
         <form>
-          <div><strong>Wifi Connection</strong></div>
-          <select>
-          {this.state.networks.map((name,index) => {
-            return <option key={index}>{name}</option>;
-          })}
-          </select>
-          <button onClick={this.scan}>Scan</button>
+          <SelectField
+            floatingLabelText="Wireless Network"
+            value={0}
+            onChange={this.setWirelessNetwork}
+            autoWidth={true}
+            >
+            {this.state.networks.map((name,index) => {
+              return <MenuItem key={index} value={name} primaryText={name} />;
+            })}
+          </SelectField>
+          <TextField
+            hintText=""
+            floatingLabelText="Network Password"
+            type="password"
+          />
+
+          <SelectField
+            floatingLabelText="Output Channel"
+            value={0}
+            onChange={this.setOutputChannel}
+            autoWidth={true}
+            >
+            <MenuItem value={0} primaryText="[NOT POPULATED]" />
+          </SelectField>
+          <Slider />
+          <Toggle label="Volume Normalization" />
+          <Toggle label="Resampling" />
+          <SelectField
+            floatingLabelText="Streaming Rate"
+            value={0}
+            onChange={this.setStreamingRate}
+            autoWidth={true}
+            >
+            <MenuItem value={0} primaryText="[NOT POPULATED]" />
+          </SelectField>
+
+          <RaisedButton label="Rescan Networks" fullWidth={true} />
+          <RaisedButton label="Install Update" fullWidth={true} />
+          <RaisedButton label="Restart Player" fullWidth={true} />
+          <RaisedButton label="Reset Player" fullWidth={true} />
         </form>
         <Menu/>
       </section>
