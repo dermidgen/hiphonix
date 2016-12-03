@@ -9,8 +9,8 @@
 #define SRC_SUPPLICANT_H_
 
 #define WPAS_DBUS_SERVICE   "fi.w1.wpa_supplicant1"
-#define WPAS_DBUS_PATH      "/fi/w1/wpa_supplicant1/Interfaces/1"
-#define WPAS_DBUS_INTERFACE "fi.w1.wpa_supplicant1.Interface"
+#define WPAS_DBUS_INTERFACE "fi.w1.wpa_supplicant1"
+#define WPAS_DBUS_PATH      "/fi/w1/wpa_supplicant1/Interfaces/3"
 
 #define WPAS_DBUS_PATH_INTERFACES   WPAS_DBUS_PATH "/Interfaces"
 #define WPAS_DBUS_IFACE_INTERFACE   WPAS_DBUS_INTERFACE ".Interface"

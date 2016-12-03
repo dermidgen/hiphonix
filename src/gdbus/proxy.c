@@ -69,7 +69,7 @@ void dbus_init()
 	proxy_create_async(
 			           WPAS_DBUS_SERVICE,
                        WPAS_DBUS_PATH,
-                       WPAS_DBUS_INTERFACE,
+					   WPAS_DBUS_IFACE_INTERFACE,
 					   (GAsyncReadyCallback) on_wpas_proxy_acquired);
 
 #if USE_NetworkManager > 0
