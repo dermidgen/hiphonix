@@ -3,12 +3,13 @@ Description=hiphonix server daemon
 Requires=network.target local-fs.target
 
 [Service]
+Environment=WPAS_IFACE=1
 Environment=MPD_HOST=localhost
 Environment=MPD_PORT=6600
 Environment=WEB_PORT=8080
 Environment=HIPHONIX_USER=root
 EnvironmentFile=/etc/default/hiphonix
-ExecStart=/usr/bin/hiphonix --user $HIPHONIX_USER --webport $WEB_PORT --host $MPD_HOST --port $MPD_PORT
+ExecStart=/usr/bin/hiphonix --user $HIPHONIX_USER --webport $WEB_PORT --host $MPD_HOST --port $MPD_PORT --wpas-iface $WPAS_IFACE
 Type=simple
 
 [Install]

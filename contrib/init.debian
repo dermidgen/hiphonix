@@ -24,7 +24,7 @@ HIPHONIX_USER=root
 MPD_HOST=localhost
 MPD_PORT=6600
 WEB_PORT=8080
-
+WPAS_IFACE=1
 
 # Exit if the package is not installed
 [ -x "$DAEMON" ] || exit 0
@@ -35,7 +35,7 @@ WEB_PORT=8080
 # Load the VERBOSE setting and other rcS variables
 [ -f /etc/default/rcS ] && . /etc/default/rcS
 
-DAEMON_OPT="--user $HIPHONIX_USER --webport $WEB_PORT --host $MPD_HOST --port $MPD_PORT"
+DAEMON_OPT="--user $HIPHONIX_USER --webport $WEB_PORT --host $MPD_HOST --port $MPD_PORT --wpas-iface $WPAS_IFACE"
 
 do_start()
 {

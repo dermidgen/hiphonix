@@ -94,6 +94,7 @@ int main(int argc, char **argv)
     char *run_as_user = NULL;
     char const *error_msg = NULL;
     char *webport = "8080";
+    char *wpas_iface = "1";
 
     server = mg_create_server(NULL, server_callback);
     GError *error = NULL;
@@ -130,6 +131,9 @@ int main(int argc, char **argv)
             case 'w':
                 webport = strdup(optarg);
                 break;
+            case 'i':
+                wpas_iface = strdup(optarg);
+                break;
             case 'u':
                 run_as_user = strdup(optarg);
                 break;
@@ -145,6 +149,7 @@ int main(int argc, char **argv)
                         " -h, --host <host>\t\tconnect to mpd at host [localhost]\n"
                         " -p, --port <port>\t\tconnect to mpd at port [6600]\n"
                         " -w, --webport [ip:]<port>\tlisten interface/port for webserver [8080]\n"
+                        " -i, --wpas-iface <iface>\twpa_supplicant interface [1]\n"
                         " -u, --user <username>\t\tdrop priviliges to user after socket bind\n"
                         " -v, --version\t\t\tget version\n"
                         " --help\t\t\t\tthis help\n"
