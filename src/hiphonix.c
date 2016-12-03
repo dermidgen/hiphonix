@@ -94,7 +94,8 @@ int main(int argc, char **argv)
     char *run_as_user = NULL;
     char const *error_msg = NULL;
     char *webport = "8080";
-    char *wpas_iface = "1";
+
+    wpas_iface = "1";
 
     server = mg_create_server(NULL, server_callback);
     GError *error = NULL;
@@ -113,6 +114,7 @@ int main(int argc, char **argv)
         {"host",         required_argument, 0, 'h'},
         {"port",         required_argument, 0, 'p'},
         {"webport",      required_argument, 0, 'w'},
+        {"wpas-iface",   required_argument, 0, 'i'},
         {"user",         required_argument, 0, 'u'},
         {"version",      no_argument,       0, 'v'},
         {"help",         no_argument,       0,  0 },

@@ -65,6 +65,11 @@ static void wpas_scan_sync()
 	}
 }
 
+static void wpas_get_interfaces()
+{
+
+}
+
 void wpas_scan()
 {
 	wpas_scan_async();

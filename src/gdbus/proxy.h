@@ -11,6 +11,7 @@
 #define USE_CONNMAN 0
 #define USE_NetworkManager 0
 
+char *wpas_iface;
 GDBusProxy *wpas_dbus_proxy;
 GDBusProxy *nm_dbus_proxy;
 GDBusProxy *connman_dbus_proxy;

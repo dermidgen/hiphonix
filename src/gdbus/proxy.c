@@ -5,12 +5,15 @@
  *      Author: dgraham
  */
 
+#include <string.h>
+
 #include <gio/gio.h>
 // #include <NetworkManager.h>
 
 #include "../supplicant.h"
 // #include "../connman.h"
 
+char *wpas_iface;
 GDBusProxy *wpas_dbus_proxy;
 GDBusProxy *nm_dbus_proxy;
 GDBusProxy *connman_dbus_proxy;
@@ -60,15 +63,19 @@ static void proxy_destroy(GDBusProxy *proxy)
 
 void dbus_init()
 {
+	char wpas_interface[25];
+
 	// Setup
 #if !GLIB_CHECK_VERSION (2, 35, 0)
 	/* Initialize GType system */
 	g_type_init ();
 #endif
 
+	strcpy(wpas_interface, WPAS_DBUS_PATH_INTERFACES);
+	strcat(wpas_interface, wpas_iface);
 	proxy_create_async(
 			           WPAS_DBUS_SERVICE,
-                       WPAS_DBUS_PATH,
+					   wpas_interface,
 					   WPAS_DBUS_IFACE_INTERFACE,
 					   (GAsyncReadyCallback) on_wpas_proxy_acquired);
 
