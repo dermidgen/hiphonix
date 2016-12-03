@@ -1,6 +1,14 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, browserHistory, Link, IndexRoute } from 'react-router'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import TextField from 'material-ui/TextField';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import RaisedButton from 'material-ui/RaisedButton';
+import Toggle from 'material-ui/Toggle';
+import Slider from 'material-ui/Slider';
 import moment from 'moment';
 import Socket from './socket';
 import './index.css';
@@ -12,6 +20,14 @@ const socket = new Socket();
 window.socket = socket;
 
 document.addEventListener('gesturestart', e => { e.preventDefault(); });
+
+const muiTheme = getMuiTheme({
+  palette: {
+    canvasColor: 'rgba(19, 23, 27, 1)',
+    primary1Color: 'rgba(223, 224, 228, 1)',
+    textColor: 'rgba(223, 224, 228, 1)',
+  }
+});
 
 class Menu extends Component {
   cancel() {
@@ -33,6 +49,7 @@ class Controls extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      playing: false,
       playback: {},
       song: {}
     };
@@ -48,6 +65,7 @@ class Controls extends Component {
     this.play = this.play.bind(this);
     this.next = this.next.bind(this);
     this.pause = this.pause.bind(this);
+    // this.togglePlayback = this.togglePlayback.bind(this);
     // this.volume = this.volume.bind(this);
     // this.toggleVolume = this.toggleVolume.bind(this);
   }
@@ -67,20 +85,6 @@ class Controls extends Component {
     console.log('Controler.pause()');
     socket.command('MPD_API_SET_PAUSE',[]);
   }
-  // toggleVolume() {
-  //   const showVolume = !this.state.showVolume;
-  //   console.log('Controler.toggleVolume(): %o', showVolume);
-  //   this.setState({ showVolume });
-  // }
-  // volume(event, value) {
-  //   console.log('Controler.volume(event: %o, value: %o)', event, value);
-  //   if (value) {
-  //     this.setState({
-  //       volume: value
-  //     });
-  //     socket.command('MPD_API_SET_VOLUME',[value]);
-  //   }
-  // }
   toggleQueue(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -90,11 +94,16 @@ class Controls extends Component {
   togglePlayback(event) {
     event.preventDefault();
     event.stopPropagation();
-    console.log('Toggle Playback');
+    console.log('Controler.togglePlayback()');
+    if (this.state.playing) {
+      this.pause();
+    } else {
+      this.play();
+    }
   }
   render() {
     return (
-      <footer onClick={ this.toggleQueue.bind(this) }>
+      <footer className="" onClick={ this.toggleQueue.bind(this) }>
         <div className="cover"></div>
         <div className="titles">
           <div className="title">title</div>
@@ -108,18 +117,53 @@ class Controls extends Component {
 }
 
 class Header extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      volume: 0
+    };
+  }
+  toggleVolume() {
+    event.preventDefault();
+    event.stopPropagation();
+    const showVolume = !this.state.showVolume;
+    console.log('Header.toggleVolume(): %o', showVolume);
+    this.setState({ showVolume });
+  }
+  volume(event, value) {
+    console.log('Header.volume(event: %o, value: %o)', event, value);
+    if (value) {
+      this.setState({
+        volume: value
+      });
+      socket.command('MPD_API_SET_VOLUME',[value]);
+    }
+  }
   render() {
+    var icon = null;
+    switch (this.props.title) {
+      case 'Settings':
+        icon = 'close';
+        break;
+      case 'Queue':
+        icon = 'close';
+        break;
+      case 'Library':
+        break;
+      default:
+        icon = 'arrow_back';
+    }
     return (
       <header>
         {(() => {
-          if (this.props.title !== "Library") {
+          if (icon) {
             return (
-              <Link id="left" onClick={browserHistory.goBack} className="material-icons">close</Link>
+              <Link id="left" onClick={browserHistory.goBack} className="material-icons">{icon}</Link>
             );
           }
         })()}
         <span id="title">{this.props.title}</span>
-        <i id="volume" className="material-icons">volume_up</i>
+        <i id="volume" className="material-icons" onClick={ this.toggleVolume.bind(this) }>volume_up</i>
         {(() => {
           if (this.props.title !== "Settings") {
             return (
@@ -127,6 +171,18 @@ class Header extends Component {
             );
           }
         })()}
+        <div className="volume" style={{ display: (this.state.showVolume ? 'block' : 'none') }}>
+          <Slider
+            defaultValue={50}
+            axis="y"
+            style={{height: 100}}
+            min={0}
+            max={100}
+            value={this.state.volume}
+            onChange={this.volume.bind(this)}
+            onDragStop={this.toggleVolume.bind(this)}
+          />
+        </div>
       </header>
     );
   }
@@ -135,10 +191,12 @@ class Header extends Component {
 class App extends Component {
   render() {
     return (
-      <main>
-        {this.props.children}
-        <Controls/>
-      </main>
+      <MuiThemeProvider muiTheme={muiTheme}>
+        <main>
+          {this.props.children}
+          <Controls/>
+        </main>
+      </MuiThemeProvider>
     );
   }
 }
@@ -156,29 +214,69 @@ class Settings extends Component {
       });
     });
 
-    // bindings
-    this.scan.bind(this);
-  }
-  scan() {
-    socket.command('NET_LIST',[]);
+    // socket.command('NET_LIST',[]);
   }
   componentDidMount() {
     this.setState({
       networks: [],
     });
   }
+  setWirelessNetwork() {
+    this.setState({
+      networks: [],
+    });
+  }
+  setOutputChannel() {
+    console.log('Settings.setOutputChannel()');
+  }
+  setStreamingRate() {
+    console.log('Settings.setStreamingRate()');
+  }
   render() {
     return (
       <section>
         <Header title="Settings"/>
         <form>
-          <div><strong>Wifi Connection</strong></div>
-          <select>
-          {this.state.networks.map((name,index) => {
-            return <option key={index}>{name}</option>;
-          })}
-          </select>
-          <button onClick={this.scan}>Scan</button>
+          <SelectField
+            floatingLabelText="Wireless Network"
+            value={0}
+            onChange={this.setWirelessNetwork}
+            autoWidth={true}
+            >
+            {this.state.networks.map((name,index) => {
+              return <MenuItem key={index} value={name} primaryText={name} />;
+            })}
+          </SelectField>
+          <TextField
+            hintText=""
+            floatingLabelText="Network Password"
+            type="password"
+          />
+
+          <SelectField
+            floatingLabelText="Output Channel"
+            value={0}
+            onChange={this.setOutputChannel}
+            autoWidth={true}
+            >
+            <MenuItem value={0} primaryText="[NOT POPULATED]" />
+          </SelectField>
+          <Slider />
+          <Toggle label="Volume Normalization" />
+          <Toggle label="Resampling" />
+          <SelectField
+            floatingLabelText="Streaming Rate"
+            value={0}
+            onChange={this.setStreamingRate}
+            autoWidth={true}
+            >
+            <MenuItem value={0} primaryText="[NOT POPULATED]" />
+          </SelectField>
+
+          <RaisedButton label="Rescan Networks" fullWidth={true} />
+          <RaisedButton label="Install Update" fullWidth={true} />
+          <RaisedButton label="Restart Player" fullWidth={true} />
+          <RaisedButton label="Reset Player" fullWidth={true} />
         </form>
         <Menu/>
       </section>
@@ -284,10 +382,30 @@ class Item extends Component {
         break;
     }
   }
+  play(uri) {
+    event.preventDefault();
+    event.stopPropagation();
+    console.log('Item.play(): %o', uri);
+    socket.command('MPD_API_SET_PLAY',[uri]);
+  }
   handleClick(event) {
     event.preventDefault();
     event.stopPropagation();
-    console.log('Handling Click');
+    switch (this.props.type) {
+      case 'directory':
+        console.log('Open Folder: %o', this.props.dir);
+        browserHistory.push(this.props.dir);
+        break;
+      case 'playlist':
+        console.log('Open Playlist: %o', this.props.plist);
+        this.play(this.props.plist);
+        break;
+      default:
+        console.log('Play Song: %o', this.props.uri);
+        this.play(this.props.uri);
+        break;
+    }
+
   }
   render() {
     return (
@@ -303,7 +421,7 @@ class Item extends Component {
             }
           })()}
         </div>
-        <a className="action material-icons">{this.action}</a>
+        <a className="action material-icons" onClick={ this.play.bind(this) }>{this.action}</a>
       </li>
     )
   }
@@ -324,21 +442,20 @@ class Library extends Component {
     this.title = this.title.bind(this);
   }
   title() {
-    // console.group('Library.title()');
-    // let parts = null;
-    // let title = null;
-    // try {
-    //   parts = this.props.params.splat.split('/');
-    //   title = parts[0] || 'library';
-    // } catch (e) {
-    //   console.error(e);
-    // }
-    // console.log('splat: %o', this.props.params.splat);
-    // console.log('parts: %o', parts);
-    // console.log('title: %o', title);
-    // console.groupEnd();
-    // return title;
-    return 'Library';
+    console.group('Library.title()');
+    let parts = null;
+    let title = null;
+    try {
+      parts = this.props.params.splat.split('/');
+      title = parts[0] || 'library';
+    } catch (e) {
+      console.error(e);
+    }
+    console.log('splat: %o', this.props.params.splat);
+    console.log('parts: %o', parts);
+    console.log('title: %o', title);
+    console.groupEnd();
+    return title || 'Library';
   }
   componentWillMount() {
     if (!socket.connected) {
@@ -380,6 +497,7 @@ ReactDOM.render(
       <Route path="/settings" component={Settings}/>
       <Route path="/queue" component={Queue}/>
       <Route path="/search" component={Search}/>
+      <Route path="/welcome" component={Search}/>
       <Route path="/*" component={Library}/>
     </Route>
   </Router>,
