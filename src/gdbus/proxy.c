@@ -18,7 +18,12 @@ GDBusProxy *wpas_dbus_proxy;
 GDBusProxy *nm_dbus_proxy;
 GDBusProxy *connman_dbus_proxy;
 
-static void on_wpas_proxy_acquired (GDBusProxy *proxy, GAsyncResult *result, gpointer user_data)
+static void proxy_destroy(GDBusProxy *proxy)
+{
+	g_object_unref (proxy);
+}
+
+void on_wpas_proxy_acquired (GDBusProxy *proxy, GAsyncResult *result, gpointer user_data)
 {
 	GError *error = NULL;
 
@@ -28,7 +33,7 @@ static void on_wpas_proxy_acquired (GDBusProxy *proxy, GAsyncResult *result, gpo
 	g_print("WPA Suppplicant DBus Proxy Acquired\n");
 }
 
-static void proxy_create_async(const char *service, const char *path, const char *interface, GAsyncReadyCallback callback)
+void proxy_create_async(const char *service, const char *path, const char *interface, GAsyncReadyCallback callback)
 {
 	GError *error = NULL;
 	g_dbus_proxy_new_for_bus(G_BUS_TYPE_SYSTEM,
@@ -40,25 +45,6 @@ static void proxy_create_async(const char *service, const char *path, const char
 							 NULL,
 							 callback,
 							 &error);
-}
-
-static GDBusProxy *proxy_create_sync(const char *service, const char *path, const char *interface)
-{
-	GDBusProxy *proxy;
-	proxy = g_dbus_proxy_new_for_bus_sync(G_BUS_TYPE_SYSTEM,
-                                          G_DBUS_PROXY_FLAGS_NONE,
-                                          NULL,
-			                              service,
-			                              path,
-			                              interface,
-                                          NULL, NULL);
-	g_assert(proxy != NULL);
-	return proxy;
-}
-
-static void proxy_destroy(GDBusProxy *proxy)
-{
-	g_object_unref (proxy);
 }
 
 void dbus_init()

@@ -45,6 +45,14 @@ static void wpas_scan_sync()
 	GVariantBuilder builder;
 	GError *error = NULL;
 	GVariant *ret;
+	char wpas_interface[25];
+
+	strcpy(wpas_interface, WPAS_DBUS_PATH_INTERFACES);
+	strcat(wpas_interface, wpas_iface);
+	proxy_create_async(WPAS_DBUS_SERVICE,
+					   wpas_interface,
+					   WPAS_DBUS_IFACE_INTERFACE,
+					   (GAsyncReadyCallback) on_wpas_proxy_acquired);
 
 	/* Scan params */
 	/* Use passive to scan while an interface is in use */
@@ -65,8 +73,16 @@ static void wpas_scan_sync()
 	}
 }
 
-static void wpas_get_interfaces()
+static void wpas_ap_list()
 {
+	char wpas_interface[25];
+
+	strcpy(wpas_interface, WPAS_DBUS_PATH_INTERFACES);
+	strcat(wpas_interface, wpas_iface);
+	proxy_create_async(WPAS_DBUS_SERVICE,
+					   wpas_interface,
+					   WPAS_DBUS_IFACE_BSSID,
+					   (GAsyncReadyCallback) on_wpas_proxy_acquired);
 
 }
 

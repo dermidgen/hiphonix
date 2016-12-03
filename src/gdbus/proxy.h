@@ -16,6 +16,9 @@ GDBusProxy *wpas_dbus_proxy;
 GDBusProxy *nm_dbus_proxy;
 GDBusProxy *connman_dbus_proxy;
 
+void on_wpas_proxy_acquired (GDBusProxy *proxy, GAsyncResult *result, gpointer user_data);
+void proxy_create_async(const char *service, const char *path, const char *interface, GAsyncReadyCallback callback);
+
 void dbus_init();
 void dbus_destroy();
 
