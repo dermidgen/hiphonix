@@ -54,15 +54,25 @@ class Controls extends Component {
       song: {}
     };
     socket.on('state', state => {
-      // console.groupCollapsed('Player state changed');
-      // console.dir(state);
+      // console.log({ state });
       this.setState({ playback: state });
-      // console.groupEnd();
     });
     socket.on('song_change', song => {
       console.groupCollapsed('Song changed');
       console.dir(song);
-      this.setState({ song });
+      this.setSong(song);
+      console.groupEnd();
+    });
+    socket.on('queue', queue => {
+      // console.groupCollapsed('Queue received');
+      console.group('Queue received');
+      console.log(this.state.playing);
+      queue.forEach(song => {
+        console.log(song);
+        if (song.id === this.state.currentsongid) {
+          this.setSong(song);
+        }
+      });
       console.groupEnd();
     });
 
@@ -74,6 +84,10 @@ class Controls extends Component {
     // this.togglePlayback = this.togglePlayback.bind(this);
     // this.volume = this.volume.bind(this);
     // this.toggleVolume = this.toggleVolume.bind(this);
+  }
+  setSong(song) {
+    console.log('Controler.setSong()');
+    this.setState({ song });
   }
   prev() {
     console.log('Controler.prev()');
@@ -304,8 +318,12 @@ class Queue extends Component {
       items: []
     }
     socket.on('queue', (items = []) => {
-      console.log(`Queue items received: %o`, items);
+      console.groupCollapsed('Queue items received');
+      console.dir(items);
+      this.setState({ items: [] });
       this.setState({ items });
+      console.dir(this.state.items);
+      console.groupEnd();
     });
   }
   componentWillMount() {
@@ -329,7 +347,11 @@ class Queue extends Component {
     return (
       <section>
         <Header title="Queue"/>
-        <List items={ this.state.items }/>
+        <ul>
+          {this.state.items.map((item, index) => {
+            return <Item key={index} {...item} />;
+          })}
+        </ul>
         <Menu/>
       </section>
     )
@@ -343,8 +365,12 @@ class Search extends Component {
       items: []
     }
     socket.on('search', (items = []) => {
-      console.log(`Search items received: %o`, items);
+      console.groupCollapsed('Search items received');
+      console.dir(items);
+      this.setState({ items: [] });
       this.setState({ items });
+      console.dir(this.state.items);
+      console.groupEnd();
     });
   }
   componentWillMount() {
@@ -354,35 +380,13 @@ class Search extends Component {
     return (
       <section>
         <Header title="Search"/>
-        <List items={ this.state.items }/>
+        <ul>
+          {this.state.items.map((item, index) => {
+            return <Item key={index} {...item} />;
+          })}
+        </ul>
         <Menu/>
       </section>
-    )
-  }
-}
-
-class List extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      items: []
-    }
-    socket.on('browse', (items = []) => {
-      console.groupCollapsed('Library items received');
-      console.dir(items);
-      this.setState({ items: [] });
-      this.setState({ items });
-      console.dir(this.state.items);
-      console.groupEnd();
-    });
-  }
-  render() {
-    return (
-      <ul>
-        {this.state.items.map((item, index) => {
-          return <Item key={index} {...item} />;
-        })}
-      </ul>
     )
   }
 }
@@ -483,6 +487,18 @@ class Item extends Component {
 class Library extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      items: []
+    }
+    socket.on('browse', (items = []) => {
+      console.groupCollapsed('Library items received');
+      console.dir(items);
+      this.setState({ items: [] });
+      this.setState({ items });
+      console.dir(this.state.items);
+      console.groupEnd();
+    });
+
     // bindings
     this.title = this.title.bind(this);
   }
@@ -526,12 +542,17 @@ class Library extends Component {
     console.log('Splat: %o', this.props.params.splat);
     console.groupEnd();
     socket.command('MPD_API_GET_BROWSE',[0, path]);
+    socket.command('MPD_API_GET_QUEUE');
   }
   render() {
     return (
       <section>
         <Header title={ this.title() }/>
-        <List/>
+        <ul>
+          {this.state.items.map((item, index) => {
+            return <Item key={index} {...item} />;
+          })}
+        </ul>
         <Menu/>
       </section>
     )
