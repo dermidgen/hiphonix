@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Router, Route, browserHistory, Link, IndexRoute } from 'react-router'
+import { Router, Route, browserHistory, Link, IndexRoute } from 'react-router';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import TextField from 'material-ui/TextField';
@@ -54,10 +54,16 @@ class Controls extends Component {
       song: {}
     };
     socket.on('state', state => {
+      // console.groupCollapsed('Player state changed');
+      // console.dir(state);
       this.setState({ playback: state });
+      // console.groupEnd();
     });
     socket.on('song_change', song => {
+      console.groupCollapsed('Song changed');
+      console.dir(song);
       this.setState({ song });
+      console.groupEnd();
     });
 
     // bindings
@@ -106,8 +112,8 @@ class Controls extends Component {
       <footer className="" onClick={ this.toggleQueue.bind(this) }>
         <div className="cover"></div>
         <div className="titles">
-          <div className="title">title</div>
-          <div className="subtitle">subtitle</div>
+          <div className="title">{ this.state.song.title }</div>
+          <div className="subtitle">{ this.state.song.cover }</div>
         </div>
         <div className="play-pause material-icons" onClick={ this.togglePlayback.bind(this) }>play_arrow</div>
         <div className="progress-bar"><div style={ { width: `${this.state.playback.elapsed}%` } }></div></div>
@@ -285,6 +291,13 @@ class Settings extends Component {
 }
 
 class Queue extends Component {
+  // play
+  // remove
+  // reorder
+  // clear
+  // save as playlist
+  //
+  // sticky on top
   constructor(props) {
     super(props);
     this.state = {
@@ -349,10 +362,24 @@ class Search extends Component {
 }
 
 class List extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      items: []
+    }
+    socket.on('browse', (items = []) => {
+      console.groupCollapsed('Library items received');
+      console.dir(items);
+      this.setState({ items: [] });
+      this.setState({ items });
+      console.dir(this.state.items);
+      console.groupEnd();
+    });
+  }
   render() {
     return (
       <ul>
-        {this.props.items.map((item, index) => {
+        {this.state.items.map((item, index) => {
           return <Item key={index} {...item} />;
         })}
       </ul>
@@ -363,7 +390,6 @@ class List extends Component {
 class Item extends Component {
   constructor(props) {
     super(props);
-
     switch (this.props.type) {
       case 'directory':
         this.icon = 'folder';
@@ -382,30 +408,57 @@ class Item extends Component {
         break;
     }
   }
-  play(uri) {
-    event.preventDefault();
-    event.stopPropagation();
-    console.log('Item.play(): %o', uri);
-    socket.command('MPD_API_SET_PLAY',[uri]);
-  }
   handleClick(event) {
+    console.log('Item.handleClick');
     event.preventDefault();
     event.stopPropagation();
+    var action = null;
+    var type = this.props.type;
+    var data = null;
     switch (this.props.type) {
       case 'directory':
-        console.log('Open Folder: %o', this.props.dir);
-        browserHistory.push(this.props.dir);
+        action = 'open';
+        data = this.props.dir;
+        browserHistory.push(data);
         break;
       case 'playlist':
-        console.log('Open Playlist: %o', this.props.plist);
-        this.play(this.props.plist);
+        action = 'play';
+        data = this.props.plist;
+        socket.command('MPD_API_SET_PLAY',[data]);
         break;
       default:
-        console.log('Play Song: %o', this.props.uri);
-        this.play(this.props.uri);
+        action = 'play';
+        data = this.props.uri;
+        socket.command('MPD_API_SET_PLAY',[data]);
         break;
     }
-
+    console.log(`${action} ${type}: %o`, data);
+  }
+  handleAction(event) {
+    console.log('Item.handleAction');
+    event.preventDefault();
+    event.stopPropagation();
+    var action = null;
+    var type = this.props.type;
+    var data = null;
+    switch (this.props.type) {
+      case 'directory':
+        action = 'open';
+        data = this.props.dir;
+        browserHistory.push(data);
+        break;
+      case 'playlist':
+        action = 'play';
+        data = this.props.plist;
+        socket.command('MPD_API_SET_PLAY',[data]);
+        break;
+      default:
+        action = 'play';
+        data = this.props.uri;
+        socket.command('MPD_API_SET_PLAY',[data]);
+        break;
+    }
+    console.log(`${action} ${type}: %o`, data);
   }
   render() {
     return (
@@ -421,7 +474,7 @@ class Item extends Component {
             }
           })()}
         </div>
-        <a className="action material-icons" onClick={ this.play.bind(this) }>{this.action}</a>
+        <a className="action material-icons" onClick={ this.handleAction.bind(this) }>{this.action}</a>
       </li>
     )
   }
@@ -430,19 +483,11 @@ class Item extends Component {
 class Library extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      items: []
-    }
-    socket.on('browse', (items = []) => {
-      console.log(`Library items received: %o`, items);
-      this.setState({ items });
-    });
-
     // bindings
     this.title = this.title.bind(this);
   }
   title() {
-    console.group('Library.title()');
+    console.groupCollapsed('Set Title');
     let parts = null;
     let title = null;
     try {
@@ -474,16 +519,19 @@ class Library extends Component {
   }
   fetch() {
     let path = (this.props.params.splat || '/').split('/');
-    path.shift();
+    // path.shift();
     path = path.join('/');
     if (!path || path === '') path = '/';
+    console.groupCollapsed('Fetch Items for path: %o', path);
+    console.log('Splat: %o', this.props.params.splat);
+    console.groupEnd();
     socket.command('MPD_API_GET_BROWSE',[0, path]);
   }
   render() {
     return (
       <section>
         <Header title={ this.title() }/>
-        <List items={ this.state.items }/>
+        <List/>
         <Menu/>
       </section>
     )
@@ -503,140 +551,3 @@ ReactDOM.render(
   </Router>,
   document.getElementById('root')
 );
-
-
-
-
-// REFERENCE
-/*
-
-
-// controls
-//   icon
-//   title
-//   subtitle (duration)
-//   play/pause icon
-//   progress bar
-// full controls
-//   progress bar
-//   current position
-//   total length
-//   shuffle icon
-//   previous track icon
-//   play/pause icon
-//   next track icon
-//   repeat all/one/none cycle icon
-
-
-// icons:
-//  folder
-//  audiotrack
-//  playlist_play
-//  storage
-
-// actions:
-//  more_vert
-//  chevron_right
-
-// other
-//  repeat
-//  shuffle
-//  skip_previous
-//  skip_next
-//  arrow_back
-//  wifi
-//  volume_up
-//  close
-
-
-
-var items = [
-  {
-    icon: 'folder',
-    title: 'Folder',
-    subtitle: '3 items',
-    action: 'chevron_right'
-  },
-  {
-    icon: 'playlist_play',
-    title: 'Playlist',
-    subtitle: '20 items',
-    action: 'chevron_right'
-  },
-  {
-    icon: 'audiotrack',
-    title: 'Song',
-    subtitle: '0:00',
-    action: 'play_arrow'
-  },
-  {
-    icon: 'drag_handle',
-    title: 'Draggable Song',
-    subtitle: '0:00',
-    action: 'play_arrow'
-  },
-  {
-    icon: 'drag_handle',
-    title: 'Draggable Song',
-    subtitle: '0:00',
-    action: 'play_arrow'
-  },
-  {
-    icon: 'drag_handle',
-    title: 'Draggable Song',
-    subtitle: '0:00',
-    action: 'play_arrow'
-  },
-  {
-    icon: 'drag_handle',
-    title: 'Draggable Song',
-    subtitle: '0:00',
-    action: 'play_arrow'
-  },
-  {
-    icon: 'drag_handle',
-    title: 'Draggable Song',
-    subtitle: '0:00',
-    action: 'play_arrow'
-  },
-  {
-    icon: 'drag_handle',
-    title: 'Draggable Song',
-    subtitle: '0:00',
-    action: 'play_arrow'
-  },
-  {
-    icon: 'drag_handle',
-    title: 'Draggable Song',
-    subtitle: '0:00',
-    action: 'play_arrow'
-  }
-]
-
-var items = [
-  {
-    icon: 'drag_handle',
-    title: 'Song',
-    subtitle: '0:00',
-    action: 'play_arrow'
-  },
-  {
-    icon: 'drag_handle',
-    title: 'Song',
-    subtitle: '0:00',
-    action: 'play_arrow'
-  },
-  {
-    icon: 'drag_handle',
-    title: 'Song',
-    subtitle: '0:00',
-    action: 'play_arrow'
-  },
-  {
-    icon: 'drag_handle',
-    title: 'Song',
-    subtitle: '0:00',
-    action: 'play_arrow'
-  }
-]
-*/

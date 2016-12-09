@@ -84,7 +84,7 @@ wss.on('connection', connection => {
     const cmd = parts[0];
     const args = parts.slice(1);
     const state = setState(cmd, args);
-    const data = fixtures(cmd);
+    const data = fixtures(cmd, args);
     const response = JSON.stringify(data)
 
     debug('Message', i({
