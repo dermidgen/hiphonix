@@ -1,9 +1,15 @@
+const debug = require('debug')('hip:fixtures');
+const util = require('util');
 const fs = require('fs');
 const path = require('path');
 
+const i = (obj, depth = 1) => {
+  return '\n' + util.inspect(obj, { depth, colors: true })
+}
+
 // Provides stubs for commands that don't have a fixture
 // or commands that return a different fixture.
-function selectFixture(cmd) {
+function selectFixture(cmd, params) {
   switch(cmd) {
     case 'MPD_API_SET_PAUSE':
       return '';
@@ -32,13 +38,22 @@ function selectFixture(cmd) {
     case 'MPD_API_ADD_PLAYLIST':
       return path.join(__dirname, `UPDATE_QUEUE.json`);
     break;
+    case 'MPD_API_GET_BROWSE':
+      var index = path.join(
+        __dirname,
+        (params[1] || '/'),
+        `MPD_API_GET_BROWSE.json`
+      );
+      debug(i({ index }));
+      return index
+    break;
     default:
       return path.join(__dirname, `${cmd}.json`);
   }
 };
 
-function fixtures(cmd) {
-  const fixture = selectFixture(cmd);
+function fixtures(cmd, params) {
+  const fixture = selectFixture(cmd, params);
   let data = {};
 
   try {

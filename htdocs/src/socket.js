@@ -62,7 +62,9 @@ class Socket extends EventEmitter {
   }
 
   command(cmd, params) {
-    console.log('Socket.command(cmd: %o, params: %o)', cmd, params);
+    console.groupCollapsed('Socket command received: %o', cmd);
+    console.log('Params: %o)', params);
+    console.groupEnd();
     const message = ([cmd].concat(params)).join(',');
     this.ws.send(message);
   }
